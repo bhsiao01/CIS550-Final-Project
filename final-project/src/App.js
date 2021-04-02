@@ -6,6 +6,9 @@ import {
 	Route,
 	Switch
 } from 'react-router-dom';
+import Home from './components/Home'
+import Stock from './components/Stock'
+import Housing from './components/Housing'
 
 function App() {
   return (
@@ -15,7 +18,21 @@ function App() {
 						<Route
 							exact
 							path="/"
-							render={() => <Dashboard />}
+							render={() => <Home />}
+						/>
+					</Switch>
+					<Switch>
+						<Route
+							exact
+							path="/stock"
+							render={() => <Stock />}
+						/>
+					</Switch>
+					<Switch>
+						<Route
+							exact
+							path="/housing"
+							render={() => <Housing />}
 						/>
 					</Switch>
 				</Router>
