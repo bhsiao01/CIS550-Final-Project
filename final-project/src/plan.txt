@@ -1,0 +1,10 @@
+Plan for pages:
+Home page
+This is where the user lands and can see what to search for. Our search bar will allow users to search based on company or city/state and will list all associated results. For example, if “Charleston” is searched, the search bar will display “Charleston, SC” and “Charleston, WV.”
+
+Stock information/housing value page for a company
+This will display the stock information for the searched company as well as the housing data for the searched company’s headquarters’ location.
+
+Housing data is associated with a particular city. For example, if we searched up “Amazon” as our keyword, our webpage would display the stock data for $AMZN, as well as housing data for houses in Seattle -- the city Amazon is headquartered in.
+City information page for location
+This will display a list of all the companies in the searched city as well as the housing data for this city.
