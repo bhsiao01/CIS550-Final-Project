@@ -15,6 +15,8 @@ app.use(express.urlencoded({extended: false}));
 app.get('/api/test', (req, res) => {
   res.send({ express: 'Hello From Express' });
 });
+  
+app.get('/homePrices', routes.getAverageHome);
 
 app.listen(8081, () => {
 	console.log(`Server listening on PORT 8081`);
