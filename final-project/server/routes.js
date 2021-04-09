@@ -16,18 +16,8 @@ connection.connect(function(err) {
 
   console.log('Connected to database.');
   const db = `use master;`; //use the correct database in AWS RDS environment
-/*   const query = `
-    SELECT *
-    FROM StockInfo
-    LIMIT 20;
-  `; */
 
-  //connect to database
-  connection.query(db, (err, rows, fields) => {});
-  /* connection.query(query, (err, rows, fields) => {
-    if (err) console.log(err);
-    else console.log(rows);
-  }); */
+  connection.query(db, (err, rows, fields) => {});  //connect to database
 });
 
 const getAverageHome = (req, res) => {
