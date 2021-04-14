@@ -21,6 +21,8 @@ app.get("/homePrices", routes.getAverageHome);
 
 app.get("/company", routes.getCompanies);
 
+app.get("/industry", routes.getTopStocksPerIndustry);
+
 // route for each company, city
 // eg. /company/apple  
 
