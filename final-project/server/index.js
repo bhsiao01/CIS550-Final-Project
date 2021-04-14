@@ -16,7 +16,18 @@ app.get('/api/test', (req, res) => {
   res.send({ express: 'Hello From Express' });
 });
   
-app.get('/homePrices', routes.getAverageHome);
+//calling app.get for the homeprices page
+app.get("/homePrices", routes.getAverageHome);
+
+app.get("/company", routes.getCompanies);
+
+// route for each company, city
+// eg. /company/apple  
+
+// route for homepage  
+
+
+
 
 app.listen(8081, () => {
 	console.log(`Server listening on PORT 8081`);
