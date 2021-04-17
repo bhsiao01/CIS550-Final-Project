@@ -77,6 +77,31 @@ const getCompanies = (req, res) => {
   WHERE City = 'Princeton' AND StateAbbr = 'NJ'
   LIMIT 10;
   `
+
+
+  const stock30Days = `
+    SELECT *
+    FROM Stocks
+    WHERE StockSymbol = 'MSFT'
+    ORDER BY Date DESC
+    LIMIT 30;
+  `
+
+
+  const forecastedChange = 
+  `SELECT RegionName, StateName, ForecastPctChange
+  FROM ZillowForecast
+  WHERE RegionName = 'Seattle' AND StateName = 'Washington'
+  ORDER BY ForecastPctChange;
+  `
+
+  const housingRange = 
+  `
+  SELECT RegionID, RegionName, MAX(Value), MIN(Value)
+	FROM ZillowHistoricalData
+  GROUP BY RegionID, RegionName
+	HAVING MAX(Value) >= [inputMax] AND MIN(Value) <= [inputMin]
+  `
   /*connection.query(cityStat, (err, rows, fields) => {
     if (err) console.log(err)
     else {
