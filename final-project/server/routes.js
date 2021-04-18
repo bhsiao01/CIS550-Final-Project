@@ -34,7 +34,7 @@ const getAverageHome = (req, res) => {
 	FROM ZillowHistoricalData
 	WHERE RegionName = 'Seattle' AND StateName = 'WA'
   GROUP BY RegionName;
-  `
+  `;
   connection.query(db, (err, rows, fields) => {})
 
   /*connection.query(avgValueQuery, (err, rows, fields) => {
@@ -47,19 +47,28 @@ const getAverageHome = (req, res) => {
 
   // Get simple statistics for cities
   // Parametrize State
-  const cityState = `
+  const cityStat = `
   SELECT RegionName, MIN(Value) AS min, AVG(Value) AS mean, MAX(Value) AS max 
   FROM ZillowHistoricalData
   WHERE StateName = 'PA'
   GROUP BY RegionID, RegionName;
+  `;
+
+  const housingRange = 
   `
-  /*connection.query(cityState, (err, rows, fields) => {
+  SELECT RegionName, StateName, MIN(Value) AS Min, MAX(Value) AS Max
+	FROM ZillowHistoricalData
+  GROUP BY RegionName, StateName
+	HAVING MAX(Value) <= 200000 AND MIN(Value) >= 150000
+  ORDER BY MIN(Value);
+  `;
+  connection.query(housingRange, (err, rows, fields) => {
     if (err) console.log(err);
     else {
       console.log(rows);
       res.json(rows);
     }
-  });*/
+  });
 }
 
 //finds all companies with headquarters in the input city
@@ -76,7 +85,7 @@ const getCompanies = (req, res) => {
   FROM StockInfo
   WHERE City = 'Princeton' AND StateAbbr = 'NJ'
   LIMIT 10;
-  `
+  `;
 
 
   const stock30Days = `
@@ -85,30 +94,24 @@ const getCompanies = (req, res) => {
     WHERE StockSymbol = 'MSFT'
     ORDER BY Date DESC
     LIMIT 30;
-  `
+  `;
 
 
   const forecastedChange = 
-  `SELECT RegionName, StateName, ForecastPctChange
+  `SELECT RegionName, StateName, AVG(ForecastYoYPctChange) AS Forecast
   FROM ZillowForecast
-  WHERE RegionName = 'Seattle' AND StateName = 'Washington'
-  ORDER BY ForecastPctChange;
-  `
+  WHERE RegionName = 'Philadelphia' AND StateName = 'PA'
+  GROUP BY RegionName, StateName
+  ORDER BY ForecastYoYPctChange;
+  `;
 
-  const housingRange = 
-  `
-  SELECT RegionID, RegionName, MAX(Value), MIN(Value)
-	FROM ZillowHistoricalData
-  GROUP BY RegionID, RegionName
-	HAVING MAX(Value) >= [inputMax] AND MIN(Value) <= [inputMin]
-  `
-  /*connection.query(cityStat, (err, rows, fields) => {
+  connection.query(housingRange, (err, rows, fields) => {
     if (err) console.log(err)
     else {
       console.log(rows)
       res.json(rows)
     }
-  })*/
+  })
 
   // TODO: If not complex enough, add another join of T1 with companies that are in the city
   const sectorHome = `
