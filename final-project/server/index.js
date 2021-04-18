@@ -19,9 +19,9 @@ app.get('/api/test', (req, res) => {
 //calling app.get for the homeprices page
 app.get("/city/:city/:state", routes.getAverageHome);
 
-app.get("/company", routes.getCompanies);
+app.get("/company/:ticker", routes.getCompanies);
 
-app.get("/industry", routes.getTopStocksPerIndustry);
+app.get("/industry/:sector", routes.getTopStocksPerIndustry);
 
 // route for each company, city
 // eg. /company/apple  

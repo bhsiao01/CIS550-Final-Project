@@ -73,6 +73,15 @@ const getAverageHome = (req, res) => {
 	HAVING MAX(Value) <= 200000 AND MIN(Value) >= 150000
   ORDER BY MIN(Value);
   `;
+
+  const forecastedChange = 
+  `SELECT RegionName, StateName, AVG(ForecastYoYPctChange) AS Forecast
+  FROM ZillowForecast
+  WHERE RegionName = 'Philadelphia' AND StateName = 'PA'
+  GROUP BY RegionName, StateName
+  ORDER BY ForecastYoYPctChange;
+  `;
+
   connection.query(compStat, (err, rows, fields) => {
     if (err) console.log(err);
     else {
@@ -85,32 +94,21 @@ const getAverageHome = (req, res) => {
 //finds all companies with headquarters in the input city
 //gets stuff from StockInfo
 const getCompanies = (req, res) => {
-  console.log("Hello " + city_input + state_abrv_input);
+  var company_input = req.params.ticker;
+  console.log(company_input);
 
   const db = `use master;`
   connection.query(db, (err, rows, fields) => {})
 
-  
-
-
   const stock30Days = `
     SELECT *
     FROM Stocks
-    WHERE StockSymbol = 'MSFT'
+    WHERE StockSymbol = '${company_input}'
     ORDER BY Date DESC
     LIMIT 30;
   `;
 
-
-  const forecastedChange = 
-  `SELECT RegionName, StateName, AVG(ForecastYoYPctChange) AS Forecast
-  FROM ZillowForecast
-  WHERE RegionName = 'Philadelphia' AND StateName = 'PA'
-  GROUP BY RegionName, StateName
-  ORDER BY ForecastYoYPctChange;
-  `;
-
-  connection.query(cityStat, (err, rows, fields) => {
+  connection.query(stock30Days, (err, rows, fields) => {
     if (err) console.log(err)
     else {
       console.log(rows)
@@ -118,19 +116,6 @@ const getCompanies = (req, res) => {
     }
   })
 
-  // TODO: If not complex enough, add another join of T1 with companies that are in the city
-  const sectorHome = `
-  WITH temp1 AS (
-    SELECT RegionName, AVG(Value) as mean 
-    FROM ZillowHistoricalData Z JOIN StockInfo S ON Z.RegionName = S.City 
-    WHERE S.Sector = 'Technology'
-    GROUP BY RegionName
-    ORDER BY mean DESC
-  )
-  SELECT T1.RegionName, T1.mean
-  FROM temp1 as T1
-  LIMIT 5;
-  `
   /*connection.query(sectorHome, (err, rows, fields) => {
     if (err) console.log(err)
     else {
@@ -142,6 +127,8 @@ const getCompanies = (req, res) => {
 
 //optimize! (DOES NOT LOAD WITHOUT WHERE DATE ... clauses)
 const getTopStocksPerIndustry = (req, res) => {
+  var sector_input = req.params.sector;
+  console.log(sector_input);
   const db = `use master;`;
   connection.query(db, (err, rows, fields) => {});
 
@@ -166,10 +153,25 @@ const getTopStocksPerIndustry = (req, res) => {
     ORDER BY MaxPrice DESC
     LIMIT 10);
   `;*/
+
+  // TODO: If not complex enough, add another join of T1 with companies that are in the city
+  const sectorHome = `
+  WITH temp1 AS (
+    SELECT RegionName, AVG(Value) as mean 
+    FROM ZillowHistoricalData Z JOIN StockInfo S ON Z.RegionName = S.City 
+    WHERE S.Sector = 'Technology'
+    GROUP BY RegionName
+    ORDER BY mean DESC
+  )
+  SELECT T1.RegionName, T1.mean
+  FROM temp1 as T1
+  LIMIT 5;
+  `;
+
   const industry = `
   SELECT S.StockSymbol, MAX(High) AS MaxPrice
       FROM Stocks S JOIN StockInfo I ON S.StockSymbol = I.StockSymbol
-      WHERE S.Date >= '2020-01-01' AND I.Sector = 'Technology'
+      WHERE S.Date >= '2020-01-01' AND I.Sector = '${sector_input}'
       GROUP BY StockSymbol;
   `;
 
