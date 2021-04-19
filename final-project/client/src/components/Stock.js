@@ -1,6 +1,9 @@
 import React from 'react';
+import { useLocation } from 'react-router';
 
-const Stock = () => {
+const Stock = (props) => {
+  const location = useLocation();
+
   return (
     <div>
       Stonks
