@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
 import { useHistory } from 'react-router-dom'
+import SearchIcon from '@material-ui/icons/Search';
+import state_abrev from '../states.js'
 import {
   Box,
   Grid,
@@ -25,7 +27,7 @@ const Home = () => {
 
   const redirect = () => {
     if (searchType === 'Location') {
-      history.push('/city/' + city)
+      history.push('/city/' + city + '/' + state)
     } else if (searchType === 'Company') {
       history.push('/company/' + company)
     } else {
@@ -60,7 +62,7 @@ const Home = () => {
                 labelId="search-type"
                 value={searchType}
                 onChange={changeSearchType}
-                style={{ minWidth: '120px' }}
+                style={{ minWidth: '120px', align: 'left' }}
               >
                 <MenuItem value={'Location'}>Location</MenuItem>
                 <MenuItem value={'Company'}>Company</MenuItem>
@@ -88,8 +90,10 @@ const Home = () => {
                     style={{ minWidth: '60px' }}
                     onChange={(e) => setState(e.target.value)}
                   >
-                    <MenuItem value={'PA'}>PA</MenuItem>
-                    <MenuItem value={'WA'}>WA</MenuItem>
+                    {state_abrev.map((state) => <MenuItem value={state}>{state}</MenuItem>)
+                      // <MenuItem value={'PA'}>PA</MenuItem>
+                      // <MenuItem value={'WA'}>WA</MenuItem>
+                    }
                   </Select>
                 </FormControl>
               </>
@@ -108,10 +112,10 @@ const Home = () => {
             ) : (
               <>
                 <FormControl style={{ width: '80%' }}>
-                  <InputLabel htmlFor="my-input">Industry</InputLabel>
+                  <InputLabel id="industry">Industry</InputLabel>
                   <Input
-                    id="my-input"
-                    aria-describedby="my-helper-text"
+                    id="industry"
+                    aria-describedby="industry-text-input"
                     value={industry}
                     onChange={(e) => setIndustry(e.target.value)}
                   />
@@ -126,6 +130,7 @@ const Home = () => {
                 style={{ float: 'right' }}
                 disableElevation
               >
+                <SearchIcon />
                 Search
               </Button>
             </Box>
