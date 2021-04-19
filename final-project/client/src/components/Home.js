@@ -17,6 +17,7 @@ const Home = () => {
   const [city, setCity] = useState('')
   const [state, setState] = useState('')
   const [company, setCompany] = useState('')
+  const [industry, setIndustry] = useState('')
 
   const changeSearchType = (e) => {
     setSearchType(e.target.value)
@@ -24,10 +25,11 @@ const Home = () => {
 
   const redirect = () => {
     if (searchType === 'Location') {
-      // TODO: change route
-      history.push('/city')
-    } else {
+      history.push('/city/' + city)
+    } else if (searchType == 'Company') {
       history.push('/company/' + company)
+    } else {
+      history.push('/industry/' + industry)
     }
   }
 
@@ -56,6 +58,7 @@ const Home = () => {
               >
                 <MenuItem value={'Location'}>Location</MenuItem>
                 <MenuItem value={'Company'}>Company</MenuItem>
+                <MenuItem value={'Industry'}>Industry</MenuItem>
               </Select>
             </FormControl>
             {searchType === 'Location' ? (
