@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useHistory } from 'react-router-dom'
-import SearchIcon from '@material-ui/icons/Search';
+import SearchIcon from '@material-ui/icons/Search'
 import state_abrev from '../states.js'
 import {
   Box,
@@ -27,7 +27,7 @@ const Home = () => {
 
   const redirect = () => {
     if (searchType === 'Location') {
-      history.push('/city/' + city + '/' + state)
+      history.push('/location/' + city + '/' + state)
     } else if (searchType === 'Company') {
       history.push('/company/' + company)
     } else {
@@ -75,7 +75,7 @@ const Home = () => {
                   <InputLabel id="city">City</InputLabel>
                   <Input
                     labelId="city"
-                    aria-describedby="my-helper-text"
+                    aria-describedby="city-text-input"
                     value={city}
                     onChange={(e) => setCity(e.target.value)}
                     placeholder={'Seattle'}
@@ -90,10 +90,9 @@ const Home = () => {
                     style={{ minWidth: '60px' }}
                     onChange={(e) => setState(e.target.value)}
                   >
-                    {state_abrev.map((state) => <MenuItem value={state}>{state}</MenuItem>)
-                      // <MenuItem value={'PA'}>PA</MenuItem>
-                      // <MenuItem value={'WA'}>WA</MenuItem>
-                    }
+                    {state_abrev.map((state) => (
+                      <MenuItem value={state}>{state}</MenuItem>
+                    ))}
                   </Select>
                 </FormControl>
               </>
@@ -103,7 +102,7 @@ const Home = () => {
                   <InputLabel id="company">Company</InputLabel>
                   <Input
                     labelId="company"
-                    aria-describedby="my-helper-text"
+                    aria-describedby="company-text-input"
                     value={company}
                     onChange={(e) => setCompany(e.target.value)}
                   />

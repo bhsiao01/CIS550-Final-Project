@@ -3,7 +3,7 @@ import './App.css'
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import Home from './components/Home'
 import Stock from './components/Stock'
-import Housing from './components/Housing'
+import Location from './components/Location'
 import {ThemeProvider} from '@material-ui/core'
 import theme from './theme'
 
@@ -19,7 +19,7 @@ function App() {
           <Route exact path="/company/*" render={() => <Stock />} />
         </Switch>
         <Switch>
-          <Route exact path="/housing" render={() => <Housing />} />
+          <Route exact path="/location/*" render={() => <Location />} />
         </Switch>
       </Router>
     </div>
