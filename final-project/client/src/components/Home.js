@@ -26,7 +26,7 @@ const Home = () => {
   const redirect = () => {
     if (searchType === 'Location') {
       history.push('/city/' + city)
-    } else if (searchType == 'Company') {
+    } else if (searchType === 'Company') {
       history.push('/company/' + company)
     } else {
       history.push('/industry/' + industry)
@@ -45,7 +45,13 @@ const Home = () => {
         >
           <Grid item xs={3} />
           <Grid item xs={6}>
-            <h1 style={{ fontSize: '2.5rem', marginBottom: '3.5rem', textAlign: 'left'}}>
+            <h1
+              style={{
+                fontSize: '2.5rem',
+                marginBottom: '3.5rem',
+                textAlign: 'left',
+              }}
+            >
               Search for a city or company...
             </h1>
             <FormControl style={{ width: '20%' }}>
@@ -87,16 +93,28 @@ const Home = () => {
                   </Select>
                 </FormControl>
               </>
+            ) : searchType === 'Company' ? (
+              <>
+                <FormControl style={{ width: '80%' }}>
+                  <InputLabel id="company">Company</InputLabel>
+                  <Input
+                    labelId="company"
+                    aria-describedby="my-helper-text"
+                    value={company}
+                    onChange={(e) => setCompany(e.target.value)}
+                  />
+                </FormControl>
+              </>
             ) : (
               <>
-              <FormControl style={{ width: '80%'}}>
-                <InputLabel id="company">Company</InputLabel>
-                <Input
-                  labelId="company"
-                  aria-describedby="my-helper-text"
-                  value={company}
-                  onChange={(e) => setCompany(e.target.value)}
-                />
+                <FormControl style={{ width: '80%' }}>
+                  <InputLabel htmlFor="my-input">Industry</InputLabel>
+                  <Input
+                    id="my-input"
+                    aria-describedby="my-helper-text"
+                    value={industry}
+                    onChange={(e) => setIndustry(e.target.value)}
+                  />
                 </FormControl>
               </>
             )}
@@ -105,7 +123,7 @@ const Home = () => {
                 variant="contained"
                 color="primary"
                 onClick={redirect}
-                style={{float: 'right'}}
+                style={{ float: 'right' }}
                 disableElevation
               >
                 Search
