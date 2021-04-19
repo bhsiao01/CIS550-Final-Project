@@ -21,10 +21,6 @@ const Home = () => {
   const [company, setCompany] = useState('')
   const [industry, setIndustry] = useState('')
 
-  const changeSearchType = (e) => {
-    setSearchType(e.target.value)
-  }
-
   const redirect = () => {
     if (searchType === 'Location') {
       history.push('/location/' + city + '/' + state)
@@ -59,9 +55,8 @@ const Home = () => {
             <FormControl style={{ width: '20%' }}>
               <InputLabel id="search-type">Search Type</InputLabel>
               <Select
-                labelId="search-type"
                 value={searchType}
-                onChange={changeSearchType}
+                onChange={(e) => setSearchType(e.target.value)}
                 style={{ minWidth: '120px', align: 'left' }}
               >
                 <MenuItem value={'Location'}>Location</MenuItem>
@@ -74,7 +69,6 @@ const Home = () => {
                 <FormControl style={{ width: '65%' }}>
                   <InputLabel id="city">City</InputLabel>
                   <Input
-                    labelId="city"
                     aria-describedby="city-text-input"
                     value={city}
                     onChange={(e) => setCity(e.target.value)}
@@ -85,13 +79,13 @@ const Home = () => {
                 <FormControl style={{ width: '15%' }}>
                   <InputLabel id="state">State</InputLabel>
                   <Select
-                    labelId="state"
                     value={state}
                     style={{ minWidth: '60px' }}
                     onChange={(e) => setState(e.target.value)}
+                    placeholder={'WA'}
                   >
                     {state_abrev.map((state) => (
-                      <MenuItem value={state}>{state}</MenuItem>
+                      <MenuItem value={state} key={state}>{state}</MenuItem>
                     ))}
                   </Select>
                 </FormControl>
@@ -101,7 +95,6 @@ const Home = () => {
                 <FormControl style={{ width: '80%' }}>
                   <InputLabel id="company">Company</InputLabel>
                   <Input
-                    labelId="company"
                     aria-describedby="company-text-input"
                     value={company}
                     onChange={(e) => setCompany(e.target.value)}
