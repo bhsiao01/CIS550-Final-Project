@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import SearchIcon from '@material-ui/icons/Search'
 import state_abrev from '../states.js'
+import NavBar from './NavBar'
 import {
   Box,
   Grid,
@@ -22,11 +23,13 @@ const Home = () => {
   const [industry, setIndustry] = useState('')
 
   const redirect = () => {
-    if (searchType === 'Location') {
+    if (searchType === 'Location' && city.length !== 0 && state.length !== 0) {
       history.push('/location/' + city + '/' + state)
-    } else if (searchType === 'Company') {
+    }
+    if (searchType === 'Company' && company.length !== 0) {
       history.push('/company/' + company)
-    } else {
+    }
+    if (searchType === 'Industry' && industry.length !== 0) {
       history.push('/industry/' + industry)
     }
   }
@@ -34,6 +37,7 @@ const Home = () => {
   return (
     <>
       <Box>
+        <NavBar home={true}/>
         <Grid
           container
           direction={'row'}
@@ -82,7 +86,6 @@ const Home = () => {
                     value={state}
                     style={{ minWidth: '60px' }}
                     onChange={(e) => setState(e.target.value)}
-                    placeholder={'WA'}
                   >
                     {state_abrev.map((state) => (
                       <MenuItem value={state} key={state}>{state}</MenuItem>
