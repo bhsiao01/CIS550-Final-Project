@@ -17,18 +17,41 @@ app.get('/api/test', (req, res) => {
 });
   
 //calling app.get for the homeprices page
-app.get("/location/:city/:state", routes.getAverageHome);
+// done
+app.get("/getAverageHome/:city/:state", routes.getAverageHome);
 
-app.get("/company/:ticker", routes.getCompanies);
+//calling app.get for simple city stats
+// done
+app.get("/getCityStat/:city/:state", routes.getCityStat);
 
-app.get("/industry/:sector", routes.getTopStocksPerIndustry);
+//calling app.get for forecasted housing values for a city
+// done
+app.get("/getForecast/:city/:state", routes.getForecast);
 
-// route for each company, city
-// eg. /company/apple  
+//calling app.get for cities that meet a housing price range
+// done
+app.get("/getHousingRange/:min/:max", routes.getHousingRange);
 
-// route for homepage  
 
+//calling app.get for simple city stats
+// done
+app.get("/getCompStat/:city/:state", routes.getCompStat);
 
+//calling app.get 30 day stock history
+// done
+app.get("/get30day/:ticker", routes.get30Day);
+
+//calling app.get to find the topstocks per industry
+//done
+app.get("/getTop10/:sector", routes.getTop10StocksPerIndustry);
+
+//calling app.get to find mean price given an industry
+//done
+app.get("/getMeanPriceIndustry/:industry", routes.meanPrice);
+
+//calling app.get to find the high price per an industry
+//done
+app.get("/getHighPriceIndustry/:industry", routes.getHighPricePerIndustry);
 
 
 app.listen(8081, () => {

@@ -5,6 +5,7 @@ var connection = mysql.createConnection({
   host: 'cis550-final-proj.ccvcesjf7gop.us-east-2.rds.amazonaws.com',
   user: 'admin',
   password: 'G!raffeS3aweed',
+  database: 'master',
   port: 3306,
 })
 
@@ -15,71 +16,23 @@ connection.connect(function (err) {
   }
 
   console.log('Connected to database.')
-  const db = `use master;` //use the correct database in AWS RDS environment
+  //const db = `use master;` //use the correct database in AWS RDS environment
 
-  connection.query(db, (err, rows, fields) => {}) //connect to database
+  //connection.query(db, (err, rows, fields) => {}) //connect to database
 })
 
-/*
- * Queries for the City page
- */
-const getAverageHome = (req, res) => {
-  var city_input = req.params.city;
-  var state_abrv_input = req.params.state;
-
-  const db = `use master;`
-  //var inputKeyword = req.params.keyword; '${inputKeyword}'
-
-  // get average home value for input city, state
-  // TODO: Parametrize RegionName and StateName
-  const avgValueQuery = `
-  SELECT RegionName, AVG(Value)
-	FROM ZillowHistoricalData
-	WHERE RegionName = '${city_input}' AND StateName = '${state_abrv_input}'
-  GROUP BY RegionName;
-  `;
-  connection.query(db, (err, rows, fields) => {})
-
-  /*connection.query(avgValueQuery, (err, rows, fields) => {
-    if (err) console.log(err);
-    else {
-      console.log(rows);
-      res.json(rows);
-    }
-  });*/
-
-  // Get simple statistics for cities
-  // Parametrize State
-  const cityStat = `
-  SELECT RegionName, MIN(Value) AS min, AVG(Value) AS mean, MAX(Value) AS max 
-  FROM ZillowHistoricalData
-  WHERE RegionName = '${city_input}' AND StateName = '${state_abrv_input}'
-  GROUP BY RegionName, StateName;
-  `;
-
-  const compStat = `
-  SELECT City, StateAbbr, CompanyName
-  FROM StockInfo
-  WHERE City = '${city_input}' AND StateAbbr = '${state_abrv_input}'
-  LIMIT 10;
-  `;
-
-  // this might fit better on the home page (place for people to enter range of housing prices they'd consider)
+/* Queries by price */
+// get cities that are in a certain of range of prices
+const getHousingRange = (req, res) => {
+  var min_val = req.params.min;
+  var max_val = req.params.max;
   const housingRange = 
   `
   SELECT RegionName, StateName, MIN(Value) AS Min, MAX(Value) AS Max
 	FROM ZillowHistoricalData
   GROUP BY RegionName, StateName
-	HAVING MAX(Value) <= 200000 AND MIN(Value) >= 150000
+	HAVING MAX(Value) <= ${max_val} AND MIN(Value) >= ${min_val}
   ORDER BY MIN(Value);
-  `;
-
-  const forecastedChange = 
-  `SELECT RegionName, StateName, AVG(ForecastYoYPctChange) AS Forecast
-  FROM ZillowForecast
-  WHERE RegionName = 'Philadelphia' AND StateName = 'PA'
-  GROUP BY RegionName, StateName
-  ORDER BY ForecastYoYPctChange;
   `;
 
   connection.query(compStat, (err, rows, fields) => {
@@ -91,9 +44,98 @@ const getAverageHome = (req, res) => {
   });
 }
 
-//finds all companies with headquarters in the input city
-//gets stuff from StockInfo
-const getCompanies = (req, res) => {
+/*
+ * Queries for the City page
+ */
+
+// Get simple statistics for cities
+const getCityStat = (req, res) => {
+  var city_input = req.params.city;
+  var state_abrv_input = req.params.state;
+  
+  const cityStat = `
+  SELECT RegionName, MIN(Value) AS min, AVG(Value) AS mean, MAX(Value) AS max 
+  FROM ZillowHistoricalData
+  WHERE RegionName = '${city_input}' AND StateName = '${state_abrv_input}'
+  GROUP BY RegionName, StateName;
+  `;
+
+  connection.query(cityStat, (err, rows, fields) => {
+    if (err) console.log(err);
+    else {
+      console.log(rows);
+      res.json(rows);
+    }
+  });
+}
+
+// get companies in given city and state
+const getCompStat = (req, res) => {
+  var city_input = req.params.city;
+  var state_abrv_input = req.params.state;
+  
+  const compStat = `
+  SELECT City, StateAbbr, CompanyName
+  FROM StockInfo
+  WHERE City = '${city_input}' AND StateAbbr = '${state_abrv_input}'
+  LIMIT 10;
+  `;
+
+  connection.query(compStat, (err, rows, fields) => {
+    if (err) console.log(err);
+    else {
+      console.log(rows);
+      res.json(rows);
+    }
+  });
+}
+
+// get forecasted housing prices for the next year for a given city, state
+const getForecast = (req, res) => {
+  var city_input = req.params.city;
+  var state_abrv_input = req.params.state;
+
+  const forecastedChange = 
+  `SELECT RegionName, StateName, AVG(ForecastYoYPctChange) AS Forecast
+  FROM ZillowForecast
+  WHERE RegionName = '${city_input}' AND StateName = '${state_abrv_input}'
+  GROUP BY RegionName, StateName
+  ORDER BY ForecastYoYPctChange;
+  `;
+
+  connection.query(forecastedChange, (err, rows, fields) => {
+    if (err) console.log(err);
+    else {
+      console.log(rows);
+      res.json(rows);
+    }
+  });
+}
+
+// get average home price for a city
+const getAverageHome = (req, res) => {
+  var city_input = req.params.city;
+  var state_abrv_input = req.params.state;
+
+  const avgValueQuery = `
+  SELECT RegionName, AVG(Value)
+	FROM ZillowHistoricalData
+	WHERE RegionName = '${city_input}' AND StateName = '${state_abrv_input}'
+  GROUP BY RegionName;
+  `;
+
+  connection.query(avgValueQuery, (err, rows, fields) => {
+    if (err) console.log(err);
+    else {
+      console.log(rows);
+      res.json(rows);
+    }
+  });
+}
+
+/* Companies queries */ 
+//gets 30 day stock data for a given company
+const get30Day = (req, res) => {
   var company_input = req.params.ticker;
   console.log(company_input);
 
@@ -114,21 +156,47 @@ const getCompanies = (req, res) => {
       console.log(rows)
       res.json(rows)
     }
-  })
+  });
+}
 
-  /*connection.query(sectorHome, (err, rows, fields) => {
+// Find the top 10 stocks with the greatest price for each industry.
+const getTop10StocksPerIndustry = (req, res) => {
+  var industry_input = req.params.industry;
+  const db = `use master;`
+  connection.query(db, (err, rows, fields) => {})
+  const topTen = `
+    WITH HighPrice AS (
+      SELECT S.StockSymbol, MAX(High) AS MaxPrice
+      FROM Stocks S JOIN StockInfo I ON S.StockSymbol = I.StockSymbol
+      WHERE S.Date >= '2020-01-01' AND I.Sector = '${industry_input}'
+      GROUP BY StockSymbol
+    ),
+    PriceIndustry AS (
+      SELECT S.StockSymbol, P.MaxPrice, S.Sector
+      FROM HighPrice P JOIN StockInfo S ON P.StockSymbol = S.StockSymbol
+      WHERE S.Sector = '${industry_input}'
+    )
+    SELECT DISTINCT S.StockSymbol, I.Sector, I.CompanyName, P.MaxPrice
+    FROM Stocks S JOIN StockInfo I ON I.StockSymbol = S.StockSymbol JOIN PriceIndustry P ON I.StockSymbol = P.StockSymbol
+    WHERE S.Date >= '2020-01-01' AND S.High >= 
+    (SELECT MIN(MaxPrice) 
+    FROM PriceIndustry 
+    WHERE Sector = 'Technology'
+    ORDER BY MaxPrice DESC
+    LIMIT 10);
+  `;
+
+connection.query(topTen, (err, rows, fields) => {
     if (err) console.log(err)
     else {
       console.log(rows)
       res.json(rows)
     }
-  })*/
+  })
 }
 
-// Find the city with the highest mean ZHVI out of all cities with 
-// company headquarters of companies in an input industry.
-
-
+/* Industry queries */ 
+// Find the city with the highest mean ZHVI out of all cities with company headquarters of companies in an input industry.
 const meanPrice = (req, res) => {
   var industry_input = req.params.industry; 
   const db = `use master;`
@@ -150,45 +218,13 @@ connection.query(meanP, (err, rows, fields) => {
       console.log(rows)
       res.json(rows)
     }
-  })
-}
-
-// Find the top 10 stocks with the greatest price for each industry.
-const top10 = (req, res) => {
-  const db = `use master;`
-  connection.query(db, (err, rows, fields) => {})
-  const topTen = `
-  WITH HighPrice AS (
-    SELECT StockSymbol, MAX(HighPrice) AS MaxPrice
-    FROM Stocks
-    GROUP BY StockSymbol
-  ),
-  PriceIndustry AS (
-    SELECT S.StockSymbol, P.MaxPrice, S.Industry
-    FROM HighPrice P JOIN Stocks S ON A.StockSymbol = S.StockSymbol
-  )
-  SELECT DISTINCT S.StockSymbol, I.Industry, I.CompanyName
-  FROM Stocks S JOIN StockInfo I ON I.StockSymbol = S.StockSymbol
-  GROUP BY S.StockSymbol, I.Industry
-  WHERE S.HighPrice >= 
-  (SELECT MIN(MaxPrice) 
-  FROM PriceIndustry 
-  WHERE Industry = I.Industry
-  ORDER BY MaxPrice DESC
-  LIMIT 10);
-`
-connection.query(topTen, (err, rows, fields) => {
-    if (err) console.log(err)
-    else {
-      console.log(rows)
-      res.json(rows)
-    }
-  })
+  });
 }
 
 // For the companies with the ten highest revenues, find the change in housing value in the 
 // location of their headquarters in the past 5 years.
-
+//optimize! (DOES NOT LOAD WITHOUT WHERE DATE ... clauses)
+// TODO : Sabhya
 const top10Rev = (req, res) => {
   const db = `use master;`
   connection.query(db, (err, rows, fields) => {})
@@ -221,12 +257,12 @@ connection.query(topTenRev, (err, rows, fields) => {
 
 // Find the number of NASDAQ companies and their average stock price in the top 20 cities with the 
 // highest forecasted percentage change in value, as of April 1st 2020.
-
-const top10Rev = (req, res) => {
+// TODO : Sabhya
+const top20 = (req, res) => {
   var industry_state = req.params.state; 
   const db = `use master;`
   connection.query(db, (err, rows, fields) => {})
-  const topTenRev = `
+  const topTwenty = `
   WITH HighestForecastValue AS (
   SELECT RegionName, StateName, ForecastPctChange
   FROM ZillowForecast
@@ -255,35 +291,9 @@ connection.query(topTenRev, (err, rows, fields) => {
   })
 }
 
-//optimize! (DOES NOT LOAD WITHOUT WHERE DATE ... clauses)
-const getTopStocksPerIndustry = (req, res) => {
-  var sector_input = req.params.sector;
-  console.log(sector_input);
-  const db = `use master;`;
-  connection.query(db, (err, rows, fields) => {});
 
-  /*const industry = `
-    WITH HighPrice AS (
-      SELECT S.StockSymbol, MAX(High) AS MaxPrice
-      FROM Stocks S JOIN StockInfo I ON S.StockSymbol = I.StockSymbol
-      WHERE S.Date >= '2020-01-01' AND I.Sector = 'Technology'
-      GROUP BY StockSymbol
-    ),
-    PriceIndustry AS (
-      SELECT S.StockSymbol, P.MaxPrice, S.Sector
-      FROM HighPrice P JOIN StockInfo S ON P.StockSymbol = S.StockSymbol
-      WHERE S.Sector = 'Technology'
-    )
-    SELECT DISTINCT S.StockSymbol, I.Sector, I.CompanyName, P.MaxPrice
-    FROM Stocks S JOIN StockInfo I ON I.StockSymbol = S.StockSymbol JOIN PriceIndustry P ON I.StockSymbol = P.StockSymbol
-    WHERE S.Date >= '2020-01-01' AND S.High >= 
-    (SELECT MIN(MaxPrice) 
-    FROM PriceIndustry 
-    WHERE Sector = 'Technology'
-    ORDER BY MaxPrice DESC
-    LIMIT 10);
-  `;*/
-
+// get home values for a specific industry
+const getSectorHome = (req, res) => {
   // TODO: If not complex enough, add another join of T1 with companies that are in the city
   const sectorHome = `
   WITH temp1 AS (
@@ -297,9 +307,17 @@ const getTopStocksPerIndustry = (req, res) => {
   FROM temp1 as T1
   LIMIT 5;
   `;
+}
+
+// Get high price for all stocks in an industry
+const getHighPricePerIndustry = (req, res) => {
+  var sector_input = req.params.sector;
+  console.log(sector_input);
+  const db = `use master;`;
+  connection.query(db, (err, rows, fields) => {});
 
   const industry = `
-  SELECT S.StockSymbol, MAX(High) AS MaxPrice
+      SELECT S.StockSymbol, MAX(High) AS MaxPrice
       FROM Stocks S JOIN StockInfo I ON S.StockSymbol = I.StockSymbol
       WHERE S.Date >= '2020-01-01' AND I.Sector = '${sector_input}'
       GROUP BY StockSymbol;
@@ -314,8 +332,48 @@ const getTopStocksPerIndustry = (req, res) => {
   })
 }
 
+// get home prices for cities with companies in a certain sector
+const getHomesFromSector = (req, res) => {
+  var sector_input = req.params.sector;
+  console.log(sector_input);
+  const db = `use master;`;
+  connection.query(db, (err, rows, fields) => {});
+
+  const sectorHome = `
+    WITH temp1 AS (
+    SELECT RegionName, AVG(Value) as mean 
+    FROM ZillowHistoricalData Z JOIN StockInfo S ON Z.RegionName = S.City 
+    WHERE S.Sector = 'Technology'
+    GROUP BY RegionName
+    ORDER BY mean DESC
+  )
+  SELECT T1.RegionName, T1.mean
+  FROM temp1 as T1
+  LIMIT 5;
+  `;
+
+  connection.query(industry, (err, rows, fields) => {
+    if (err) console.log(err);
+    else {
+      console.log(rows);
+      res.json(rows);
+    }
+  })
+}
+
 module.exports = {
   getAverageHome: getAverageHome,
-  getCompanies: getCompanies,
-  getTopStocksPerIndustry: getTopStocksPerIndustry,
+  // getCompanies: getCompanies,
+  getHighPricePerIndustry: getHighPricePerIndustry,
+  getCityStat: getCityStat,
+  get30Day: get30Day,
+  meanPrice: meanPrice,
+  getCompStat: getCompStat,
+  getHousingRange: getHousingRange,
+  getForecast: getForecast,
+  getHomesFromSector: getHomesFromSector,
+  getTop10StocksPerIndustry: getTop10StocksPerIndustry,
+  getSectorHome: getSectorHome,
+  getHomesFromSector: getHomesFromSector
 }
+//

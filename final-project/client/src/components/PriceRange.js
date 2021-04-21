@@ -3,7 +3,7 @@ import { useLocation } from 'react-router'
 import axios from 'axios'
 import NavBar from './NavBar'
 
-// parses URL queries for city and state. returns list of city, state.
+// parses URL queries for price min and max.
 const parseURL = (url) => {
   if (url.split('/').length > 3) {
     let state = url.slice(-2)
@@ -58,4 +58,4 @@ const Location = () => {
   )
 }
 
-export default Location
+export default PriceRange

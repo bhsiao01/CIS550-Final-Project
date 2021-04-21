@@ -23,10 +23,15 @@ const Home = () => {
   const [industry, setIndustry] = useState('')
   const [mouseX, setMouseX] = useState(0)
   const [mouseY, setMouseY] = useState(0)
+  const [minPrice, setMinPrice] = useState()
+  const [maxPrice, setMaxPrice] = useState()
 
   const redirect = () => {
     if (searchType === 'Location' && city.length !== 0 && state.length !== 0) {
       history.push('/location/' + city + '/' + state)
+    }
+    if (searchType === 'Price') {
+      history.push('/price/')
     }
     if (searchType === 'Company' && company.length !== 0) {
       history.push('/company/' + company)
@@ -39,11 +44,19 @@ const Home = () => {
   return (
     <>
       <div
-        onMouseMove={(e) => {setMouseX(e.pageX / window.innerWidth * 100); setMouseY(e.pageY / window.innerHeight * 100)}}
+        onMouseMove={(e) => {
+          setMouseX((e.pageX / window.innerWidth) * 100)
+          setMouseY((e.pageY / window.innerHeight) * 100)
+        }}
         style={{
           height: '99vh',
           background:
-          'radial-gradient(at ' + mouseX + '% ' + mouseY + '%, #AAD7DE, #DED0F0)'}}
+            'radial-gradient(at ' +
+            mouseX +
+            '% ' +
+            mouseY +
+            '%, #AAD7DE, #DED0F0)',
+        }}
       >
         <Box>
           <NavBar home={true} />
@@ -75,6 +88,7 @@ const Home = () => {
                   <MenuItem value={'Location'}>Location</MenuItem>
                   <MenuItem value={'Company'}>Company</MenuItem>
                   <MenuItem value={'Industry'}>Industry</MenuItem>
+                  <MenuItem value={'Price'}>Price Range</MenuItem>
                 </Select>
               </FormControl>
               {searchType === 'Location' ? (
@@ -112,6 +126,27 @@ const Home = () => {
                       aria-describedby="company-text-input"
                       value={company}
                       onChange={(e) => setCompany(e.target.value)}
+                    />
+                  </FormControl>
+                </>
+              ) : searchType === 'Price' ? (
+                <>
+                  <FormControl style={{ width: '40%' }}>
+                    <InputLabel id="price">Minimum Price</InputLabel>
+                    <Input
+                      aria-describedby="price-text-input"
+                      value={minPrice}
+                      onChange={(e) => setMinPrice(e.target.value)}
+                      style={{ minWidth: '50%' }}
+                    />
+                  </FormControl>
+                  <FormControl style={{ width: '40%' }}>
+                    <InputLabel id="state">Maximum Price</InputLabel>
+                    <Input
+                      aria-describedby="price-text-input"
+                      value={maxPrice}
+                      onChange={(e) => setMaxPrice(e.target.value)}
+                      style={{ minWidth: '50%' }}
                     />
                   </FormControl>
                 </>
