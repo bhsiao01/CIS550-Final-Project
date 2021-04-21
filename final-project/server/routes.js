@@ -125,6 +125,136 @@ const getCompanies = (req, res) => {
   })*/
 }
 
+// Find the city with the highest mean ZHVI out of all cities with 
+// company headquarters of companies in an input industry.
+
+
+const meanPrice = (req, res) => {
+  var industry_input = req.params.industry; 
+  const db = `use master;`
+  connection.query(db, (err, rows, fields) => {})
+  const meanP = `
+  WITH temp1 AS (
+    SELECT RegionName, AVG(ZHVI) as mean 
+    FROM FROM ZillowHistoricalData JOIN StockInfo ON ZillowHistoricalData.RegionName = StockInfo.City 
+    GROUP BY RegionName 
+    WHERE StockInfo.industry = '${industry_input}'
+  )
+  SELECT T1.RegionName
+  FROM temp1 as T1
+  WHERE T1.mean > ALL (SELECT T1.mean FROM temp1);
+`
+connection.query(meanP, (err, rows, fields) => {
+    if (err) console.log(err)
+    else {
+      console.log(rows)
+      res.json(rows)
+    }
+  })
+}
+
+// Find the top 10 stocks with the greatest price for each industry.
+const top10 = (req, res) => {
+  const db = `use master;`
+  connection.query(db, (err, rows, fields) => {})
+  const topTen = `
+  WITH HighPrice AS (
+    SELECT StockSymbol, MAX(HighPrice) AS MaxPrice
+    FROM Stocks
+    GROUP BY StockSymbol
+  ),
+  PriceIndustry AS (
+    SELECT S.StockSymbol, P.MaxPrice, S.Industry
+    FROM HighPrice P JOIN Stocks S ON A.StockSymbol = S.StockSymbol
+  )
+  SELECT DISTINCT S.StockSymbol, I.Industry, I.CompanyName
+  FROM Stocks S JOIN StockInfo I ON I.StockSymbol = S.StockSymbol
+  GROUP BY S.StockSymbol, I.Industry
+  WHERE S.HighPrice >= 
+  (SELECT MIN(MaxPrice) 
+  FROM PriceIndustry 
+  WHERE Industry = I.Industry
+  ORDER BY MaxPrice DESC
+  LIMIT 10);
+`
+connection.query(topTen, (err, rows, fields) => {
+    if (err) console.log(err)
+    else {
+      console.log(rows)
+      res.json(rows)
+    }
+  })
+}
+
+// For the companies with the ten highest revenues, find the change in housing value in the 
+// location of their headquarters in the past 5 years.
+
+const top10Rev = (req, res) => {
+  const db = `use master;`
+  connection.query(db, (err, rows, fields) => {})
+  const topTenRev = `
+  WITH CompanyRevenues AS (
+  SELECT StockSymbol, Revenue, CompanyName, City, State
+  FROM StockInfo
+  WHERE Industry = [input]
+  ORDER BY Revenue DESC
+  LIMIT 10
+  ),
+  HousingValues AS (
+  SELECT RegionName, State, MAX(Value) - MIN(Value) AS HousingValueChange
+  FROM CompanyRevenues R
+  JOIN ZillowHistorical Z ON R.City = Z.RegionName AND R.State = Z.State
+  GROUP BY Z.RegionName, Z.State
+  WHERE Z.Date >= ‘01-01-2016’
+  )
+  SELECT R.StockSymbol, R.CompanyName, R.Revenue, R.City, R.State H.HousingValueChange
+  FROM CompanyRevenues R JOIN HousingValues H ON H.RegionName = R.City AND H.State = R.State;
+`
+connection.query(topTenRev, (err, rows, fields) => {
+    if (err) console.log(err)
+    else {
+      console.log(rows)
+      res.json(rows)
+    }
+  })
+}
+
+// Find the number of NASDAQ companies and their average stock price in the top 20 cities with the 
+// highest forecasted percentage change in value, as of April 1st 2020.
+
+const top10Rev = (req, res) => {
+  var industry_state = req.params.state; 
+  const db = `use master;`
+  connection.query(db, (err, rows, fields) => {})
+  const topTenRev = `
+  WITH HighestForecastValue AS (
+  SELECT RegionName, StateName, ForecastPctChange
+  FROM ZillowForecast
+  ORDER BY ForecastPctChange
+  LIMIT 20;
+  ),
+  StockPricesByCity AS (
+  SELECT I.City, I.State, COUNT(*) AS NumCompanies, AVG(ClosingPrice) AS AvgPrice
+  FROM Stocks S JOIN StockInfo I ON I.StockSymbol = S.StockSymbol
+  WHERE Date = ‘04-01-2020’
+  GROUP BY I.City, I.State;
+  )
+  SELECT City, State, NumCompanies, AvgPrice, ForecastPctChange
+  FROM StockPricesByCity
+  JOIN HighestForecastValue
+  ON RegionName = City AND StateName = State
+  WHERE State = '${industry_state}';
+
+`
+connection.query(topTenRev, (err, rows, fields) => {
+    if (err) console.log(err)
+    else {
+      console.log(rows)
+      res.json(rows)
+    }
+  })
+}
+
 //optimize! (DOES NOT LOAD WITHOUT WHERE DATE ... clauses)
 const getTopStocksPerIndustry = (req, res) => {
   var sector_input = req.params.sector;
