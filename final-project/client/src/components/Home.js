@@ -31,7 +31,7 @@ const Home = () => {
       history.push('/location/' + city + '/' + state)
     }
     if (searchType === 'Price') {
-      if (maxPrice > minPrice) {
+      if (parseInt(maxPrice) > parseInt(minPrice)) {
         history.push('/price/' + minPrice + '/' + maxPrice)
       }
     }
