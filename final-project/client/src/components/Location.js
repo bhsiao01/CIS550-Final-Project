@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useLocation } from 'react-router'
 import axios from 'axios'
 import NavBar from './NavBar'
+import { Grid } from '@material-ui/core'
 
 // parses URL queries for city and state. returns list of city, state.
 const parseURL = (url) => {
@@ -22,37 +23,71 @@ const Location = () => {
   let url = useLocation().pathname
   const [city, setCity] = useState(parseURL(url)[0])
   const [state, setState] = useState(parseURL(url)[1])
-  const [avgHome, setAvgHome] = useState([''])
-  const [cityStat, setCityStat] = useState([''])
+  const [avgHome, setAvgHome] = useState([])
+  const [cityStat, setCityStat] = useState([])
+  const [forecast, setForecast] = useState([])
+  const [companies, setCompanies] = useState([])
 
   useEffect(() => {
     axios
-      .get('http://localhost:8081/getAverageHome/' + city + '/' + state)
+      .get('http://localhost:8081/getForecast/' + city + '/' + state)
       .then((response) => {
-        setAvgHome(response.data)
+        setForecast(response.data)
       })
     axios
       .get('http://localhost:8081/getCityStat/' + city + '/' + state)
       .then((response) => {
         setCityStat(response.data)
       })
+    axios
+      .get('http://localhost:8081/getCompStat/' + city + '/' + state)
+      .then((response) => {
+        setCompanies(response.data)
+      })
   }, [city, state])
 
   return (
     <>
       <NavBar />
-      {avgHome.length === 0 ? (
-        <>🤔No results found.</>
-      ) : (
-        <>
+      <Grid
+        container
+        direction={'row'}
+        spacing={4}
+        style={{ textAlign: 'left' }}
+      >
+        <Grid item xs={2} />
+        <Grid item xs={8}>
           <h2>
-            Companies in {city}, {state}
+            {city}, {state}
           </h2>
-          {avgHome.map((comp) => (
-            <p>{comp.CompanyName}</p>
-          ))}
-        </>
-      )}
+          <Grid container direction={'row'} spacing={4}>
+            <Grid item xs={6}>
+              <h3>Home Value Statistics</h3>
+              {cityStat.map((city) => (
+                <div>
+                  <p>Average Home Value: ${city.mean}</p>
+                  <p>Minimum Home Value: ${city.min}</p>
+                  <p>Maximum Home Value: ${city.max}</p>
+                </div>
+              ))}
+              {forecast.map((city) => (
+                <div>
+                  <p>Forecasted Change: {city.Forecast}%</p>
+                </div>
+              ))}
+            </Grid>
+            <Grid item xs={6}>
+              <h3>
+                Companies headquarted in {city}, {state}
+              </h3>
+              {companies.map((comp) => (
+                <p>{comp.CompanyName}</p>
+              ))}
+            </Grid>
+          </Grid>
+        </Grid>
+        <Grid item xs={2} />
+      </Grid>
     </>
   )
 }
