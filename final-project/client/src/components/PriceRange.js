@@ -2,58 +2,66 @@ import React, { useEffect, useState } from 'react'
 import { useLocation } from 'react-router'
 import axios from 'axios'
 import NavBar from './NavBar'
+import { Grid } from '@material-ui/core'
 
 // parses URL queries for price min and max.
 const parseURL = (url) => {
   if (url.split('/').length > 3) {
-    let state = url.slice(-2)
-    let index = url.indexOf('/', 10)
-    let city = url.slice(10, index)
+    let index = url.indexOf('/', 7)
+    let maxPrice = url.slice(index + 1)
+    let minPrice = url.slice(7, index)
     // standardize casing
-    city = city.substring(0, 1).toUpperCase() + city.substring(1).toLowerCase()
-    return [city, state]
+    return [minPrice, maxPrice]
   }
 
   return []
 }
 
-const Location = () => {
-  // useLocation().pathname will return '/location/city/state'
+const PriceRange = () => {
+  // useLocation().pathname will return '/price/minPrice/maxPrice'
   let url = useLocation().pathname
-  // const [] = useState(true)
-  const [city, setCity] = useState(parseURL(url)[0])
-  const [state, setState] = useState(parseURL(url)[1])
-  const [avgHome, setAvgHome] = useState([''])
-  const [cityStat, setCityStat] = useState([''])
+  const [min, setMin] = useState(parseURL(url)[0])
+  const [max, setMax] = useState(parseURL(url)[1])
+  const [cities, setCities] = useState([])
 
   useEffect(() => {
     axios
-      .get('http://localhost:8081/getAverageHome/' + city + '/' + state)
+      .get('http://localhost:8081/getHousingRange/' + min + '/' + max)
       .then((response) => {
-        setAvgHome(response.data)
+        setCities(response.data)
       })
-    axios
-      .get('http://localhost:8081/getCityStat/' + city + '/' + state)
-      .then((response) => {
-        setCityStat(response.data)
-      })
-  }, [city, state])
+  }, [min, max])
 
   return (
     <>
       <NavBar />
-      {avgHome.length === 0 ? (
-        <>🤔No results found.</>
-      ) : (
-        <>
-          <h2>
-            Companies in {city}, {state}
-          </h2>
-          {avgHome.map((comp) => (
-            <p>{comp.CompanyName}</p>
-          ))}
-        </>
-      )}
+      <Grid
+        container
+        direction={'row'}
+        spacing={4}
+        alignItems="center"
+        style={{ height: '75vh' }}
+      >
+        <Grid item xs={3} />
+        <Grid item xs={6}>
+          {cities.length} cities were found with housing prices in the range $
+          {min} - ${max}
+          <div style={{ textAlign: 'left' }}>
+            {cities.map((city) => (
+              <div>
+                <p style={{ fontWeight: 600 }}>
+                  {city.RegionName}, {city.StateName}
+                </p>
+                <p>
+                  {' '}
+                  ${city.Min} - ${city.Max}
+                </p>
+              </div>
+            ))}
+          </div>
+        </Grid>
+        <Grid item xs={3} />
+      </Grid>
     </>
   )
 }

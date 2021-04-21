@@ -5,6 +5,7 @@ import Home from './components/Home'
 import Company from './components/Company'
 import Location from './components/Location'
 import Industry from './components/Industry'
+import PriceRange from './components/PriceRange'
 import {ThemeProvider} from '@material-ui/core'
 import theme from './theme'
 
@@ -24,6 +25,9 @@ function App() {
         </Switch>
         <Switch>
           <Route exact={false} path="/industry" render={() => <Industry />} />
+        </Switch>
+        <Switch>
+          <Route exact={false} path="/price" render={() => <PriceRange />} />
         </Switch>
       </Router>
     </div>

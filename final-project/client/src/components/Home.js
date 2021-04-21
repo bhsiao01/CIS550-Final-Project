@@ -23,15 +23,17 @@ const Home = () => {
   const [industry, setIndustry] = useState('')
   const [mouseX, setMouseX] = useState(0)
   const [mouseY, setMouseY] = useState(0)
-  const [minPrice, setMinPrice] = useState()
-  const [maxPrice, setMaxPrice] = useState()
+  const [minPrice, setMinPrice] = useState('')
+  const [maxPrice, setMaxPrice] = useState('')
 
   const redirect = () => {
     if (searchType === 'Location' && city.length !== 0 && state.length !== 0) {
       history.push('/location/' + city + '/' + state)
     }
     if (searchType === 'Price') {
-      history.push('/price/')
+      if (maxPrice > minPrice) {
+        history.push('/price/' + minPrice + '/' + maxPrice)
+      }
     }
     if (searchType === 'Company' && company.length !== 0) {
       history.push('/company/' + company)
@@ -76,7 +78,7 @@ const Home = () => {
                   textAlign: 'left',
                 }}
               >
-                Search for a city or company...
+                Search for a city, company, or industry...
               </h1>
               <FormControl style={{ width: '20%' }}>
                 <InputLabel id="search-type">Search Type</InputLabel>
@@ -138,6 +140,7 @@ const Home = () => {
                       value={minPrice}
                       onChange={(e) => setMinPrice(e.target.value)}
                       style={{ minWidth: '50%' }}
+                      type = "number"
                     />
                   </FormControl>
                   <FormControl style={{ width: '40%' }}>
@@ -147,6 +150,7 @@ const Home = () => {
                       value={maxPrice}
                       onChange={(e) => setMaxPrice(e.target.value)}
                       style={{ minWidth: '50%' }}
+                      type = "number"
                     />
                   </FormControl>
                 </>

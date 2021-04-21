@@ -20,7 +20,6 @@ const parseURL = (url) => {
 const Location = () => {
   // useLocation().pathname will return '/location/city/state'
   let url = useLocation().pathname
-  // const [] = useState(true)
   const [city, setCity] = useState(parseURL(url)[0])
   const [state, setState] = useState(parseURL(url)[1])
   const [avgHome, setAvgHome] = useState([''])

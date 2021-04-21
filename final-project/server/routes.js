@@ -35,7 +35,7 @@ const getHousingRange = (req, res) => {
   ORDER BY MIN(Value);
   `;
 
-  connection.query(compStat, (err, rows, fields) => {
+  connection.query(housingRange, (err, rows, fields) => {
     if (err) console.log(err);
     else {
       console.log(rows);
@@ -230,20 +230,20 @@ const top10Rev = (req, res) => {
   connection.query(db, (err, rows, fields) => {})
   const topTenRev = `
   WITH CompanyRevenues AS (
-  SELECT StockSymbol, Revenue, CompanyName, City, State
-  FROM StockInfo
-  WHERE Industry = [input]
-  ORDER BY Revenue DESC
-  LIMIT 10
+    SELECT StockSymbol, Revenue, CompanyName, City, State
+    FROM StockInfo
+    WHERE Industry = [input]
+    ORDER BY Revenue DESC
+    LIMIT 10
   ),
   HousingValues AS (
-  SELECT RegionName, State, MAX(Value) - MIN(Value) AS HousingValueChange
-  FROM CompanyRevenues R
-  JOIN ZillowHistorical Z ON R.City = Z.RegionName AND R.State = Z.State
-  GROUP BY Z.RegionName, Z.State
-  WHERE Z.Date >= ‘01-01-2016’
+    SELECT RegionName, State, MAX(Value) - MIN(Value) AS HousingValueChange
+    FROM CompanyRevenues R
+    JOIN ZillowHistorical Z ON R.City = Z.RegionName AND R.State = Z.State
+    GROUP BY Z.RegionName, Z.State
+    WHERE Z.Date >= ‘01-01-2016’
   )
-  SELECT R.StockSymbol, R.CompanyName, R.Revenue, R.City, R.State H.HousingValueChange
+  SELECT R.StockSymbol, R.CompanyName, R.Revenue, R.City, R.State, H.HousingValueChange
   FROM CompanyRevenues R JOIN HousingValues H ON H.RegionName = R.City AND H.State = R.State;
 `
 connection.query(topTenRev, (err, rows, fields) => {
