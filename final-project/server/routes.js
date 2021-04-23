@@ -223,28 +223,25 @@ connection.query(meanP, (err, rows, fields) => {
 
 // For the companies with the ten highest revenues, find the change in housing value in the 
 // location of their headquarters in the past 5 years.
-//optimize! (DOES NOT LOAD WITHOUT WHERE DATE ... clauses)
-// TODO : Sabhya
-const top10Rev = (req, res) => {
-  const db = `use master;`
-  connection.query(db, (err, rows, fields) => {})
+//optimize! 
+const getTop10RevByIndustry = (req, res) => {
+  var industry_input = req.params.industry; 
   const topTenRev = `
   WITH CompanyRevenues AS (
-    SELECT StockSymbol, Revenue, CompanyName, City, State
+    SELECT StockSymbol, Revenue, CompanyName, City, StateAbbr
     FROM StockInfo
-    WHERE Industry = [input]
+    WHERE Sector = '${industry_input}'
     ORDER BY Revenue DESC
     LIMIT 10
   ),
   HousingValues AS (
-    SELECT RegionName, State, MAX(Value) - MIN(Value) AS HousingValueChange
-    FROM CompanyRevenues R
-    JOIN ZillowHistorical Z ON R.City = Z.RegionName AND R.State = Z.State
-    GROUP BY Z.RegionName, Z.State
-    WHERE Z.Date >= ‘01-01-2016’
-  )
-  SELECT R.StockSymbol, R.CompanyName, R.Revenue, R.City, R.State, H.HousingValueChange
-  FROM CompanyRevenues R JOIN HousingValues H ON H.RegionName = R.City AND H.State = R.State;
+    SELECT Z.RegionName, Z.StateName, MAX(Value) - MIN(Value) AS HousingValueChange
+    FROM CompanyRevenues R JOIN ZillowHistoricalData Z ON R.City = Z.RegionName AND R.StateAbbr = Z.StateName
+    WHERE Z.Date >= '2016-01-01'
+    GROUP BY Z.RegionName, Z.StateName
+    )
+  SELECT R.StockSymbol, R.CompanyName, R.Revenue, R.City, R.StateAbbr, H.HousingValueChange
+  FROM CompanyRevenues R JOIN HousingValues H ON H.RegionName = R.City AND H.StateName = R.StateAbbr;
 `
 connection.query(topTenRev, (err, rows, fields) => {
     if (err) console.log(err)
@@ -255,32 +252,69 @@ connection.query(topTenRev, (err, rows, fields) => {
   })
 }
 
+
 // Find the number of NASDAQ companies and their average stock price in the top 20 cities with the 
-// highest forecasted percentage change in value, as of April 1st 2020.
-// TODO : Sabhya
-const top20 = (req, res) => {
-  var industry_state = req.params.state; 
-  const db = `use master;`
-  connection.query(db, (err, rows, fields) => {})
+// highest forecasted percentage change in value, as of Jan 1st 2020.
+const OldgetTop20Cities = (req, res) => {
+  var state_input = req.params.state; 
   const topTwenty = `
-  WITH HighestForecastValue AS (
-  SELECT RegionName, StateName, ForecastPctChange
-  FROM ZillowForecast
-  ORDER BY ForecastPctChange
-  LIMIT 20;
+  WITH AvgForecastedValues AS (
+    SELECT RegionName, StateName, ForecastedDate, AVG(ForecastYoYPctChange) AS ForecastYoYPctChange
+    FROM ZillowForecast
+    GROUP BY RegionName, StateName, ForecastedDate
+  ),
+  HighestForecastValue AS (
+  SELECT RegionName, StateName, ForecastYoYPctChange
+  FROM AvgForecastedValues
+  ORDER BY ForecastYoYPctChange DESC
+  LIMIT 50
   ),
   StockPricesByCity AS (
-  SELECT I.City, I.State, COUNT(*) AS NumCompanies, AVG(ClosingPrice) AS AvgPrice
+  SELECT I.City, I.StateAbbr, COUNT(*) AS NumCompanies, AVG(S.Close) AS AvgPrice
   FROM Stocks S JOIN StockInfo I ON I.StockSymbol = S.StockSymbol
-  WHERE Date = ‘04-01-2020’
-  GROUP BY I.City, I.State;
+  WHERE Date >= '2020-01-01'
+  GROUP BY I.City, I.StateAbbr
+  ORDER BY I.City ASC
   )
-  SELECT City, State, NumCompanies, AvgPrice, ForecastPctChange
+  SELECT City, StateAbbr, NumCompanies, AvgPrice, ForecastYoYPctChange
   FROM StockPricesByCity
   JOIN HighestForecastValue
-  ON RegionName = City AND StateName = State
-  WHERE State = '${industry_state}';
+  ON RegionName = City AND StateName = StateAbbr
+  WHERE RegionName = 'Lincoln';
+  WHERE RegionName = '${state_input}';
+`
+connection.query(topTenRev, (err, rows, fields) => {
+    if (err) console.log(err)
+    else {
+      console.log(rows)
+      res.json(rows)
+    }
+  })
+}
 
+// SABHYA TO DO - explain how this query would work 
+const newGetTop20Cities = (req, res) => {
+  var state_input = req.params.state; 
+  const topTwenty = `
+  WITH AvgForecastedValues AS (
+    SELECT RegionName, StateName, ForecastedDate, AVG(ForecastYoYPctChange) AS ForecastYoYPctChange
+    FROM ZillowForecast
+    GROUP BY RegionName, StateName, ForecastedDate
+  ),
+  StockPricesByCity AS (
+    SELECT I.City, I.StateAbbr, COUNT(*) AS NumCompanies, AVG(S.Close) AS AvgPrice
+    FROM Stocks S JOIN StockInfo I ON I.StockSymbol = S.StockSymbol
+    WHERE Date >= '2020-01-01'
+    GROUP BY I.City, I.StateAbbr
+  ), 
+  MatchedCities AS (
+    SELECT S.City, S.StateAbbr, S.NumCompanies, S.AvgPrice, F.ForecastYoYPctChange
+    FROM StockPricesByCity S JOIN AvgForecastedValues F ON RegionName = City AND StateName = StateAbbr
+  )
+  SELECT City, StateAbbr, NumCompanies, AvgPrice, ForecastYoYPctChange
+  FROM MatchedCities
+  ORDER BY ForecastYoYPctChange DESC
+  LIMIT 20;
 `
 connection.query(topTenRev, (err, rows, fields) => {
     if (err) console.log(err)
