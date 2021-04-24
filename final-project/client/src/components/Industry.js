@@ -22,7 +22,7 @@ const Industry = () => {
   let url = useLocation().pathname
   const [industry, setIndustry] = useState(parseURL(url))
   const [topStocks, setTopStocks] = useState([])
-  const [topMean, setTopMean] = useState([])
+  const [topMean, setTopMean] = useState([])    // TODO : May need to remove this query (kind of redundant)
   const [topRev, setTopRev] = useState([])
   const [homes, setHomes] = useState([])
   const [highPrice, setHighPrice] = useState([])
@@ -48,7 +48,7 @@ const Industry = () => {
       })
   }, [industry])
 
-  console.log("HI" + homes)
+  console.log("HI" + highPrice)
   return (
     <div>
       <NavBar />
@@ -102,23 +102,9 @@ const Industry = () => {
         <Grid item xs={8}>
           <Grid container direction={'row'} spacing={4}>
             <Grid item xs={6}>
-              <h3>City with the most expensive housing in the {industry} Industry </h3>
-                {topMean.map((region) => (
-                    <p>{region.RegionName}: Mean price of ${region.mean}</p>
-                ))}
-            </Grid>
-            <Grid item xs={6}>
-                <h3>
-                Companies with the highest revenues in the {industry} Industry
-                </h3>
-                {topRev.map((comp) => (
-                    <div>
-                        <p>{comp.StockSymbol}</p>
-                        <p>{comp.CompanyName}</p>
-                        <p>Revenue: ${comp.Revenue}</p>
-                        <p>Location: {comp.City}, {comp.StateAbbr}</p>
-                        <p>Housing value change: ${comp.HousingValueChange} </p>
-                    </div>
+              <h3>Companies in {industry} Industry and Their High Prices </h3>
+                {highPrice.map((price) => (
+                    <p>{price.StockSymbol}: High price of ${price.MaxPrice}</p>
                 ))}
             </Grid>
           </Grid>

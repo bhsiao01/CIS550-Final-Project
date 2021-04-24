@@ -229,6 +229,7 @@ connection.query(topTen, (err, rows, fields) => {
 }
 
 /* Industry queries */ 
+
 // Find the city with the highest mean ZHVI out of all cities with company headquarters of companies in an input industry.
 const meanPrice = (req, res) => {
   var industry_input = req.params.industry; 
@@ -248,7 +249,7 @@ const meanPrice = (req, res) => {
 connection.query(meanP, (err, rows, fields) => {
     if (err) console.log(err)
     else {
-      console.log(rows)
+      //console.log(rows)
       res.json(rows)
     }
   });
@@ -259,7 +260,7 @@ connection.query(meanP, (err, rows, fields) => {
 //optimize! 
 const getTop10RevByIndustry = (req, res) => {
   var industry_input = req.params.sector;
-  console.log("industry: " + industry_input);
+  //console.log("industry: " + industry_input);
 
   // TODO: don't limit date - too fast (decades still has value)
   const topTenRev = `
@@ -282,7 +283,7 @@ const getTop10RevByIndustry = (req, res) => {
 connection.query(topTenRev, (err, rows, fields) => {
     if (err) console.log(err)
     else {
-      console.log(rows)
+      //console.log(rows)
       res.json(rows)
     }
   })
@@ -346,7 +347,6 @@ connection.query(topTenRev, (err, rows, fields) => {
 // Get high price for all stocks in an industry
 const getHighPricePerIndustry = (req, res) => {
   var sector_input = req.params.sector;
-  console.log(sector_input);
   const db = `use master;`;
   connection.query(db, (err, rows, fields) => {});
 

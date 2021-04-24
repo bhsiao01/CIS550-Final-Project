@@ -55,7 +55,7 @@ app.get("/getMeanPriceIndustry/:industry", routes.meanPrice);
 
 //calling app.get to find the high price per an industry
 //done
-app.get("/getHighPriceIndustry/:industry", routes.getHighPricePerIndustry);
+app.get("/getHighPriceIndustry/:sector", routes.getHighPricePerIndustry);
 
 // calling app.get to find the top 10 revenues per industry
 app.get("/getTop10Rev/:sector", routes.getTop10RevByIndustry);
