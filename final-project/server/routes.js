@@ -133,6 +133,39 @@ const getAverageHome = (req, res) => {
   });
 }
 
+// SABHYA TO DO - explain how this query would work 
+const getTop20Cities = (req, res) => {
+  var state_input = req.params.state; 
+  const topTwenty = `
+  WITH AvgForecastedValues AS (
+    SELECT RegionName, StateName, ForecastedDate, AVG(ForecastYoYPctChange) AS ForecastYoYPctChange
+    FROM ZillowForecast
+    GROUP BY RegionName, StateName, ForecastedDate
+  ),
+  StockPricesByCity AS (
+    SELECT I.City, I.StateAbbr, COUNT(*) AS NumCompanies, AVG(S.Close) AS AvgPrice
+    FROM Stocks S JOIN StockInfo I ON I.StockSymbol = S.StockSymbol
+    WHERE Date >= '2020-01-01'
+    GROUP BY I.City, I.StateAbbr
+  ), 
+  MatchedCities AS (
+    SELECT S.City, S.StateAbbr, S.NumCompanies, S.AvgPrice, F.ForecastYoYPctChange
+    FROM StockPricesByCity S JOIN AvgForecastedValues F ON RegionName = City AND StateName = StateAbbr
+  )
+  SELECT City, StateAbbr, NumCompanies, AvgPrice, ForecastYoYPctChange
+  FROM MatchedCities
+  ORDER BY ForecastYoYPctChange DESC
+  LIMIT 20;
+`
+connection.query(topTenRev, (err, rows, fields) => {
+    if (err) console.log(err)
+    else {
+      console.log(rows)
+      res.json(rows)
+    }
+  })
+}
+
 /* Companies queries */ 
 //gets 30 day stock data for a given company
 const get30Day = (req, res) => {
@@ -203,12 +236,12 @@ const meanPrice = (req, res) => {
   connection.query(db, (err, rows, fields) => {})
   const meanP = `
   WITH temp1 AS (
-    SELECT RegionName, AVG(Value) as mean 
+    SELECT RegionName, StateAbbr, AVG(Value) as mean 
     FROM ZillowHistoricalData Z JOIN StockInfo S ON Z.RegionName = S.City
     WHERE S.sector = '${industry_input}' 
     GROUP BY RegionName 
   )
-  SELECT T1.RegionName, mean
+  SELECT T1.RegionName, T1.StateAbbr, mean
   FROM temp1 as T1
   WHERE T1.mean >= ALL (SELECT mean FROM temp1);
 `
@@ -292,42 +325,9 @@ connection.query(topTenRev, (err, rows, fields) => {
   })
 }*/
 
-// SABHYA TO DO - explain how this query would work 
-const newGetTop20Cities = (req, res) => {
-  var state_input = req.params.state; 
-  const topTwenty = `
-  WITH AvgForecastedValues AS (
-    SELECT RegionName, StateName, ForecastedDate, AVG(ForecastYoYPctChange) AS ForecastYoYPctChange
-    FROM ZillowForecast
-    GROUP BY RegionName, StateName, ForecastedDate
-  ),
-  StockPricesByCity AS (
-    SELECT I.City, I.StateAbbr, COUNT(*) AS NumCompanies, AVG(S.Close) AS AvgPrice
-    FROM Stocks S JOIN StockInfo I ON I.StockSymbol = S.StockSymbol
-    WHERE Date >= '2020-01-01'
-    GROUP BY I.City, I.StateAbbr
-  ), 
-  MatchedCities AS (
-    SELECT S.City, S.StateAbbr, S.NumCompanies, S.AvgPrice, F.ForecastYoYPctChange
-    FROM StockPricesByCity S JOIN AvgForecastedValues F ON RegionName = City AND StateName = StateAbbr
-  )
-  SELECT City, StateAbbr, NumCompanies, AvgPrice, ForecastYoYPctChange
-  FROM MatchedCities
-  ORDER BY ForecastYoYPctChange DESC
-  LIMIT 20;
-`
-connection.query(topTenRev, (err, rows, fields) => {
-    if (err) console.log(err)
-    else {
-      console.log(rows)
-      res.json(rows)
-    }
-  })
-}
-
 
 // get home values for a specific industry
-const getSectorHome = (req, res) => {
+/*const getSectorHome = (req, res) => {
   // TODO: If not complex enough, add another join of T1 with companies that are in the city
   const sectorHome = `
   WITH temp1 AS (
@@ -341,7 +341,7 @@ const getSectorHome = (req, res) => {
   FROM temp1 as T1
   LIMIT 5;
   `;
-}
+}*/
 
 // Get high price for all stocks in an industry
 const getHighPricePerIndustry = (req, res) => {
@@ -375,18 +375,17 @@ const getHomesFromSector = (req, res) => {
 
   const sectorHome = `
     WITH temp1 AS (
-    SELECT RegionName, AVG(Value) as mean 
+    SELECT RegionName, StateAbbr, AVG(Value) as mean 
     FROM ZillowHistoricalData Z JOIN StockInfo S ON Z.RegionName = S.City 
-    WHERE S.Sector = 'Technology'
+    WHERE S.Sector = '${sector_input}'
     GROUP BY RegionName
     ORDER BY mean DESC
   )
-  SELECT T1.RegionName, T1.mean
-  FROM temp1 as T1
-  LIMIT 5;
+  SELECT T1.RegionName, T1.StateAbbr, T1.mean
+  FROM temp1 as T1;
   `;
 
-  connection.query(industry, (err, rows, fields) => {
+  connection.query(sectorHome, (err, rows, fields) => {
     if (err) console.log(err);
     else {
       console.log(rows);
@@ -407,8 +406,9 @@ module.exports = {
   getForecast: getForecast,
   getHomesFromSector: getHomesFromSector,
   getTop10StocksPerIndustry: getTop10StocksPerIndustry,
-  getSectorHome: getSectorHome,
   getHomesFromSector: getHomesFromSector,
-  getTop10RevByIndustry: getTop10RevByIndustry
+  getHomesFromSector: getHomesFromSector,
+  getTop10RevByIndustry: getTop10RevByIndustry,
+  getTop20Cities: getTop20Cities
 }
 //
