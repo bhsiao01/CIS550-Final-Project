@@ -24,6 +24,8 @@ const PriceRange = () => {
   const [max, setMax] = useState(parseURL(url)[1])
   const [cities, setCities] = useState([])
 
+  // TODO: allow user to choose how to sort?
+
   useEffect(() => {
     axios
       .get('http://localhost:8081/getHousingRange/' + min + '/' + max)

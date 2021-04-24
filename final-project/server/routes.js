@@ -23,6 +23,8 @@ connection.connect(function (err) {
 
 /* Queries by price */
 // get cities that are in a certain of range of prices
+
+// TODO: maybe we can make this a bigger query somehow (long runtime => easier to optimize)
 const getHousingRange = (req, res) => {
   var min_val = req.params.min;
   var max_val = req.params.max;
@@ -113,6 +115,7 @@ const getForecast = (req, res) => {
 }
 
 // get average home price for a city
+// TODO: this is redundant
 const getAverageHome = (req, res) => {
   var city_input = req.params.city;
   var state_abrv_input = req.params.state;

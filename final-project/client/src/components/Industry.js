@@ -21,7 +21,6 @@ const Industry = () => {
   // useLocation().pathname will return '/industry/sector'
   let url = useLocation().pathname
   const [industry, setIndustry] = useState(parseURL(url))
-  const [topStocks, setTopStocks] = useState([])
   const [topMean, setTopMean] = useState([])    // TODO : May need to remove this query (kind of redundant)
   const [topRev, setTopRev] = useState([])
   const [homes, setHomes] = useState([])

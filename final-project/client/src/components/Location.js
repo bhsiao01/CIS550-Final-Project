@@ -27,6 +27,7 @@ const Location = () => {
   const [cityStat, setCityStat] = useState([])
   const [forecast, setForecast] = useState([])
   const [companies, setCompanies] = useState([])
+  const [top20, setTop20] = useState([])
 
   useEffect(() => {
     axios
@@ -43,6 +44,11 @@ const Location = () => {
       .get('http://localhost:8081/getCompStat/' + city + '/' + state)
       .then((response) => {
         setCompanies(response.data)
+      })
+      axios
+      .get('http://localhost:8081/getTop20Cities/' + '/' + state)
+      .then((response) => {
+        setTop20(response.data)
       })
   }, [city, state])
 
@@ -82,6 +88,18 @@ const Location = () => {
               </h3>
               {companies.map((comp) => (
                 <p>{comp.CompanyName}</p>
+              ))}
+            </Grid>
+            <Grid item xs={6}>
+              <h3>
+                Other cities in {state} by housing value
+              </h3>
+              {top20.map((comp) => (
+                <div>
+                  <p>{comp.City}, {comp.StateAbbr}:</p>
+                  <p>{comp.NumCompanies} companies</p>
+                  <p>Average price: {comp.AvgPrice}, Forecasted change: {comp.ForecastYoYPctChange}</p>
+                </div>
               ))}
             </Grid>
           </Grid>
