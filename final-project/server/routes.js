@@ -139,8 +139,8 @@ const get30Day = (req, res) => {
   var company_input = req.params.ticker;
   console.log(company_input);
 
-  const db = `use master;`
-  connection.query(db, (err, rows, fields) => {})
+  /*const db = `use master;`
+  connection.query(db, (err, rows, fields) => {})*/
 
   const stock30Days = `
     SELECT *

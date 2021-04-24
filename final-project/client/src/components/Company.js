@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useLocation } from 'react-router'
 import axios from 'axios'
 import NavBar from './NavBar'
+import { Grid } from '@material-ui/core'
 
 // parses URL queries for company name.
 const parseURL = (url) => {
@@ -21,20 +22,35 @@ const Company = (props) => {
   const [prices, setPrices] = useState([''])
 
   useEffect(() => {
-    axios.get('http://localhost:8081/company/' + company).then((response) => {
+    axios.get('http://localhost:8081/get30day/' + company).then((response) => {
       setPrices(response.data)
     })
   }, [company])
 
+  console.log(prices)
+
   return (
     <div>
       <NavBar />
-      <h2>Stock Prices for {company}</h2>
-      {prices.map((price) => (
-        <>
-        <p>{price.High}</p>
-        </>
-      ))}
+      <Grid
+        container
+        direction={'row'}
+        spacing={4}
+        style={{ textAlign: 'left' }}
+      >
+        <Grid item xs={2} />
+        <Grid item xs={8}>
+          <h2>Stock Prices for {company}</h2>
+          <Grid container direction={'row'} spacing={4}>
+            <Grid item xs={6}>
+              <h3>Price Statistics</h3>
+              {prices.map((price) => (
+                  <p>Date: {price.Date}</p>
+              ))}
+            </Grid>
+          </Grid>
+        </Grid>
+        </Grid>
     </div>
   )
 }
