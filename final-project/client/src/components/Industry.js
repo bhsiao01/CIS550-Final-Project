@@ -21,20 +21,41 @@ const Industry = () => {
   let url = useLocation().pathname
   const [industry, setIndustry] = useState(parseURL(url))
   const [topStocks, setTopStocks] = useState([])
+  const [topMean, setTopMean] = useState([])
+  const [topRev, setTopRev] = useState([])
 
   useEffect(() => {
-    axios.get('http://localhost:8081/industry/' + industry).then((response) => {
-      setTopStocks(response.data)
+    axios.get('http://localhost:8081/getMeanPriceIndustry/' + industry).then((response) => {
+      setTopMean(response.data)
     })
+    axios
+      .get('http://localhost:8081/getTop10Rev/' + industry)
+      .then((response) => {
+        setTopRev(response.data)
+      })
   }, [industry])
 
+  console.log("HI" + topRev)
   return (
     <div>
       <NavBar />
-      <h2>Stocks in Industry {industry}</h2>
-      {topStocks.map((comp) => (
-        <p>{comp.StockSymbol}</p>
-      ))}
+      <div>
+        <h2>Stocks in the {industry} Industry</h2>
+        {topMean.map((region) => (
+            <p>{region.RegionName}: Mean price of ${region.mean}</p>
+        ))}
+      </div>
+      <div>
+          {topRev.map((comp) => (
+              <div>
+                <p>{comp.StockSymbol}</p>
+                <p>{comp.CompanyName}</p>
+                <p>Revenue: ${comp.Revenue}</p>
+                <p>Location: {comp.City}, {comp.StateAbbr}</p>
+                <p>Housing value change: ${comp.HousingValueChange} </p>
+              </div>
+          ))}
+      </div>
     </div>
   )
 }

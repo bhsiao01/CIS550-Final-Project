@@ -203,14 +203,14 @@ const meanPrice = (req, res) => {
   connection.query(db, (err, rows, fields) => {})
   const meanP = `
   WITH temp1 AS (
-    SELECT RegionName, AVG(ZHVI) as mean 
-    FROM ZillowHistoricalData JOIN StockInfo ON ZillowHistoricalData.RegionName = StockInfo.City 
+    SELECT RegionName, AVG(Value) as mean 
+    FROM ZillowHistoricalData Z JOIN StockInfo S ON Z.RegionName = S.City
+    WHERE S.sector = '${industry_input}' 
     GROUP BY RegionName 
-    WHERE StockInfo.industry = '${industry_input}'
   )
-  SELECT T1.RegionName
+  SELECT T1.RegionName, mean
   FROM temp1 as T1
-  WHERE T1.mean > ALL (SELECT T1.mean FROM temp1);
+  WHERE T1.mean >= ALL (SELECT mean FROM temp1);
 `
 connection.query(meanP, (err, rows, fields) => {
     if (err) console.log(err)
@@ -225,8 +225,9 @@ connection.query(meanP, (err, rows, fields) => {
 // location of their headquarters in the past 5 years.
 //optimize! 
 const getTop10RevByIndustry = (req, res) => {
-  var industry_input = req.params.industry;
-  
+  var industry_input = req.params.sector;
+  console.log("industry: " + industry_input);
+
   // TODO: don't limit date - too fast (decades still has value)
   const topTenRev = `
   WITH CompanyRevenues AS (
@@ -255,7 +256,7 @@ connection.query(topTenRev, (err, rows, fields) => {
 }
 
 
-// Find the number of NASDAQ companies and their average stock price in the top 20 cities with the 
+/*// Find the number of NASDAQ companies and their average stock price in the top 20 cities with the 
 // highest forecasted percentage change in value, as of Jan 1st 2020.
 const OldgetTop20Cities = (req, res) => {
   var state_input = req.params.state; 
@@ -289,7 +290,7 @@ connection.query(topTenRev, (err, rows, fields) => {
       res.json(rows)
     }
   })
-}
+}*/
 
 // SABHYA TO DO - explain how this query would work 
 const newGetTop20Cities = (req, res) => {
@@ -407,6 +408,7 @@ module.exports = {
   getHomesFromSector: getHomesFromSector,
   getTop10StocksPerIndustry: getTop10StocksPerIndustry,
   getSectorHome: getSectorHome,
-  getHomesFromSector: getHomesFromSector
+  getHomesFromSector: getHomesFromSector,
+  getTop10RevByIndustry: getTop10RevByIndustry
 }
 //

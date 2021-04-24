@@ -53,6 +53,9 @@ app.get("/getMeanPriceIndustry/:industry", routes.meanPrice);
 //done
 app.get("/getHighPriceIndustry/:industry", routes.getHighPricePerIndustry);
 
+// calling app.get to find the top 10 revenues per industry
+app.get("/getTop10Rev/:sector", routes.getTop10RevByIndustry);
+
 
 app.listen(8081, () => {
 	console.log(`Server listening on PORT 8081`);
