@@ -204,7 +204,7 @@ const meanPrice = (req, res) => {
   const meanP = `
   WITH temp1 AS (
     SELECT RegionName, AVG(ZHVI) as mean 
-    FROM FROM ZillowHistoricalData JOIN StockInfo ON ZillowHistoricalData.RegionName = StockInfo.City 
+    FROM ZillowHistoricalData JOIN StockInfo ON ZillowHistoricalData.RegionName = StockInfo.City 
     GROUP BY RegionName 
     WHERE StockInfo.industry = '${industry_input}'
   )
@@ -225,7 +225,9 @@ connection.query(meanP, (err, rows, fields) => {
 // location of their headquarters in the past 5 years.
 //optimize! 
 const getTop10RevByIndustry = (req, res) => {
-  var industry_input = req.params.industry; 
+  var industry_input = req.params.industry;
+  
+  // TODO: don't limit date - too fast (decades still has value)
   const topTenRev = `
   WITH CompanyRevenues AS (
     SELECT StockSymbol, Revenue, CompanyName, City, StateAbbr
@@ -267,7 +269,6 @@ const OldgetTop20Cities = (req, res) => {
   SELECT RegionName, StateName, ForecastYoYPctChange
   FROM AvgForecastedValues
   ORDER BY ForecastYoYPctChange DESC
-  LIMIT 50
   ),
   StockPricesByCity AS (
   SELECT I.City, I.StateAbbr, COUNT(*) AS NumCompanies, AVG(S.Close) AS AvgPrice
@@ -277,11 +278,9 @@ const OldgetTop20Cities = (req, res) => {
   ORDER BY I.City ASC
   )
   SELECT City, StateAbbr, NumCompanies, AvgPrice, ForecastYoYPctChange
-  FROM StockPricesByCity
-  JOIN HighestForecastValue
-  ON RegionName = City AND StateName = StateAbbr
-  WHERE RegionName = 'Lincoln';
-  WHERE RegionName = '${state_input}';
+  FROM StockPricesByCity S JOIN HighestForecastValue H ON H.RegionName = S.City AND H.StateName = S.StateAbbr
+  WHERE StateAbbr = '${state_input}'
+  LIMIT 50;
 `
 connection.query(topTenRev, (err, rows, fields) => {
     if (err) console.log(err)
