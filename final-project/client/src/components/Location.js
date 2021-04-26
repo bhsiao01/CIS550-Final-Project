@@ -46,7 +46,7 @@ const Location = () => {
         setCompanies(response.data)
       })
       axios
-      .get('http://localhost:8081/getTop20Cities/' + '/' + state)
+      .get('http://localhost:8081/getTop20Cities/' + state)
       .then((response) => {
         setTop20(response.data)
       })

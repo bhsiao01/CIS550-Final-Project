@@ -65,7 +65,7 @@ const getCityStat = (req, res) => {
   connection.query(cityStat, (err, rows, fields) => {
     if (err) console.log(err);
     else {
-      console.log(rows);
+      //console.log(rows);
       res.json(rows);
     }
   });
@@ -86,7 +86,7 @@ const getCompStat = (req, res) => {
   connection.query(compStat, (err, rows, fields) => {
     if (err) console.log(err);
     else {
-      console.log(rows);
+      //console.log(rows);
       res.json(rows);
     }
   });
@@ -108,7 +108,7 @@ const getForecast = (req, res) => {
   connection.query(forecastedChange, (err, rows, fields) => {
     if (err) console.log(err);
     else {
-      console.log(rows);
+      //console.log(rows);
       res.json(rows);
     }
   });
@@ -130,7 +130,7 @@ const getAverageHome = (req, res) => {
   connection.query(avgValueQuery, (err, rows, fields) => {
     if (err) console.log(err);
     else {
-      console.log(rows);
+      //console.log(rows);
       res.json(rows);
     }
   });
@@ -143,12 +143,13 @@ const getTop20Cities = (req, res) => {
   WITH AvgForecastedValues AS (
     SELECT RegionName, StateName, ForecastedDate, AVG(ForecastYoYPctChange) AS ForecastYoYPctChange
     FROM ZillowForecast
+    WHERE StateName = '${state_input}'
     GROUP BY RegionName, StateName, ForecastedDate
   ),
   StockPricesByCity AS (
     SELECT I.City, I.StateAbbr, COUNT(*) AS NumCompanies, AVG(S.Close) AS AvgPrice
     FROM Stocks S JOIN StockInfo I ON I.StockSymbol = S.StockSymbol
-    WHERE Date >= '2020-01-01'
+    WHERE I.StateAbbr = '${state_input}' AND Date >= '2020-01-01'
     GROUP BY I.City, I.StateAbbr
   ), 
   MatchedCities AS (
@@ -160,7 +161,7 @@ const getTop20Cities = (req, res) => {
   ORDER BY ForecastYoYPctChange DESC
   LIMIT 20;
 `
-connection.query(topTenRev, (err, rows, fields) => {
+connection.query(topTwenty, (err, rows, fields) => {
     if (err) console.log(err)
     else {
       console.log(rows)
