@@ -21,6 +21,9 @@ const Company = (props) => {
   const [company, setCompany] = useState(parseURL(url))
   const [prices, setPrices] = useState([''])
 
+
+  //want to add in where company is headquartered + some simple housing stats (maybe)
+
   useEffect(() => {
     axios.get('http://localhost:8081/get30day/' + company).then((response) => {
       setPrices(response.data)
@@ -45,7 +48,11 @@ const Company = (props) => {
             <Grid item xs={6}>
               <h3>Price Statistics</h3>
               {prices.map((price) => (
+                <div>
                   <p>Date: {price.Date}</p>
+                  <p>Open price: ${price.Open}</p>
+                  <p>Close price: ${price.Close}</p>
+                </div>
               ))}
             </Grid>
           </Grid>
