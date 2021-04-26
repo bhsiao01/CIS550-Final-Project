@@ -77,7 +77,7 @@ const getCompStat = (req, res) => {
   var state_abrv_input = req.params.state;
   
   const compStat = `
-  SELECT City, StateAbbr, CompanyName
+  SELECT City, StateAbbr, CompanyName, StockSymbol
   FROM StockInfo
   WHERE City = '${city_input}' AND StateAbbr = '${state_abrv_input}'
   LIMIT 10;
@@ -137,6 +137,7 @@ const getAverageHome = (req, res) => {
 }
 
 // SABHYA TO DO - explain how this query would work 
+// TODO: Optimize, maybe lift restriction on date/work with larger range of dates (2018-01-01 takes about 5 sec)
 const getTop20Cities = (req, res) => {
   var state_input = req.params.state; 
   const topTwenty = `

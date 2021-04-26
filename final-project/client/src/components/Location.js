@@ -71,14 +71,14 @@ const Location = () => {
               <h3>Home Value Statistics</h3>
               {cityStat.map((city) => (
                 <div>
-                  <p>Average Home Value: ${city.mean}</p>
-                  <p>Minimum Home Value: ${city.min}</p>
-                  <p>Maximum Home Value: ${city.max}</p>
+                  <p>Average Home Value: ${Number(Number(city.mean).toFixed(2)).toLocaleString()}</p>
+                  <p>Minimum Home Value: ${Number(Number(city.min).toFixed(2)).toLocaleString()}</p>
+                  <p>Maximum Home Value: ${Number(Number(city.max).toFixed(2)).toLocaleString()}</p>
                 </div>
               ))}
               {forecast.map((city) => (
                 <div>
-                  <p>Forecasted Change: {city.Forecast}%</p>
+                  <p>Forecasted Change: {city.Forecast.toFixed(3)}%</p>
                 </div>
               ))}
             </Grid>
@@ -87,7 +87,7 @@ const Location = () => {
                 Companies headquarted in {city}, {state}
               </h3>
               {companies.map((comp) => (
-                <p>{comp.CompanyName}</p>
+                <p>{comp.CompanyName} ({comp.StockSymbol})</p>
               ))}
             </Grid>
             <Grid item xs={6}>
@@ -98,7 +98,7 @@ const Location = () => {
                 <div>
                   <p>{comp.City}, {comp.StateAbbr}:</p>
                   <p>{comp.NumCompanies} companies</p>
-                  <p>Average price: {comp.AvgPrice}, Forecasted change: {comp.ForecastYoYPctChange}</p>
+                  <p>Average price: {Number(Number(comp.AvgPrice).toFixed(2)).toLocaleString()}, Forecasted change: {comp.ForecastYoYPctChange.toFixed(3)}%</p>
                 </div>
               ))}
             </Grid>
