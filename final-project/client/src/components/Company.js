@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useLocation } from 'react-router'
 import axios from 'axios'
 import NavBar from './NavBar'
+import StockChart from './StockChart'
 import { Grid } from '@material-ui/core'
 
 // parses URL queries for company name.
@@ -19,8 +20,7 @@ const Company = (props) => {
   // useLocation().pathname will return '/company/ticker'
   let url = useLocation().pathname
   const [company, setCompany] = useState(parseURL(url))
-  const [prices, setPrices] = useState([''])
-
+  const [prices, setPrices] = useState([])
 
   //want to add in where company is headquartered + some simple housing stats (maybe)
 
@@ -29,8 +29,6 @@ const Company = (props) => {
       setPrices(response.data)
     })
   }, [company])
-
-  console.log(prices)
 
   return (
     <div>
@@ -47,17 +45,11 @@ const Company = (props) => {
           <Grid container direction={'row'} spacing={4}>
             <Grid item xs={6}>
               <h3>Price Statistics</h3>
-              {prices.map((price) => (
-                <div>
-                  <p>Date: {price.Date}</p>
-                  <p>Open price: ${price.Open}</p>
-                  <p>Close price: ${price.Close}</p>
-                </div>
-              ))}
+              <StockChart prices={prices} />
             </Grid>
           </Grid>
         </Grid>
-        </Grid>
+      </Grid>
     </div>
   )
 }

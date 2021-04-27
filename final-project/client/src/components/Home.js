@@ -128,6 +128,7 @@ const Home = () => {
                       aria-describedby="company-text-input"
                       value={company}
                       onChange={(e) => setCompany(e.target.value)}
+                      placeholder={'AAPL'}
                     />
                   </FormControl>
                 </>
@@ -163,6 +164,7 @@ const Home = () => {
                       aria-describedby="industry-text-input"
                       value={industry}
                       onChange={(e) => setIndustry(e.target.value)}
+                      placeholder={'Technology'}
                     />
                   </FormControl>
                 </>
