@@ -39,15 +39,11 @@ const Company = (props) => {
         spacing={4}
         style={{ textAlign: 'left' }}
       >
-        <Grid item xs={2} />
-        <Grid item xs={8}>
+        <Grid item xs={1} />
+        <Grid item xs={11}>
           <h2>Stock Prices for {company}</h2>
-          <Grid container direction={'row'} spacing={4}>
-            <Grid item xs={6}>
-              <h3>Price Statistics</h3>
-              <StockChart prices={prices} />
-            </Grid>
-          </Grid>
+            <h3>Price Statistics</h3>
+            <StockChart prices={prices} />
         </Grid>
       </Grid>
     </div>
