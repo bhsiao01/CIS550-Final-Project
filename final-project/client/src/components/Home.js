@@ -57,7 +57,7 @@ const Home = () => {
             mouseX +
             '% ' +
             mouseY +
-            '%, #AAD7DE, #DED0F0)',
+            '%, #e3def1, #def1e7)',
         }}
       >
         <Box>
@@ -73,7 +73,6 @@ const Home = () => {
             <Grid item xs={6}>
               <h1
                 style={{
-                  fontSize: '2.5rem',
                   marginBottom: '3.5rem',
                   textAlign: 'left',
                 }}

@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react'
 import { useLocation } from 'react-router'
 import axios from 'axios'
 import NavBar from './NavBar'
-import { Grid } from '@material-ui/core'
+import { Grid, Card, CardContent, Typography } from '@material-ui/core'
+import MapContainer from './MapContainer'
 
 // parses URL queries for city and state. returns list of city, state.
 const parseURL = (url) => {
@@ -45,7 +46,7 @@ const Location = () => {
       .then((response) => {
         setCompanies(response.data)
       })
-      axios
+    axios
       .get('http://localhost:8081/getTop20Cities/' + state)
       .then((response) => {
         setTop20(response.data)
@@ -66,41 +67,70 @@ const Location = () => {
           <h2>
             {city}, {state}
           </h2>
+          <MapContainer />
           <Grid container direction={'row'} spacing={4}>
             <Grid item xs={6}>
-              <h3>Home Value Statistics</h3>
-              {cityStat.map((city) => (
-                <div>
-                  <p>Average Home Value: ${Number(Number(city.mean).toFixed(2)).toLocaleString()}</p>
-                  <p>Minimum Home Value: ${Number(Number(city.min).toFixed(2)).toLocaleString()}</p>
-                  <p>Maximum Home Value: ${Number(Number(city.max).toFixed(2)).toLocaleString()}</p>
-                </div>
-              ))}
-              {forecast.map((city) => (
-                <div>
-                  <p>Forecasted Change: {city.Forecast.toFixed(3)}%</p>
-                </div>
-              ))}
+              <Card>
+                <CardContent>
+                  <h3>Home Value Statistics</h3>
+                  {cityStat.map((city) => (
+                    <div>
+                      <p>
+                        Average Home Value: $
+                        {Number(Number(city.mean).toFixed(2)).toLocaleString()}
+                      </p>
+                      <p>
+                        Minimum Home Value: $
+                        {Number(Number(city.min).toFixed(2)).toLocaleString()}
+                      </p>
+                      <p>
+                        Maximum Home Value: $
+                        {Number(Number(city.max).toFixed(2)).toLocaleString()}
+                      </p>
+                    </div>
+                  ))}
+                  {forecast.map((city) => (
+                    <div>
+                      <p>Forecasted Change: {city.Forecast.toFixed(3)}%</p>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent>
+                  <h3>Other cities in {state} by housing value</h3>
+                  {top20.map((comp) => (
+                    <div>
+                      <p>
+                        {comp.City}, {comp.StateAbbr}:
+                      </p>
+                      <p>{comp.NumCompanies} companies</p>
+                      <p>
+                        Average price:{' '}
+                        {Number(
+                          Number(comp.AvgPrice).toFixed(2)
+                        ).toLocaleString()}
+                        , Forecasted change:{' '}
+                        {comp.ForecastYoYPctChange.toFixed(3)}%
+                      </p>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
             </Grid>
             <Grid item xs={6}>
-              <h3>
-                Companies headquarted in {city}, {state}
-              </h3>
-              {companies.map((comp) => (
-                <p>{comp.CompanyName} ({comp.StockSymbol})</p>
-              ))}
-            </Grid>
-            <Grid item xs={6}>
-              <h3>
-                Other cities in {state} by housing value
-              </h3>
-              {top20.map((comp) => (
-                <div>
-                  <p>{comp.City}, {comp.StateAbbr}:</p>
-                  <p>{comp.NumCompanies} companies</p>
-                  <p>Average price: {Number(Number(comp.AvgPrice).toFixed(2)).toLocaleString()}, Forecasted change: {comp.ForecastYoYPctChange.toFixed(3)}%</p>
-                </div>
-              ))}
+              <Card>
+                <CardContent>
+                  <h3>
+                    Companies headquarted in {city}, {state}
+                  </h3>
+                  {companies.map((comp) => (
+                    <p>
+                      {comp.CompanyName} ({comp.StockSymbol})
+                    </p>
+                  ))}
+                </CardContent>
+              </Card>
             </Grid>
           </Grid>
         </Grid>

@@ -3,7 +3,7 @@ import { useLocation } from 'react-router'
 import axios from 'axios'
 import NavBar from './NavBar'
 import StockChart from './StockChart'
-import { Grid } from '@material-ui/core'
+import { Grid, Card, CardContent } from '@material-ui/core'
 
 // parses URL queries for company name.
 const parseURL = (url) => {
@@ -42,8 +42,12 @@ const Company = (props) => {
         <Grid item xs={1} />
         <Grid item xs={11}>
           <h2>Stock Prices for {company}</h2>
+          <Card>
+            <CardContent>
             <h3>Price Statistics</h3>
             <StockChart prices={prices} />
+            </CardContent>
+          </Card>
         </Grid>
       </Grid>
     </div>
