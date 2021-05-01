@@ -17,22 +17,17 @@ const NavBar = () => {
             <Button size="large">what's this called</Button>
           </Link>
         </Grid>
-        <Grid item xs={6}></Grid>
-        <Grid item xs={1}>
+        <Grid item xs={9} style={{ textAlign: 'right' }}>
           <Link to="/location/">
             <Button size="large">
               Location
             </Button>
           </Link>
-        </Grid>
-        <Grid item xs={1}>
           <Link to="/company/">
             <Button size="large">
               Company
             </Button>
           </Link>
-        </Grid>
-        <Grid item xs={1}>
           <Link to="/industry/">
             <Button size="large">
               Industry
