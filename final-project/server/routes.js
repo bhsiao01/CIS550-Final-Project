@@ -92,6 +92,7 @@ const getCompStat = (req, res) => {
   });
 }
 
+
 // get forecasted housing prices for the next year for a given city, state
 const getForecast = (req, res) => {
   var city_input = req.params.city;
@@ -189,6 +190,101 @@ const get30Day = (req, res) => {
   `;
 
   connection.query(stock30Days, (err, rows, fields) => {
+    if (err) console.log(err)
+    else {
+      console.log(rows)
+      res.json(rows)
+    }
+  });
+}
+
+//get company Name from company ticker
+
+const getCompanyName = (req, res) => {
+  var company_input = req.params.ticker;
+  console.log(company_input);
+
+  /*const db = `use master;`
+  connection.query(db, (err, rows, fields) => {})*/
+
+  const getCompanyName = `
+    SELECT CompanyName
+    FROM Stocks
+    WHERE StockSymbol = '${company_input}'
+  `;
+
+  connection.query(getCompanyName, (err, rows, fields) => {
+    if (err) console.log(err)
+    else {
+      console.log(rows)
+      res.json(rows)
+    }
+  });
+}
+
+//get Industry from company ticker
+const getCompanyIndustry = (req, res) => {
+  var company_input = req.params.ticker;
+  console.log(company_input);
+
+  /*const db = `use master;`
+  connection.query(db, (err, rows, fields) => {})*/
+
+  const getCompanyIndustry = `
+    SELECT Industry
+    FROM Stocks
+    WHERE StockSymbol = '${company_input}'
+  `;
+
+  connection.query(getCompanyIndustry, (err, rows, fields) => {
+    if (err) console.log(err)
+    else {
+      console.log(rows)
+      res.json(rows)
+    }
+  });
+}
+
+//get company CEO from company ticker
+
+const getCompanyCEO = (req, res) => {
+  var company_input = req.params.ticker;
+  console.log(company_input);
+
+  /*const db = `use master;`
+  connection.query(db, (err, rows, fields) => {})*/
+
+  const getCompanyCEO = `
+    SELECT CEO
+    FROM Stocks
+    WHERE StockSymbol = '${company_input}'
+  `;
+
+  connection.query(getCompanyCEO, (err, rows, fields) => {
+    if (err) console.log(err)
+    else {
+      console.log(rows)
+      res.json(rows)
+    }
+  });
+}
+
+//get company HQ from company ticker
+
+const getHQ = (req, res) => {
+  var company_input = req.params.ticker;
+  console.log(company_input);
+
+  /*const db = `use master;`
+  connection.query(db, (err, rows, fields) => {})*/
+
+  const getCompanyHq = `
+    SELECT City, StateAbbr
+    FROM Stocks
+    WHERE StockSymbol = '${company_input}'
+  `;
+
+  connection.query(getCompanyHq, (err, rows, fields) => {
     if (err) console.log(err)
     else {
       console.log(rows)
@@ -414,6 +510,10 @@ module.exports = {
   getHomesFromSector: getHomesFromSector,
   getHomesFromSector: getHomesFromSector,
   getTop10RevByIndustry: getTop10RevByIndustry,
-  getTop20Cities: getTop20Cities
+  getTop20Cities: getTop20Cities,
+  getHQ: getHQ,
+  getCompanyName: getCompanyName,
+  getCompanyIndustry: getCompanyIndustry,
+  getCompanyCEO: getCompanyCEO
 }
 //
