@@ -54,14 +54,34 @@ const getHousingRange = (req, res) => {
 const get10HomeValue = (req, res) => {
 
   const get10HomeValue = `
-  SELECT RegionName, StateName, AVG(Value) AS avg
+  SELECT RegionName, StateName, AVG(Value) as avg_home_value
   FROM ZillowHistoricalData
   GROUP BY RegionName, StateName
-  ORDER BY DESC
+  ORDER BY AVG(Value) DESC
   LIMIT 10
   `;
 
   connection.query(get10HomeValue, (err, rows, fields) => {
+    if (err) console.log(err);
+    else {
+      //console.log(rows);
+      res.json(rows);
+    }
+  });
+}
+
+//get top 10 cities with the most companies
+const get10NumCompanies = (req, res) => {
+
+  const get10NumCompanies = `
+  SELECT City, StateAbbr, COUNT(CompanyName) as num_companies
+  FROM StockInfo
+  GROUP BY City, StateAbbr
+  ORDER BY COUNT(CompanyName) DESC
+  LIMIT 10
+  `;
+
+  connection.query(get10NumCompanies, (err, rows, fields) => {
     if (err) console.log(err);
     else {
       //console.log(rows);
@@ -555,5 +575,6 @@ module.exports = {
   getCompanyCEO: getCompanyCEO,
   getIndustries: getIndustries,
   get10HomeValue: get10HomeValue,
+  get10NumCompanies: get10NumCompanies,
 }
 //
