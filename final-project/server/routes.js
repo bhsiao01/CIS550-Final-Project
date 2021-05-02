@@ -52,9 +52,7 @@ const getHousingRange = (req, res) => {
 
 //get top 10 cities with the highest average home value
 const get10HomeValue = (req, res) => {
-  var city_input = req.params.city;
-  var state_abrv_input = req.params.state;
-  
+
   const get10HomeValue = `
   SELECT RegionName, StateName, AVG(Value) AS avg
   FROM ZillowHistoricalData
