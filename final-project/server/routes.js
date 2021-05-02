@@ -50,6 +50,28 @@ const getHousingRange = (req, res) => {
  * Queries for the City page
  */
 
+//get top 10 cities with the highest average home value
+const get10HomeValue = (req, res) => {
+  var city_input = req.params.city;
+  var state_abrv_input = req.params.state;
+  
+  const get10HomeValue = `
+  SELECT RegionName, StateName, AVG(Value) AS avg
+  FROM ZillowHistoricalData
+  GROUP BY RegionName, StateName
+  ORDER BY DESC
+  LIMIT 10
+  `;
+
+  connection.query(get10HomeValue, (err, rows, fields) => {
+    if (err) console.log(err);
+    else {
+      //console.log(rows);
+      res.json(rows);
+    }
+  });
+}
+
 // Get simple statistics for cities
 const getCityStat = (req, res) => {
   var city_input = req.params.city;
@@ -209,7 +231,7 @@ const getCompanyName = (req, res) => {
 
   const getCompanyName = `
     SELECT CompanyName
-    FROM Stocks
+    FROM StockInfo
     WHERE StockSymbol = '${company_input}'
   `;
 
@@ -232,7 +254,7 @@ const getCompanyIndustry = (req, res) => {
 
   const getCompanyIndustry = `
     SELECT Industry
-    FROM Stocks
+    FROM StockInfo
     WHERE StockSymbol = '${company_input}'
   `;
 
@@ -256,7 +278,7 @@ const getCompanyCEO = (req, res) => {
 
   const getCompanyCEO = `
     SELECT CEO
-    FROM Stocks
+    FROM StockInfo
     WHERE StockSymbol = '${company_input}'
   `;
 
@@ -280,7 +302,7 @@ const getHQ = (req, res) => {
 
   const getCompanyHq = `
     SELECT City, StateAbbr
-    FROM Stocks
+    FROM StockInfo
     WHERE StockSymbol = '${company_input}'
   `;
 
@@ -330,6 +352,25 @@ connection.query(topTen, (err, rows, fields) => {
 }
 
 /* Industry queries */ 
+
+//gets all industries, no keyword
+const getIndustries = (req, res) => {
+  /*const db = `use master;`
+  connection.query(db, (err, rows, fields) => {})*/
+
+  const getAllIndustries = `
+    SELECT Industry
+    FROM StockInfo
+  `;
+
+  connection.query(getAllIndustries, (err, rows, fields) => {
+    if (err) console.log(err)
+    else {
+      console.log(rows)
+      res.json(rows)
+    }
+  });
+}
 
 // Find the city with the highest mean ZHVI out of all cities with company headquarters of companies in an input industry.
 const meanPrice = (req, res) => {
@@ -508,12 +549,13 @@ module.exports = {
   getHomesFromSector: getHomesFromSector,
   getTop10StocksPerIndustry: getTop10StocksPerIndustry,
   getHomesFromSector: getHomesFromSector,
-  getHomesFromSector: getHomesFromSector,
   getTop10RevByIndustry: getTop10RevByIndustry,
   getTop20Cities: getTop20Cities,
   getHQ: getHQ,
   getCompanyName: getCompanyName,
   getCompanyIndustry: getCompanyIndustry,
-  getCompanyCEO: getCompanyCEO
+  getCompanyCEO: getCompanyCEO,
+  getIndustries: getIndustries,
+  get10HomeValue: get10HomeValue,
 }
 //
