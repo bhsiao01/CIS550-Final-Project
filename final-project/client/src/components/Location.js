@@ -16,7 +16,11 @@ const parseURL = (url) => {
     let index = url.indexOf('/', 10)
     let city = url.slice(10, index)
     // standardize casing
-    city = city.substring(0, 1).toUpperCase() + city.substring(1).toLowerCase()
+    let words = city.split(" ")
+    for (let i = 0; i < words.length; i++) {
+      words[i] = words[i].substring(0, 1).toUpperCase() + words[i].substring(1).toLowerCase()
+    }
+    city = words.join(" ")
     return [city, state]
   }
 
@@ -40,8 +44,7 @@ const fetchCoords = (item) => {
 const geocodeAllCities = async (cityList) => {
   return Promise.all(
     cityList.map((city) => {
-      fetchCoords(city).then((val) => (city.loc = val))
-      return city
+      return fetchCoords(city).then((val) => val)
     })
   )
 }
@@ -49,9 +52,8 @@ const geocodeAllCities = async (cityList) => {
 const Location = () => {
   // useLocation().pathname will return '/location/city/state'
   let url = useLocation().pathname
-  const [city, setCity] = useState(parseURL(url)[0])
-  const [state, setState] = useState(parseURL(url)[1])
-  const [avgHome, setAvgHome] = useState([])
+  const [city] = useState(parseURL(url)[0])
+  const [state] = useState(parseURL(url)[1])
   const [cityStat, setCityStat] = useState([])
   const [forecast, setForecast] = useState([])
   const [companies, setCompanies] = useState([])
@@ -102,91 +104,89 @@ const Location = () => {
   return (
     <>
       <NavBar />
-      <Grid
-        container
-        direction={'row'}
-        spacing={4}
-        style={{ textAlign: 'left' }}
-      >
-        <Grid item xs={1} />
-        <Grid item xs={10}>
-          <h2>
-            {city}, {state}
-          </h2>
-          {cityCoords && (
-            <>
-            {console.log(cityCoords)}
-            <LocationMap cities={cityCoords} center={defaultCenter} />
-            </>
-          )}
-          <Grid container direction={'row'} spacing={4}>
-            <Grid item xs={6}>
-              <Card>
-                <CardContent>
-                  <h3>Home Value Statistics</h3>
-                  {cityStat.map((city) => (
-                    <div key={city}>
-                      <p>
-                        Average Home Value: $
-                        {Number(Number(city.mean).toFixed(2)).toLocaleString()}
+      {state ? (
+        <Grid
+          container
+          direction={'row'}
+          spacing={4}
+          style={{ textAlign: 'left' }}
+        >
+          <Grid item xs={1} />
+          <Grid item xs={10}>
+            <h2>
+              {city}, {state}
+            </h2>
+            <Grid container direction={'row'} spacing={4}>
+              <Grid item xs={4}>
+                <Card>
+                  <CardContent>
+                    <h3>Home Value Statistics</h3>
+                    {cityStat.map((city) => (
+                      <div key={city}>
+                        <p>
+                          Average Home Value: $
+                          {Number(
+                            Number(city.mean).toFixed(2)
+                          ).toLocaleString()}
+                        </p>
+                        <p>
+                          Minimum Home Value: $
+                          {Number(Number(city.min).toFixed(2)).toLocaleString()}
+                        </p>
+                        <p>
+                          Maximum Home Value: $
+                          {Number(Number(city.max).toFixed(2)).toLocaleString()}
+                        </p>
+                      </div>
+                    ))}
+                    {forecast.map((city) => (
+                      <div key={city}>
+                        <p>Forecasted Change: {city.Forecast.toFixed(3)}%</p>
+                      </div>
+                    ))}
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardContent>
+                    <h3>
+                      Companies headquarted in {city}, {state}
+                    </h3>
+                    {companies.map((comp) => (
+                      <p key={comp.StockSymbol}>
+                        <a href={'../../company/' + comp.StockSymbol}>
+                          {comp.CompanyName} ({comp.StockSymbol})
+                        </a>
                       </p>
-                      <p>
-                        Minimum Home Value: $
-                        {Number(Number(city.min).toFixed(2)).toLocaleString()}
-                      </p>
-                      <p>
-                        Maximum Home Value: $
-                        {Number(Number(city.max).toFixed(2)).toLocaleString()}
-                      </p>
-                    </div>
-                  ))}
-                  {forecast.map((city) => (
-                    <div key={city}>
-                      <p>Forecasted Change: {city.Forecast.toFixed(3)}%</p>
-                    </div>
-                  ))}
-                </CardContent>
-              </Card>
-              <Card>
-                <CardContent>
-                  <h3>Other cities in {state} by housing value</h3>
-                  {/* {top20.map((comp) => (
-                    <div>
-                      <p>
-                        {comp.City}, {comp.StateAbbr}:
-                      </p>
-                      <p>{comp.NumCompanies} companies</p>
-                      <p>
-                        Average price:{' '}
-                        {Number(
-                          Number(comp.AvgPrice).toFixed(2)
-                        ).toLocaleString()}
-                        , Forecasted change:{' '}
-                        {comp.ForecastYoYPctChange.toFixed(3)}%
-                      </p>
-                    </div>
-                  ))} */}
-                </CardContent>
-              </Card>
-            </Grid>
-            <Grid item xs={6}>
-              <Card>
-                <CardContent>
-                  <h3>
-                    Companies headquarted in {city}, {state}
-                  </h3>
-                  {companies.map((comp) => (
-                    <p key={comp.StockSymbol}>
-                      {comp.CompanyName} ({comp.StockSymbol})
+                    ))}
+                  </CardContent>
+                </Card>
+              </Grid>
+              <Grid item xs={8}>
+                <Card>
+                  <CardContent>
+                    <h3>Cities with the most housing growth in {state}</h3>
+                    <p>
+                      The map below displays cities with the highest forecasted
+                      housing value growth, based on Zillow's Home Value Index.
+                      Click on the markers to learn more about each city.
                     </p>
-                  ))}
-                </CardContent>
-              </Card>
+                    {cityCoords && (
+                      <LocationMap
+                        cities={top20}
+                        coords={cityCoords}
+                        center={defaultCenter}
+                      />
+                    )}
+                  </CardContent>
+                </Card>
+              </Grid>
             </Grid>
           </Grid>
+          <Grid item xs={2} />
         </Grid>
-        <Grid item xs={2} />
-      </Grid>
+      ) : (
+        <h2>Location</h2>
+      )}
     </>
   )
 }
