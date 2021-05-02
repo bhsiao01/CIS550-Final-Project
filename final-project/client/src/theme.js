@@ -12,6 +12,7 @@ const theme = createMuiTheme({
   typography: {
     button: {
       textTransform: 'none',
+      fontFamily: 'Vollkorn'
     }
   },
   overrides: {
