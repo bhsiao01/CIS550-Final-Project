@@ -43,7 +43,7 @@ const LocationMap = ({ cities, coords, center }) => {
                     <a href={"/location/" + selected.City + "/" + selected.StateAbbr}>
                       <b>{selected.City}, {selected.StateAbbr}</b>
                     </a>
-                    <p>{selected.NumCompanies} companies headquarted</p>
+                    <p>{selected.NumCompanies} companies headquartered</p>
                     <p>
                       Avg Stock Price:{' $'}
                       {Number(
