@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import {
   GoogleMap,
   LoadScript,
@@ -13,8 +13,6 @@ const mapStyles = {
   width: '100%',
   height: '90vh',
 }
-
-const google=window.google;
 
 const LocationMap = ({ cities, coords, center, inputCity }) => {
   const [selected, setSelected] = useState({})

@@ -46,7 +46,6 @@ const Company = (props) => {
         <Grid item xs={1} />
         <Grid item xs={10}>
           <h2>Stock Prices for {company}</h2>
-          {industry}
           <Card>
             <CardContent>
             <h3>Price Statistics</h3>
