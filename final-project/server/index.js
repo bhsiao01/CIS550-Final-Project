@@ -36,14 +36,10 @@ app.get("/getHousingRange/:min/:max", routes.getHousingRange);
 // done
 app.get("/getTop20Cities/:state", routes.getTop20Cities);
 
-<<<<<<< HEAD
 //calling app.get for city ranking in terms of range
 // done
 app.get("/getCityRanking/:state", routes.getCityRanking);
 
-
-=======
->>>>>>> 7e8bd4341fb5a0b89baec9ff68f62c4243002c0e
 //calling app.get for simple city stats
 // done
 app.get("/getCompStat/:city/:state", routes.getCompStat);
