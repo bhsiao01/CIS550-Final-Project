@@ -49,17 +49,24 @@ const Company = (props) => {
       >
         <Grid item xs={1} />
         <Grid item xs={10}>
-          <h2>Stock Prices for {company}</h2>
+          <h2>{company}</h2>
           {loading ? (
-            <>
-              <p>Loading...</p>
-              <LinearProgress />
-            </>
+            <LinearProgress />
+          ) : prices.length > 0 ? (
+            <Card>
+              <CardContent>
+                <h3>Stock Price Statistics</h3>
+                <StockChart prices={prices} />
+              </CardContent>
+            </Card>
           ) : (
             <Card>
               <CardContent>
-                <h3>Price Statistics</h3>
-                <StockChart prices={prices} />
+                <p>
+                  No results were found for {company}. This may be because{' '}
+                  {company} is not included in our dataset.
+                  <a href="/">Try searching for another company</a>.
+                </p>
               </CardContent>
             </Card>
           )}

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useLocation } from 'react-router'
 import axios from 'axios'
 import NavBar from './NavBar'
-import { Grid, LinearProgress } from '@material-ui/core'
+import { Grid, LinearProgress, Card, CardContent } from '@material-ui/core'
 
 // parses URL queries for price min and max.
 const parseURL = (url) => {
@@ -49,10 +49,10 @@ const PriceRange = () => {
         <Grid item xs={6}>
           {loading ? (
             <>
-              <p>Loading...</p>
+            <p>Loading...</p>
               <LinearProgress />
             </>
-          ) : (
+          ) : cities.length > 0 ? (
             <>
               {cities.length} cities were found with housing prices in the range
               ${min} - ${max}
@@ -68,6 +68,15 @@ const PriceRange = () => {
                 </div>
               ))}
             </>
+          ) : (
+            <Card>
+              <CardContent>
+                <p>
+                  No results were found for the range ${min} - ${max}.
+                  <a href="/">Try searching again</a>.
+                </p>
+              </CardContent>
+            </Card>
           )}
         </Grid>
         <Grid item xs={3} />
