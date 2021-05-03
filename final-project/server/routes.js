@@ -7,6 +7,7 @@ var connection = mysql.createConnection({
   password: 'G!raffeS3aweed',
   database: 'master',
   port: 3306,
+  multipleStatements: true
 })
 
 connection.connect(function (err) {
@@ -182,6 +183,7 @@ const getAverageHome = (req, res) => {
 const getTop20Cities = (req, res) => {
   var state_input = req.params.state; 
   const topTwenty = `
+
   WITH AvgForecastedValues AS (
     SELECT RegionName, StateName, ForecastedDate, AVG(ForecastYoYPctChange) AS ForecastYoYPctChange
     FROM ZillowForecast
@@ -189,11 +191,11 @@ const getTop20Cities = (req, res) => {
     GROUP BY RegionName, StateName, ForecastedDate
   ),
   StockPricesByCity AS (
-    SELECT I.City, I.StateAbbr, COUNT(DISTINCT I.StockSymbol) AS NumCompanies, AVG(S.Close) AS AvgPrice
+    SELECT I.City, I.StateAbbr, COUNT(*) AS NumCompanies, AVG(S.Close) AS AvgPrice
     FROM Stocks S JOIN StockInfo I ON I.StockSymbol = S.StockSymbol
-    WHERE I.StateAbbr = '${state_input}' AND Date >= '2020-01-01'
+    WHERE I.StateAbbr = '${state_input}' AND Date >= '2019-01-01'
     GROUP BY I.City, I.StateAbbr
-  ), 
+  ),
   MatchedCities AS (
     SELECT S.City, S.StateAbbr, S.NumCompanies, S.AvgPrice, F.ForecastYoYPctChange
     FROM StockPricesByCity S JOIN AvgForecastedValues F ON RegionName = City AND StateName = StateAbbr
@@ -216,9 +218,6 @@ const getCityRanking = (req, res) => {
   var state_input = req.params.state;
   const ranking = `
     SET @row_num = 0;
-
-    CREATE INDEX StockValueIndex ON ZillowHistoricalData (Value);
-    
     WITH HousingValues AS (
         SELECT Z.RegionName, Z.StateName, MAX(Value) - MIN(Value) AS HousingValueChange
         FROM ZillowHistoricalData Z 
@@ -229,6 +228,18 @@ const getCityRanking = (req, res) => {
       SELECT H.RegionName, H.StateName, H.HousingValueChange, (@row_num:=@row_num + 1) AS row_num
       FROM HousingValues H;
   `
+
+  // const ranking = `
+  //   WITH HousingValues AS (
+  //       SELECT Z.RegionName, Z.StateName, MAX(Value) - MIN(Value) AS HousingValueChange
+  //       FROM ZillowHistoricalData Z 
+  //       WHERE Z.StateName = '${state_input}'
+  //       GROUP BY Z.RegionName, Z.StateName
+  //       ORDER BY HousingValueChange DESC
+  //       )
+  //     SELECT H.RegionName, H.StateName, H.HousingValueChange, (@row_num:=@row_num + 1) AS row
+  //     FROM HousingValues H, (SELECT @row_num:=0) as temp;
+  // `
   connection.query(ranking, (err, rows, fields) => {
     if (err) console.log(err)
     else {
@@ -368,22 +379,25 @@ const getTop10StocksPerIndustry = (req, res) => {
     WITH HighPrice AS (
       SELECT S.StockSymbol, MAX(High) AS MaxPrice
       FROM Stocks S JOIN StockInfo I ON S.StockSymbol = I.StockSymbol
-      WHERE S.Date >= '2020-01-01' AND I.Sector = '${industry_input}'
+      WHERE S.Date >= '2019-01-01' AND I.Sector = '${industry_input}'
       GROUP BY StockSymbol
     ),
     PriceIndustry AS (
       SELECT S.StockSymbol, P.MaxPrice, S.Sector
       FROM HighPrice P JOIN StockInfo S ON P.StockSymbol = S.StockSymbol
       WHERE S.Sector = '${industry_input}'
-    )
+    ),
+    MaxPrices AS (
+      SELECT MaxPrice
+      FROM PriceIndustry
+      WHERE Sector = ${industry_input}
+      ORDER BY MaxPrice DESC
+      LIMIT 10
+    )  
     SELECT DISTINCT S.StockSymbol, I.Sector, I.CompanyName, P.MaxPrice
     FROM Stocks S JOIN StockInfo I ON I.StockSymbol = S.StockSymbol JOIN PriceIndustry P ON I.StockSymbol = P.StockSymbol
-    WHERE S.Date >= '2020-01-01' AND S.High >= 
-    (SELECT MIN(MaxPrice) 
-    FROM PriceIndustry 
-    WHERE Sector = 'Technology'
-    ORDER BY MaxPrice DESC
-    LIMIT 10);
+    WHERE S.Date >= '2019-01-01' AND S.High >= (SELECT MIN(MaxPrice)
+    FROM MaxPrices);
   `;
 
 connection.query(topTen, (err, rows, fields) => {

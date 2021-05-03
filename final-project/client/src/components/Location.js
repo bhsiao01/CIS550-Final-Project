@@ -60,6 +60,7 @@ const Location = () => {
   const [top20, setTop20] = useState([])
   const [cityCoords, setCityCoords] = useState()
   const [defaultCenter, setDefaultCenter] = useState()
+  const [ranking, setRanking] = useState()
 
   useEffect(() => {
     axios
@@ -86,6 +87,11 @@ const Location = () => {
         geocodeAllCities(response.data).then((data) => {
           setCityCoords(data)
         })
+      })
+    axios
+      .get('http://localhost:8081/getCityRanking/' + state)
+      .then((response) => {
+        setRanking(response.data)
       })
 
     // set default center of map to state's coordinates
@@ -142,6 +148,11 @@ const Location = () => {
                     {forecast.map((city) => (
                       <div key={city}>
                         <p>Forecasted Change: {city.Forecast.toFixed(3)}%</p>
+                      </div>
+                    ))}
+                    {ranking.map((rank) => (
+                      <div key={rank}>
+                        <p>{rank.RegionName} is ranked No. {rank.row} in terms of the largest range in housing prices</p>
                       </div>
                     ))}
                   </CardContent>
