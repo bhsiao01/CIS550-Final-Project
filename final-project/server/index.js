@@ -40,7 +40,6 @@ app.get("/getTop20Cities/:state", routes.getTop20Cities);
 // done
 app.get("/getCityRanking/:state", routes.getCityRanking);
 
-
 //calling app.get for simple city stats
 // done
 app.get("/getCompStat/:city/:state", routes.getCompStat);

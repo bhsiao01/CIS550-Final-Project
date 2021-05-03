@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useLocation } from 'react-router'
 import axios from 'axios'
 import NavBar from './NavBar'
-import { Grid, Card, CardContent } from '@material-ui/core'
+import { Grid, Card, CardContent, LinearProgress } from '@material-ui/core'
 import LocationMap from './LocationMap'
 import Geocode from 'react-geocode'
 import config from '../config.json'
@@ -16,11 +16,13 @@ const parseURL = (url) => {
     let index = url.indexOf('/', 10)
     let city = url.slice(10, index)
     // standardize casing
-    let words = city.split(" ")
+    let words = city.split(' ')
     for (let i = 0; i < words.length; i++) {
-      words[i] = words[i].substring(0, 1).toUpperCase() + words[i].substring(1).toLowerCase()
+      words[i] =
+        words[i].substring(0, 1).toUpperCase() +
+        words[i].substring(1).toLowerCase()
     }
-    city = words.join(" ")
+    city = words.join(' ')
     return [city, state]
   }
 
@@ -60,7 +62,7 @@ const Location = () => {
   const [top20, setTop20] = useState([])
   const [cityCoords, setCityCoords] = useState()
   const [defaultCenter, setDefaultCenter] = useState()
-  const [ranking, setRanking] = useState()
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     axios
@@ -87,11 +89,7 @@ const Location = () => {
         geocodeAllCities(response.data).then((data) => {
           setCityCoords(data)
         })
-      })
-    axios
-      .get('http://localhost:8081/getCityRanking/' + state)
-      .then((response) => {
-        setRanking(response.data)
+        setLoading(false)
       })
 
     // set default center of map to state's coordinates
@@ -121,56 +119,71 @@ const Location = () => {
           <Grid item xs={10}>
             <h2>
               {city}, {state}
+              {loading && (<LinearProgress />)}
             </h2>
             <Grid container direction={'row'} spacing={4}>
               <Grid item xs={4}>
-                <Card>
-                  <CardContent>
-                    <h3>Home Value Statistics</h3>
-                    {cityStat.map((city) => (
-                      <div key={city}>
-                        <p>
-                          Average Home Value: $
-                          {Number(
-                            Number(city.mean).toFixed(2)
-                          ).toLocaleString()}
-                        </p>
-                        <p>
-                          Minimum Home Value: $
-                          {Number(Number(city.min).toFixed(2)).toLocaleString()}
-                        </p>
-                        <p>
-                          Maximum Home Value: $
-                          {Number(Number(city.max).toFixed(2)).toLocaleString()}
-                        </p>
-                      </div>
-                    ))}
-                    {forecast.map((city) => (
-                      <div key={city}>
-                        <p>Forecasted Change: {city.Forecast.toFixed(3)}%</p>
-                      </div>
-                    ))}
-                    {ranking.map((rank) => (
-                      <div key={rank}>
-                        <p>{rank.RegionName} is ranked No. {rank.row} in terms of the largest range in housing prices</p>
-                      </div>
-                    ))}
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardContent>
-                    <h3>
-                      Companies headquarted in {city}, {state}
-                    </h3>
-                    {companies.map((comp) => (
-                      <p key={comp.StockSymbol}>
-                        <a href={'../../company/' + comp.StockSymbol}>
-                          {comp.CompanyName} ({comp.StockSymbol})
-                        </a>
+                {!loading && cityStat.length === 0 && companies.length === 0 && (
+                  <Card>
+                    <CardContent>
+                      <p>
+                        No results were found for {city}, {state}. This may be
+                        because {city}, {state} is not included in our dataset.
+                        <a href="/">Try searching for another city</a>.
                       </p>
-                    ))}
-                  </CardContent>
-                </Card>
+                    </CardContent>
+                  </Card>
+                )}
+                {cityStat.length > 0 && (
+                  <Card>
+                    <CardContent>
+                      <h3>Home Value Statistics</h3>
+                      {cityStat.map((city) => (
+                        <div key={city}>
+                          <p>
+                            Average Home Value: $
+                            {Number(
+                              Number(city.mean).toFixed(2)
+                            ).toLocaleString()}
+                          </p>
+                          <p>
+                            Minimum Home Value: $
+                            {Number(
+                              Number(city.min).toFixed(2)
+                            ).toLocaleString()}
+                          </p>
+                          <p>
+                            Maximum Home Value: $
+                            {Number(
+                              Number(city.max).toFixed(2)
+                            ).toLocaleString()}
+                          </p>
+                        </div>
+                      ))}
+                      {forecast.map((city) => (
+                        <div key={city}>
+                          <p>Forecasted Change: {city.Forecast.toFixed(3)}%</p>
+                        </div>
+                      ))}
+                    </CardContent>
+                  </Card>
+                )}
+                {companies.length > 0 && (
+                  <Card>
+                    <CardContent>
+                      <h3>
+                        Companies headquarted in {city}, {state}
+                      </h3>
+                      {companies.map((comp) => (
+                        <p key={comp.StockSymbol}>
+                          <a href={'../../company/' + comp.StockSymbol}>
+                            {comp.CompanyName} ({comp.StockSymbol})
+                          </a>
+                        </p>
+                      ))}
+                    </CardContent>
+                  </Card>
+                )}
               </Grid>
               <Grid item xs={8}>
                 <Card>
