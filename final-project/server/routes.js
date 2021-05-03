@@ -212,6 +212,32 @@ connection.query(topTwenty, (err, rows, fields) => {
   })
 }
 
+const getCityRanking = (req, res) => {
+  var state_input = req.params.state;
+  const ranking = `
+    SET @row_num = 0;
+
+    CREATE INDEX StockValueIndex ON ZillowHistoricalData (Value);
+    
+    WITH HousingValues AS (
+        SELECT Z.RegionName, Z.StateName, MAX(Value) - MIN(Value) AS HousingValueChange
+        FROM ZillowHistoricalData Z 
+        WHERE Z.StateName = '${state_input}'
+        GROUP BY Z.RegionName, Z.StateName
+        ORDER BY HousingValueChange DESC
+        )
+      SELECT H.RegionName, H.StateName, H.HousingValueChange, (@row_num:=@row_num + 1) AS row_num
+      FROM HousingValues H;
+  `
+  connection.query(ranking, (err, rows, fields) => {
+    if (err) console.log(err)
+    else {
+      console.log(rows)
+      res.json(rows)
+    }
+  })
+}
+
 /* Companies queries */ 
 //gets 30 day stock data for a given company
 const get30Day = (req, res) => {
@@ -576,5 +602,6 @@ module.exports = {
   getIndustries: getIndustries,
   get10HomeValue: get10HomeValue,
   get10NumCompanies: get10NumCompanies,
+  getCityRanking: getCityRanking
 }
 //
