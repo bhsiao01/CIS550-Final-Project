@@ -218,15 +218,41 @@ const getCityRanking = (req, res) => {
   var state_input = req.params.state;
   const ranking = `
     SET @row_num = 0;
-    WITH HousingValues AS (
-        SELECT Z.RegionName, Z.StateName, MAX(Value) - MIN(Value) AS HousingValueChange
-        FROM ZillowHistoricalData Z 
-        WHERE Z.StateName = '${state_input}'
-        GROUP BY Z.RegionName, Z.StateName
+    CREATE INDEX ZillowHistoricalDate ON ZillowHistoricalData (Date);
+    WITH FirstYear AS (
+      SELECT RegionName, StateName, MIN(Date) AS FirstDate
+      FROM ZillowHistoricalData 
+      WHERE StateName = '${state_input}' AND Date >= '1996-01-01'
+      GROUP BY RegionName, StateName
+      ORDER BY FirstDate
+    ),
+    LastYear AS (
+      SELECT RegionName, StateName, Date, MAX(Date) AS LastDate
+      FROM ZillowHistoricalData
+      WHERE StateName = '${state_input}'
+      GROUP BY RegionName, StateName
+      ORDER BY Date DESC
+    ),
+    FirstYearValues AS (
+      SELECT Z.RegionName, Z.StateName, AVG(Z.Value) AS FirstYearValue
+      FROM ZillowHistoricalData Z JOIN FirstYear F ON Z.RegionName = F.RegionName AND Z.StateName = F.StateName
+      WHERE YEAR(Z.Date) = YEAR(F.FirstDate)
+      GROUP BY Z.RegionName, Z.StateName
+    ),
+    LastYearValues AS (
+      SELECT Z.RegionName, Z.StateName, AVG(Z.Value) AS LastYearValue
+      FROM ZillowHistoricalData Z JOIN LastYear L ON Z.RegionName = L.RegionName AND Z.StateName = L.StateName
+      WHERE YEAR(Z.Date) = YEAR(L.LastDate)
+      GROUP BY Z.RegionName, Z.StateName
+    ),
+     HousingValues AS (
+        SELECT F.RegionName, F.StateName, L.LastYearValue - F.FirstYearValue AS HousingValueChange
+        FROM FirstYearValues F JOIN LastYearValues L ON F.RegionName = L.RegionName AND F.StateName = L.StateName
+        WHERE F.StateName = '${state_input}'
         ORDER BY HousingValueChange DESC
         )
-      SELECT H.RegionName, H.StateName, H.HousingValueChange, (@row_num:=@row_num + 1) AS row_num
-      FROM HousingValues H;
+    SELECT H.RegionName, H.StateName, H.HousingValueChange, (@row_num:=@row_num + 1) AS row_num
+    FROM HousingValues H;
   `
 
   // const ranking = `
