@@ -34,6 +34,10 @@ const Company = (props) => {
   const [industry, setIndustry] = useState([])
   const [currYear, setCurrYear] = useState(2020)
   const [allYears, setAllYears] = useState([])
+  const [revenue, setRevenue] = useState([])
+  const [companyName, setCompanyName] = useState([])
+  const [companyCeo, setCompanyCEO] = useState([])
+  const [companyHq, setCompanyHQ] = useState([])
 
   //want to add in where company is headquartered + some simple housing stats (maybe)
 
@@ -50,10 +54,30 @@ const Company = (props) => {
         setAllYears(response.data)
       })
     axios
-      .get('http://localhost:8081/getCompanyIndustry/' + company)
+      .get('http://localhost:8081/getIndustryFromCompany/' + company)
       .then((response) => {
         setIndustry(response.data)
       })
+    axios
+    .get('http://localhost:8081/getCompanyRevenue/' + company)
+    .then((response) => {
+      setRevenue(response.data)
+    })
+    axios
+    .get('http://localhost:8081/getCompanyName/' + company)
+    .then((response) => {
+      setCompanyName(response.data)
+    })
+    axios
+    .get('http://localhost:8081/getCompanyCEO/' + company)
+    .then((response) => {
+      setCompanyCEO(response.data)
+    })
+    axios
+    .get('http://localhost:8081/getCompanyHQ/' + company)
+    .then((response) => {
+      setCompanyHQ(response.data)
+    })
   }, [company, currYear])
 
   return (
@@ -62,12 +86,13 @@ const Company = (props) => {
       <Grid
         container
         direction={'row'}
-        spacing={4}
         style={{ textAlign: 'left' }}
       >
         <Grid item xs={1} />
         <Grid item xs={10}>
-          <h2>{company}</h2>
+          {companyName.map((name) => (
+            <h2>{name.CompanyName} ({company})</h2>
+          ))}
           {loading ? (
             <LinearProgress />
           ) : prices.length > 0 ? (
@@ -91,6 +116,7 @@ const Company = (props) => {
                 <StockChart prices={prices} />
               </CardContent>
             </Card>
+
           ) : (
             <Card>
               <CardContent>
@@ -101,7 +127,23 @@ const Company = (props) => {
                 </p>
               </CardContent>
             </Card>
-          )}
+          )} {(<Card>
+                <CardContent>
+                  <h3> Stock Information </h3>
+                  {companyHq.map((hq) => (
+                    <p>Headquarters: {hq.City}, {hq.StateAbbr}</p>
+                  ))}
+                  {companyCeo.map((ceo) => (
+                    <p>CEO: {ceo.CEO}</p>
+                  ))}
+                  {industry.map((sector) => (
+                  <p>Industry: {sector.Sector}</p>
+                  ))}
+                  {revenue.map((revenue) => (
+                    <p>Revenue (in millions): {revenue.Revenue}</p>
+                  ))}
+                </CardContent>
+              </Card>) }
         </Grid>
       </Grid>
     </div>

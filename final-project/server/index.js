@@ -43,6 +43,18 @@ app.get('/getCompStat/:city/:state', routes.getCompStat)
 
 /* COMPANY QUERIES */
 
+//calling app.get to get company name
+app.get('/getCompanyName/:ticker', routes.getCompanyName)
+
+//calling app.get to get stock revenu
+app.get('/getCompanyRevenue/:ticker', routes.getRevenue)
+
+//calling app.get to get company CEO
+app.get('/getCompanyCEO/:ticker', routes.getCompanyCEO)
+
+//calling app.get to get company HQ
+app.get('/getCompanyHQ/:ticker', routes.getHQ)
+
 //calling app.get for stock history of year
 app.get('/getStockByYear/:ticker/:year', routes.getStockByYear)
 

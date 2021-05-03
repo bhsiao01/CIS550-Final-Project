@@ -273,6 +273,28 @@ const getCityRanking = (req, res) => {
 }
 
 /* Companies queries */ 
+
+//gets company revnue by company ticker
+const getRevenue = (req, res) => {
+  var company_input = req.params.ticker;
+  var year_input = req.params.year
+  console.log(company_input);
+
+  const stockRevenue = `
+    SELECT Revenue
+    FROM StockInfo
+    WHERE StockSymbol = '${company_input}'
+  `;
+
+  connection.query(stockRevenue, (err, rows, fields) => {
+    if (err) console.log(err)
+    else {
+      console.log(rows)
+      res.json(rows)
+    }
+  });
+}
+
 //gets year of stock data for a given company
 const getStockByYear = (req, res) => {
   var company_input = req.params.ticker;
@@ -656,5 +678,6 @@ module.exports = {
   get10NumCompanies: get10NumCompanies,
   getCityRanking: getCityRanking,
   getYearsfromTicker: getYearsfromTicker,
+  getRevenue: getRevenue,
 }
 //
