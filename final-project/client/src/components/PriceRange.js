@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useLocation } from 'react-router'
 import axios from 'axios'
 import NavBar from './NavBar'
-import { Grid } from '@material-ui/core'
+import { Grid, LinearProgress } from '@material-ui/core'
 
 // parses URL queries for price min and max.
 const parseURL = (url) => {
@@ -20,6 +20,7 @@ const parseURL = (url) => {
 const PriceRange = () => {
   // useLocation().pathname will return '/price/minPrice/maxPrice'
   let url = useLocation().pathname
+  const [loading, setLoading] = useState(true)
   const [min, setMin] = useState(parseURL(url)[0])
   const [max, setMax] = useState(parseURL(url)[1])
   const [cities, setCities] = useState([])
@@ -31,6 +32,7 @@ const PriceRange = () => {
       .get('http://localhost:8081/getHousingRange/' + min + '/' + max)
       .then((response) => {
         setCities(response.data)
+        setLoading(false)
       })
   }, [min, max])
 
@@ -41,26 +43,32 @@ const PriceRange = () => {
         container
         direction={'row'}
         spacing={4}
-        alignItems="center"
-        style={{ height: '75vh' }}
+        style={{ textAlign: 'left' }}
       >
         <Grid item xs={3} />
         <Grid item xs={6}>
-          {cities.length} cities were found with housing prices in the range $
-          {min} - ${max}
-          <div style={{ textAlign: 'left' }}>
-            {cities.map((city) => (
-              <div>
-                <p style={{ fontWeight: 600 }}>
-                  {city.RegionName}, {city.StateName}
-                </p>
-                <p>
-                  {' '}
-                  ${city.Min} - ${city.Max}
-                </p>
-              </div>
-            ))}
-          </div>
+          {loading ? (
+            <>
+              <p>Loading...</p>
+              <LinearProgress />
+            </>
+          ) : (
+            <>
+              {cities.length} cities were found with housing prices in the range
+              ${min} - ${max}
+              {cities.map((city) => (
+                <div>
+                  <p style={{ fontWeight: 600 }}>
+                    {city.RegionName}, {city.StateName}
+                  </p>
+                  <p>
+                    {' '}
+                    ${city.Min} - ${city.Max}
+                  </p>
+                </div>
+              ))}
+            </>
+          )}
         </Grid>
         <Grid item xs={3} />
       </Grid>

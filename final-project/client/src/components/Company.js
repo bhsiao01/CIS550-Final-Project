@@ -3,7 +3,7 @@ import { useLocation } from 'react-router'
 import axios from 'axios'
 import NavBar from './NavBar'
 import StockChart from './StockChart'
-import { Grid, Card, CardContent } from '@material-ui/core'
+import { Grid, Card, CardContent, LinearProgress } from '@material-ui/core'
 
 // parses URL queries for company name.
 const parseURL = (url) => {
@@ -19,6 +19,7 @@ const parseURL = (url) => {
 const Company = (props) => {
   // useLocation().pathname will return '/company/ticker'
   let url = useLocation().pathname
+  const [loading, setLoading] = useState(true)
   const [company, setCompany] = useState(parseURL(url))
   const [prices, setPrices] = useState([])
   const [industry, setIndustry] = useState([])
@@ -28,10 +29,13 @@ const Company = (props) => {
   useEffect(() => {
     axios.get('http://localhost:8081/get30day/' + company).then((response) => {
       setPrices(response.data)
+      setLoading(false)
     })
-    axios.get('http://localhost:8081/getCompanyIndustry/' + company).then((response) => {
-      setIndustry(response.data)
-    })
+    axios
+      .get('http://localhost:8081/getCompanyIndustry/' + company)
+      .then((response) => {
+        setIndustry(response.data)
+      })
   }, [company])
 
   return (
@@ -46,12 +50,19 @@ const Company = (props) => {
         <Grid item xs={1} />
         <Grid item xs={10}>
           <h2>Stock Prices for {company}</h2>
-          <Card>
-            <CardContent>
-            <h3>Price Statistics</h3>
-            <StockChart prices={prices} />
-            </CardContent>
-          </Card>
+          {loading ? (
+            <>
+              <p>Loading...</p>
+              <LinearProgress />
+            </>
+          ) : (
+            <Card>
+              <CardContent>
+                <h3>Price Statistics</h3>
+                <StockChart prices={prices} />
+              </CardContent>
+            </Card>
+          )}
         </Grid>
       </Grid>
     </div>
