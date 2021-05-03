@@ -178,10 +178,10 @@ const Location = () => {
                             return (
                               <>
                                 <p>
-                                  Ranked <b>{row.row_num}</b> in housing value
+                                  Ranked <b>#{Number(row.row_num).toLocaleString()}</b> in housing value
                                   growth in {state}. Housing values have
                                   increased by $
-                                  {row.HousingValueChange.toFixed(2)} in the
+                                  {Number(row.HousingValueChange.toFixed(2)).toLocaleString()} in the
                                   past 20 years.
                                 </p>
                               </>
@@ -190,9 +190,9 @@ const Location = () => {
                             return (
                               <>
                                 <p>
-                                  Ranked {row.row_num} in housing value growth
+                                  Ranked <b>#{Number(row.row_num).toLocaleString()}</b> in housing value growth
                                   in {state}. Housing values have decreased by $
-                                  {row.HousingValueChange.toFixed(2)} in the
+                                  {Number(row.HousingValueChange.toFixed(2)).toLocaleString()} in the
                                   past 20 years.
                                 </p>
                               </>
