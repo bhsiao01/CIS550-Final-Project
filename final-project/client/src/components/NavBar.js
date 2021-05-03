@@ -14,7 +14,7 @@ const NavBar = () => {
       >
         <Grid item xs={3} style={{ textAlign: 'left' }}>
           <Link to="/" style={{ textDecoration: 'none' }}>
-            <Button size="large">what's this called</Button>
+            <Button size="large">Home</Button>
           </Link>
         </Grid>
         <Grid item xs={9} style={{ textAlign: 'right' }}>

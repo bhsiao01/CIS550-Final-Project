@@ -10,9 +10,11 @@
   "author": "Gregory Kofman <kofmangregory@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "@react-firebase/auth": "^0.2.10",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "express": "^4.17.1",
+    "firebase": "^8.4.3",
     "mysql": "^2.18.1"
   }
 }
