@@ -21,12 +21,16 @@ const Company = (props) => {
   let url = useLocation().pathname
   const [company, setCompany] = useState(parseURL(url))
   const [prices, setPrices] = useState([])
+  const [industry, setIndustry] = useState([])
 
   //want to add in where company is headquartered + some simple housing stats (maybe)
 
   useEffect(() => {
     axios.get('http://localhost:8081/get30day/' + company).then((response) => {
       setPrices(response.data)
+    })
+    axios.get('http://localhost:8081/getCompanyIndustry/' + company).then((response) => {
+      setIndustry(response.data)
     })
   }, [company])
 

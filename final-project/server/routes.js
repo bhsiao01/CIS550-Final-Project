@@ -297,7 +297,7 @@ const getCompanyIndustry = (req, res) => {
   connection.query(db, (err, rows, fields) => {})*/
 
   const getCompanyIndustry = `
-    SELECT Industry
+    SELECT Sector
     FROM StockInfo
     WHERE StockSymbol = '${company_input}'
   `;
@@ -403,7 +403,7 @@ const getIndustries = (req, res) => {
   connection.query(db, (err, rows, fields) => {})*/
 
   const getAllIndustries = `
-    SELECT Industry
+    SELECT Sector
     FROM StockInfo
   `;
 

@@ -7,6 +7,7 @@ import {
   YAxis,
   LineSeries,
   Crosshair,
+  DiscreteColorLegend,
 } from 'react-vis'
 
 function getFormattedDate(date) {
@@ -47,6 +48,20 @@ const StockChart = ({ prices }) => {
         height={300}
         onMouseLeave={() => setOpenValue(false)}
       >
+        <DiscreteColorLegend
+          style={{ position: 'absolute', right: '50px', top: '10px' }}
+          orientation="horizontal"
+          items={[
+            {
+              title: 'Open Price',
+              color: '#12939A',
+            },
+            {
+              title: 'Close Price',
+              color: '#c51162',
+            },
+          ]}
+        />
         <HorizontalGridLines />
         <VerticalGridLines />
         <XAxis

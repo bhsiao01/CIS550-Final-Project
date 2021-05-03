@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import {
   GoogleMap,
   LoadScript,
@@ -14,7 +14,7 @@ const mapStyles = {
   height: '90vh',
 }
 
-const LocationMap = ({ cities, coords, center }) => {
+const LocationMap = ({ cities, coords, center, inputCity }) => {
   const [selected, setSelected] = useState({})
 
   return (
@@ -25,13 +25,24 @@ const LocationMap = ({ cities, coords, center }) => {
             <GoogleMap mapContainerStyle={mapStyles} zoom={7} center={center}>
               {coords.map((item, i) => {
                 cities[i].loc = item
-                return (
-                  <Marker
-                    key={cities[i].City}
-                    position={item}
-                    onClick={() => setSelected(cities[i])}
-                  />
-                )
+                if (cities[i].City === inputCity) {
+                  return (
+                    <Marker
+                      icon={{url: 'http://maps.google.com/mapfiles/kml/pal4/icon47.png'}}
+                      key={cities[i].City}
+                      position={item}
+                      onClick={() => setSelected(cities[i])}
+                    />
+                  )
+                } else {
+                  return (
+                    <Marker
+                      key={cities[i].City}
+                      position={item}
+                      onClick={() => setSelected(cities[i])}
+                    />
+                  )
+                }
               })}
               {selected.loc && (
                 <InfoWindow
@@ -40,8 +51,14 @@ const LocationMap = ({ cities, coords, center }) => {
                   onCloseClick={() => setSelected({})}
                 >
                   <div className="info">
-                    <a href={"/location/" + selected.City + "/" + selected.StateAbbr}>
-                      <b>{selected.City}, {selected.StateAbbr}</b>
+                    <a
+                      href={
+                        '/location/' + selected.City + '/' + selected.StateAbbr
+                      }
+                    >
+                      <b>
+                        {selected.City}, {selected.StateAbbr}
+                      </b>
                     </a>
                     <p>{selected.NumCompanies} companies headquartered</p>
                     <p>

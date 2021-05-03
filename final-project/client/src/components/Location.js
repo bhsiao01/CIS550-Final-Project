@@ -175,6 +175,7 @@ const Location = () => {
                         cities={top20}
                         coords={cityCoords}
                         center={defaultCenter}
+                        inputCity={city}
                       />
                     )}
                   </CardContent>
