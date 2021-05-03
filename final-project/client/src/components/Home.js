@@ -175,13 +175,6 @@ const Home = () => {
                         <MenuItem value={val.Sector}>{val.Sector}</MenuItem>
                       ))}
                     </Select>
-                    {/* <Input
-                      id="industry"
-                      aria-describedby="industry-text-input"
-                      value={industry}
-                      onChange={(e) => setIndustry(e.target.value)}
-                      placeholder={'Technology'}
-                    /> */}
                   </FormControl>
                 </>
               )}

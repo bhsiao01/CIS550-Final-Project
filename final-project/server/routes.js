@@ -17,9 +17,6 @@ connection.connect(function (err) {
   }
 
   console.log('Connected to database.')
-  //const db = `use master;` //use the correct database in AWS RDS environment
-
-  //connection.query(db, (err, rows, fields) => {}) //connect to database
 })
 
 /* Queries by price */
@@ -65,7 +62,6 @@ const get10HomeValue = (req, res) => {
   connection.query(get10HomeValue, (err, rows, fields) => {
     if (err) console.log(err);
     else {
-      //console.log(rows);
       res.json(rows);
     }
   });
@@ -414,6 +410,8 @@ const getHQ = (req, res) => {
   });
 }
 
+/* Industry queries */ 
+
 // Find the top 10 stocks with the greatest price for each industry.
 const getTop10StocksPerIndustry = (req, res) => {
   var industry_input = req.params.industry;
@@ -453,13 +451,8 @@ connection.query(topTen, (err, rows, fields) => {
   })
 }
 
-/* Industry queries */ 
-
 //gets all industries, no keyword
 const getIndustries = (req, res) => {
-  /*const db = `use master;`
-  connection.query(db, (err, rows, fields) => {})*/
-
   const getAllIndustries = `
     SELECT DISTINCT Sector
     FROM StockInfo
