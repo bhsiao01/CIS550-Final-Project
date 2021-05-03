@@ -269,7 +269,9 @@ const getCityRanking = (req, res) => {
     if (err) console.log(err)
     else {
       console.log(rows)
-      res.json(rows)
+      if (rows.length > 1) {
+        res.json(rows[1])
+      }
     }
   })
 }

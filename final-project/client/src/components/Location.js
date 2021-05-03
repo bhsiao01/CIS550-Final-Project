@@ -63,6 +63,7 @@ const Location = () => {
   const [cityCoords, setCityCoords] = useState()
   const [defaultCenter, setDefaultCenter] = useState()
   const [loading, setLoading] = useState(true)
+  const [rank, setRank] = useState([])
 
   useEffect(() => {
     axios
@@ -92,6 +93,12 @@ const Location = () => {
         setLoading(false)
       })
 
+    axios
+      .get('http://localhost:8081/getCityRanking/' + state)
+      .then((response) => {
+        setRank(response.data)
+      })
+
     // set default center of map to state's coordinates
     Geocode.fromAddress(city + ',' + state).then(
       (response) => {
@@ -119,7 +126,7 @@ const Location = () => {
           <Grid item xs={10}>
             <h2>
               {city}, {state}
-              {loading && (<LinearProgress />)}
+              {loading && <LinearProgress />}
             </h2>
             <Grid container direction={'row'} spacing={4}>
               <Grid item xs={4}>
@@ -165,6 +172,36 @@ const Location = () => {
                           <p>Forecasted Change: {city.Forecast.toFixed(3)}%</p>
                         </div>
                       ))}
+                      {rank.map((row) => {
+                        if (row.RegionName === city) {
+                          if (row.HousingValueChange > 0) {
+                            return (
+                              <>
+                                <p>
+                                  Ranked <b>{row.row_num}</b> in housing value
+                                  growth in {state}. Housing values have
+                                  increased by $
+                                  {row.HousingValueChange.toFixed(2)} in the
+                                  past 20 years.
+                                </p>
+                              </>
+                            )
+                          } else {
+                            return (
+                              <>
+                                <p>
+                                  Ranked {row.row_num} in housing value growth
+                                  in {state}. Housing values have decreased by $
+                                  {row.HousingValueChange.toFixed(2)} in the
+                                  past 20 years.
+                                </p>
+                              </>
+                            )
+                          }
+                        } else {
+                          return <></>
+                        }
+                      })}
                     </CardContent>
                   </Card>
                 )}
