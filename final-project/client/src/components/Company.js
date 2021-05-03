@@ -129,7 +129,7 @@ const Company = (props) => {
             </Card>
           )} {(<Card>
                 <CardContent>
-                  <h3> Stock Information </h3>
+                  <h3> Company Information </h3>
                   {companyHq.map((hq) => (
                     <p>Headquarters: {hq.City}, {hq.StateAbbr}</p>
                   ))}
@@ -140,7 +140,7 @@ const Company = (props) => {
                   <p>Industry: {sector.Sector}</p>
                   ))}
                   {revenue.map((revenue) => (
-                    <p>Revenue (in millions): {revenue.Revenue}</p>
+                    <p>Revenue (in millions): ${Number(revenue.Revenue).toLocaleString()}</p>
                   ))}
                 </CardContent>
               </Card>) }
