@@ -461,7 +461,7 @@ const getIndustries = (req, res) => {
   connection.query(db, (err, rows, fields) => {})*/
 
   const getAllIndustries = `
-    SELECT Sector
+    SELECT DISTINCT Sector
     FROM StockInfo
   `;
 
@@ -481,13 +481,13 @@ const meanPrice = (req, res) => {
   connection.query(db, (err, rows, fields) => {})
   const meanP = `
   WITH temp1 AS (
-    SELECT RegionName, AVG(Value) as mean
+    SELECT RegionName, StateAbbr, AVG(Value) as mean
     FROM ZillowHistoricalData Z JOIN StockInfo S ON Z.RegionName = S.City
     WHERE S.Sector = '${industry_input}'
     GROUP BY RegionName
     ORDER BY mean DESC
   )
-  SELECT T1.RegionName, T1.mean
+  SELECT T1.RegionName, T1.mean, T1.StateAbbr
   FROM temp1 as T1
   LIMIT 5;
 `

@@ -9,12 +9,15 @@ const parseURL = (url) => {
   if (url.split('/').length > 2) {
     let industry = url.slice(10)
     // standardize casing
-    industry =
-      industry.substring(0, 1).toUpperCase() +
-      industry.substring(1).toLowerCase()
+    let words = industry.split(' ')
+    for (let i = 0; i < words.length; i++) {
+      words[i] =
+        words[i].substring(0, 1).toUpperCase() +
+        words[i].substring(1).toLowerCase()
+    }
+    industry = words.join(' ')
     return industry
   }
-  return ['TEST']
 }
 
 const Industry = () => {
@@ -51,7 +54,6 @@ const Industry = () => {
       })
   }, [industry])
 
-  console.log('HI' + highPrice)
   return (
     <>
       <NavBar />

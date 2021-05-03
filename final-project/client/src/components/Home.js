@@ -1,5 +1,6 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
+import axios from 'axios'
 import SearchIcon from '@material-ui/icons/Search'
 import state_abrev from '../states.js'
 import NavBar from './NavBar'
@@ -21,6 +22,7 @@ const Home = () => {
   const [state, setState] = useState('')
   const [company, setCompany] = useState('')
   const [industry, setIndustry] = useState('')
+  const [industryList, setIndustryList] = useState([])
   const [mouseX, setMouseX] = useState(0)
   const [mouseY, setMouseY] = useState(0)
   const [minPrice, setMinPrice] = useState('')
@@ -42,6 +44,12 @@ const Home = () => {
       history.push('/industry/' + industry)
     }
   }
+
+  useEffect(() => {
+    axios.get('http://localhost:8081/getAllIndustries/').then((response) => {
+      setIndustryList(response.data)
+    })
+  }, [])
 
   return (
     <>
@@ -140,7 +148,7 @@ const Home = () => {
                       value={minPrice}
                       onChange={(e) => setMinPrice(e.target.value)}
                       style={{ minWidth: '50%' }}
-                      type = "number"
+                      type="number"
                     />
                   </FormControl>
                   <FormControl style={{ width: '40%' }}>
@@ -150,7 +158,7 @@ const Home = () => {
                       value={maxPrice}
                       onChange={(e) => setMaxPrice(e.target.value)}
                       style={{ minWidth: '50%' }}
-                      type = "number"
+                      type="number"
                     />
                   </FormControl>
                 </>
@@ -158,13 +166,22 @@ const Home = () => {
                 <>
                   <FormControl style={{ width: '80%' }}>
                     <InputLabel id="industry">Industry</InputLabel>
-                    <Input
+                    <Select
+                      value={industry}
+                      onChange={(e) => setIndustry(e.target.value)}
+                      style={{ minWidth: '120px', textAlign: 'left' }}
+                    >
+                      {industryList.map((val) => (
+                        <MenuItem value={val.Sector}>{val.Sector}</MenuItem>
+                      ))}
+                    </Select>
+                    {/* <Input
                       id="industry"
                       aria-describedby="industry-text-input"
                       value={industry}
                       onChange={(e) => setIndustry(e.target.value)}
                       placeholder={'Technology'}
-                    />
+                    /> */}
                   </FormControl>
                 </>
               )}
