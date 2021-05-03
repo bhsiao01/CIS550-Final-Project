@@ -277,26 +277,43 @@ const getCityRanking = (req, res) => {
 }
 
 /* Companies queries */ 
-//gets 30 day stock data for a given company
-const get30Day = (req, res) => {
+//gets year of stock data for a given company
+const getStockByYear = (req, res) => {
   var company_input = req.params.ticker;
+  var year_input = req.params.year
   console.log(company_input);
 
-  /*const db = `use master;`
-  connection.query(db, (err, rows, fields) => {})*/
-
-  const stock30Days = `
+  const stock = `
     SELECT *
     FROM Stocks
-    WHERE StockSymbol = '${company_input}'
+    WHERE StockSymbol = '${company_input}' AND YEAR(Date) = '${year_input}'
     ORDER BY Date DESC
-    LIMIT 30;
   `;
 
-  connection.query(stock30Days, (err, rows, fields) => {
+  connection.query(stock, (err, rows, fields) => {
     if (err) console.log(err)
     else {
       console.log(rows)
+      res.json(rows)
+    }
+  });
+}
+
+//gets available years of stock data for a given company
+const getYearsfromTicker = (req, res) => {
+  var company_input = req.params.ticker;
+  console.log(company_input);
+
+  const getYears = `
+    SELECT DISTINCT YEAR(DATE) AS Year
+    FROM Stocks
+    WHERE StockSymbol = '${company_input}'
+    ORDER BY Date DESC
+  `;
+
+  connection.query(getYears, (err, rows, fields) => {
+    if (err) console.log(err)
+    else {
       res.json(rows)
     }
   });
@@ -626,7 +643,7 @@ module.exports = {
   // getCompanies: getCompanies,
   getHighPricePerIndustry: getHighPricePerIndustry,
   getCityStat: getCityStat,
-  get30Day: get30Day,
+  getStockByYear: getStockByYear,
   meanPrice: meanPrice,
   getCompStat: getCompStat,
   getHousingRange: getHousingRange,
@@ -643,6 +660,7 @@ module.exports = {
   getIndustries: getIndustries,
   get10HomeValue: get10HomeValue,
   get10NumCompanies: get10NumCompanies,
-  getCityRanking: getCityRanking
+  getCityRanking: getCityRanking,
+  getYearsfromTicker: getYearsfromTicker,
 }
 //

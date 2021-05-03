@@ -3,7 +3,17 @@ import { useLocation } from 'react-router'
 import axios from 'axios'
 import NavBar from './NavBar'
 import StockChart from './StockChart'
-import { Grid, Card, CardContent, LinearProgress } from '@material-ui/core'
+import {
+  Grid,
+  Card,
+  CardContent,
+  LinearProgress,
+  FormControl,
+  Select,
+  MenuItem,
+  InputLabel,
+  Input,
+} from '@material-ui/core'
 
 // parses URL queries for company name.
 const parseURL = (url) => {
@@ -13,7 +23,6 @@ const parseURL = (url) => {
     company = company.toUpperCase()
     return company
   }
-  return ['TEST']
 }
 
 const Company = (props) => {
@@ -23,20 +32,29 @@ const Company = (props) => {
   const [company, setCompany] = useState(parseURL(url))
   const [prices, setPrices] = useState([])
   const [industry, setIndustry] = useState([])
+  const [currYear, setCurrYear] = useState(2020)
+  const [allYears, setAllYears] = useState([])
 
   //want to add in where company is headquartered + some simple housing stats (maybe)
 
   useEffect(() => {
-    axios.get('http://localhost:8081/get30day/' + company).then((response) => {
-      setPrices(response.data)
-      setLoading(false)
-    })
+    axios
+      .get('http://localhost:8081/getStockByYear/' + company + '/' + currYear)
+      .then((response) => {
+        setPrices(response.data)
+        setLoading(false)
+      })
+    axios
+      .get('http://localhost:8081/getYearsFromTicker/' + company )
+      .then((response) => {
+        setAllYears(response.data)
+      })
     axios
       .get('http://localhost:8081/getCompanyIndustry/' + company)
       .then((response) => {
         setIndustry(response.data)
       })
-  }, [company])
+  }, [company, currYear])
 
   return (
     <div>
@@ -55,7 +73,21 @@ const Company = (props) => {
           ) : prices.length > 0 ? (
             <Card>
               <CardContent>
-                <h3>Stock Price Statistics</h3>
+                <div style={{ display: 'inline-flex' }}>
+                  <h3>Stock Prices in </h3>
+                  <FormControl style={{ width: '80px', marginLeft: '12px' }}>
+                    <InputLabel id="search-type">Year</InputLabel>
+                    <Select
+                      value={currYear}
+                      onChange={(e) => setCurrYear(e.target.value)}
+                      style={{ minWidth: '80px', align: 'left' }}
+                    >
+                      {allYears.map((year) => (
+                        <MenuItem value={year.Year}>{year.Year}</MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </div>
                 <StockChart prices={prices} />
               </CardContent>
             </Card>

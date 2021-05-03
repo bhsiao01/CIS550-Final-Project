@@ -10,14 +10,6 @@ import {
   DiscreteColorLegend,
 } from 'react-vis'
 
-function getFormattedDate(date) {
-  let year = date.getFullYear().toString().substr(-2)
-  let month = (1 + date.getMonth()).toString().padStart(2, '0')
-  let day = date.getDate().toString().padStart(2, '0')
-
-  return month + '.' + day + '.' + year
-}
-
 const StockChart = ({ prices }) => {
   const [openValue, setOpenValue] = useState(false)
   const [closeValue, setCloseValue] = useState(false)
@@ -27,12 +19,12 @@ const StockChart = ({ prices }) => {
     prices.forEach((price) => {
       if (open) {
         data.unshift({
-          x: getFormattedDate(new Date(price.Date)),
+          x: new Date(price.Date),
           y: price.Open,
         })
       } else {
         data.unshift({
-          x: getFormattedDate(new Date(price.Date)),
+          x: new Date(price.Date),
           y: price.Close,
         })
       }
@@ -44,7 +36,7 @@ const StockChart = ({ prices }) => {
   return (
     <div>
       <FlexibleWidthXYPlot
-        xType="ordinal"
+        xType="time"
         height={300}
         onMouseLeave={() => setOpenValue(false)}
       >
@@ -64,13 +56,7 @@ const StockChart = ({ prices }) => {
         />
         <HorizontalGridLines />
         <VerticalGridLines />
-        <XAxis
-          title="Date"
-          tickLabelAngle={45}
-          tickFormat={(t, i) => {
-            return t.slice(0, -3)
-          }}
-        />
+        <XAxis title="Date" />
         <YAxis title="Price ($)" />
         <LineSeries
           data={formatData(prices, true)}

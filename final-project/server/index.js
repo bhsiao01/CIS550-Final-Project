@@ -46,7 +46,9 @@ app.get("/getCompStat/:city/:state", routes.getCompStat);
 
 //calling app.get 30 day stock history
 // done
-app.get("/get30day/:ticker", routes.get30Day);
+app.get("/getStockByYear/:ticker/:year", routes.getStockByYear);
+
+app.get("/getYearsFromTicker/:ticker", routes.getYearsfromTicker);
 
 app.get("/getIndustryFromCompany/:ticker", routes.getCompanyIndustry)
 
