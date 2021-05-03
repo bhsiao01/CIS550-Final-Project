@@ -218,7 +218,6 @@ const getCityRanking = (req, res) => {
   var state_input = req.params.state;
   const ranking = `
     SET @row_num = 0;
-    CREATE INDEX ZillowHistoricalDate ON ZillowHistoricalData (Date);
     WITH FirstYear AS (
       SELECT RegionName, StateName, MIN(Date) AS FirstDate
       FROM ZillowHistoricalData 
