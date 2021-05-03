@@ -36,7 +36,6 @@ app.get("/getHousingRange/:min/:max", routes.getHousingRange);
 // done
 app.get("/getTop20Cities/:state", routes.getTop20Cities);
 
-
 //calling app.get for simple city stats
 // done
 app.get("/getCompStat/:city/:state", routes.getCompStat);
@@ -44,6 +43,8 @@ app.get("/getCompStat/:city/:state", routes.getCompStat);
 //calling app.get 30 day stock history
 // done
 app.get("/get30day/:ticker", routes.get30Day);
+
+app.get("/getIndustryFromCompany/:ticker", routes.getCompanyIndustry)
 
 //calling app.get to find the topstocks per industry
 //done
@@ -61,6 +62,8 @@ app.get("/getHighPriceIndustry/:sector", routes.getHighPricePerIndustry);
 app.get("/getTop10Rev/:sector", routes.getTop10RevByIndustry);
 
 app.get("/getSectorHome/:sector", routes.getHomesFromSector);
+
+app.get("/getAllIndustries/", routes.getIndustries);
 
 
 app.listen(8081, () => {

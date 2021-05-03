@@ -122,7 +122,7 @@ const Home = () => {
               ) : searchType === 'Company' ? (
                 <>
                   <FormControl style={{ width: '80%' }}>
-                    <InputLabel id="company">Company</InputLabel>
+                    <InputLabel id="company">Company Ticker Symbol</InputLabel>
                     <Input
                       aria-describedby="company-text-input"
                       value={company}

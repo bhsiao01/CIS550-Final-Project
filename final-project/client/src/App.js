@@ -1,5 +1,5 @@
 import React from 'react'
-import firebase from "firebase/app";
+import firebase from 'firebase/app'
 import './App.css'
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import Home from './components/Home'
@@ -10,8 +10,8 @@ import Industry from './components/Industry'
 import PriceRange from './components/PriceRange'
 import { ThemeProvider, CssBaseline } from '@material-ui/core'
 import theme from './theme'
-import { config } from "./config-fb";
-firebase.initializeApp(config);
+import { config } from './config-fb'
+firebase.initializeApp(config)
 
 function App() {
   return (
