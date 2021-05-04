@@ -27,7 +27,9 @@ const NavBar = ( { home }) => {
 
   const redirect = () => {
     if (searchType === 'Location' && city.length !== 0 && state.length !== 0) {
-      window.location = '/location/' + city + '/' + state
+      if (state !== 'State') {
+        window.location = '/location/' + city + '/' + state
+      }
     }
     if (searchType === 'Price') {
       if (parseInt(maxPrice) > parseInt(minPrice)) {
@@ -38,7 +40,9 @@ const NavBar = ( { home }) => {
       window.location = '/company/' + company
     }
     if (searchType === 'Industry' && industry.length !== 0) {
-      window.location = '/industry/' + industry
+      if (industry !== 'Industry') {
+        window.location = '/industry/' + industry
+      }
     }
   }
 
