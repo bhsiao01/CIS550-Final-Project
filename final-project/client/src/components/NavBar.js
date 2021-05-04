@@ -1,39 +1,183 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
+import { useHistory } from 'react-router-dom'
+import axios from 'axios'
+import SearchIcon from '@material-ui/icons/Search'
+import state_abrev from '../states.js'
 import { Link } from 'react-router-dom'
-import { Grid, Button } from '@material-ui/core'
+import {
+  Grid,
+  FormControl,
+  Select,
+  MenuItem,
+  Input,
+  Button,
+  IconButton,
+} from '@material-ui/core'
 
-const NavBar = () => {
+const NavBar = ( { home }) => {
+  const history = useHistory()
+  const [searchType, setSearchType] = useState('Location')
+  const [city, setCity] = useState('')
+  const [state, setState] = useState('WA')
+  const [company, setCompany] = useState('')
+  const [industry, setIndustry] = useState('Technology')
+  const [industryList, setIndustryList] = useState([])
+  const [minPrice, setMinPrice] = useState('')
+  const [maxPrice, setMaxPrice] = useState('')
+
+  const redirect = () => {
+    if (searchType === 'Location' && city.length !== 0 && state.length !== 0) {
+      window.location = '/location/' + city + '/' + state
+    }
+    if (searchType === 'Price') {
+      if (parseInt(maxPrice) > parseInt(minPrice)) {
+        window.location = '/price/' + minPrice + '/' + maxPrice
+      }
+    }
+    if (searchType === 'Company' && company.length !== 0) {
+      window.location = '/company/' + company
+    }
+    if (searchType === 'Industry' && industry.length !== 0) {
+      window.location = '/industry/' + industry
+    }
+  }
+
+  useEffect(() => {
+    axios.get('http://localhost:8081/getAllIndustries/').then((response) => {
+      setIndustryList(response.data)
+    })
+  }, [])
+
   return (
     <>
       <Grid
         container
         direction={'row'}
-        alignItems="center"
-        spacing={3}
-        style={{ padding: 24 }}
+        spacing={1}
+        style={{
+          padding: '24px 24px 12px 24px',
+          marginBottom: '12px',
+          boxShadow:
+            '0px 1px 2px rgb(0 0 0 / 8%), 0px 4px 12px rgb(0 0 0 / 5%)',
+          backgroundColor: 'white',
+        }}
+        justify={'space-between'}
       >
-        <Grid item xs={3} style={{ textAlign: 'left' }}>
+        <Grid item xs={2} style={{ textAlign: 'left' }}>
           <Link to="/" style={{ textDecoration: 'none' }}>
             <Button size="large">Home</Button>
           </Link>
         </Grid>
-        <Grid item xs={9} style={{ textAlign: 'right' }}>
-          <Link to="/location/">
-            <Button size="large">
-              Location
-            </Button>
-          </Link>
-          <Link to="/company/">
-            <Button size="large">
-              Company
-            </Button>
-          </Link>
-          <Link to="/industry/">
-            <Button size="large">
-              Industry
-            </Button>
-          </Link>
+        {!home && (
+          <Grid
+          item
+          style={{
+            display: 'inline-flex',
+            borderRadius: '40px',
+            boxShadow:
+              '0px 1px 2px rgb(0 0 0 / 8%), 0px 4px 12px rgb(0 0 0 / 5%)',
+            alignItems: 'center'
+          }}
+        >
+          <FormControl>
+            <Select
+              value={searchType}
+              onChange={(e) => setSearchType(e.target.value)}
+              style={{ minWidth: '120px', marginLeft: '12px' }}
+            >
+              <MenuItem value={'Location'}>Location</MenuItem>
+              <MenuItem value={'Company'}>Company</MenuItem>
+              <MenuItem value={'Industry'}>Industry</MenuItem>
+              <MenuItem value={'Price'}>Price Range</MenuItem>
+            </Select>
+          </FormControl>
+          {searchType === 'Location' ? (
+            <>
+              <FormControl>
+                <Input
+                  aria-describedby="city-text-input"
+                  value={city}
+                  onChange={(e) => setCity(e.target.value)}
+                  placeholder={'Seattle'}
+                  style={{ minWidth: '35%' }}
+                />
+              </FormControl>
+              <FormControl>
+                <Select
+                  value={state}
+                  style={{ minWidth: '60px' }}
+                  onChange={(e) => setState(e.target.value)}
+                  defaultValue={'WA'}
+                >
+                  <MenuItem value="State" disabled>
+                    State
+                  </MenuItem>
+                  {state_abrev.map((state) => (
+                    <MenuItem value={state} key={state}>
+                      {state}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </>
+          ) : searchType === 'Company' ? (
+            <>
+              <FormControl>
+                <Input
+                  aria-describedby="company-text-input"
+                  value={company}
+                  onChange={(e) => setCompany(e.target.value)}
+                  placeholder={'AAPL'}
+                />
+              </FormControl>
+            </>
+          ) : searchType === 'Price' ? (
+            <>
+              <FormControl>
+                <Input
+                  aria-describedby="price-text-input"
+                  value={minPrice}
+                  onChange={(e) => setMinPrice(e.target.value)}
+                  type="number"
+                  placeholder={'Minimum Price'}
+                />
+              </FormControl>
+              <FormControl>
+                <Input
+                  aria-describedby="price-text-input"
+                  value={maxPrice}
+                  onChange={(e) => setMaxPrice(e.target.value)}
+                  type="number"
+                  placeholder={'Maximum Price'}
+                />
+              </FormControl>
+            </>
+          ) : (
+            <>
+              <FormControl>
+                <Select
+                  value={industry}
+                  onChange={(e) => setIndustry(e.target.value)}
+                  style={{ minWidth: '240px', textAlign: 'left' }}
+                >
+                  {industryList.map((val) => (
+                    <MenuItem value={val.Sector}>{val.Sector}</MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </>
+          )}
+          <IconButton
+            color="primary"
+            onClick={redirect}
+            style={{ float: 'right', padding: '0 12px' }}
+            disableElevation
+          >
+            <SearchIcon />
+          </IconButton>
         </Grid>
+        )}
+        <Grid item xs={3}></Grid>
       </Grid>
     </>
   )

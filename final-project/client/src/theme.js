@@ -6,7 +6,8 @@ const theme = createMuiTheme({
       main: '#0085A3',
     },
     background: {
-      default: '#def1e7'
+      // default: '#def1e7'
+      default: '#0085a31a'
     }
   },
   typography: {
@@ -21,6 +22,11 @@ const theme = createMuiTheme({
         margin: '0 0 24px 0',
       },
     },
+    MuiSelect: {
+      root: {
+        border: '5px',
+      }
+    }
   },
 })
 

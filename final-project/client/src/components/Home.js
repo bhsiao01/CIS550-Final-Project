@@ -13,6 +13,8 @@ import {
   InputLabel,
   Input,
   Button,
+  Card,
+  CardContent,
 } from '@material-ui/core'
 
 const Home = () => {
@@ -59,7 +61,7 @@ const Home = () => {
           setMouseY((e.pageY / window.innerHeight) * 100)
         }}
         style={{
-          height: '99vh',
+          height: '100vh',
           background:
             'radial-gradient(at ' +
             mouseX +
@@ -73,7 +75,6 @@ const Home = () => {
           <Grid
             container
             direction={'row'}
-            spacing={4}
             alignItems="center"
             style={{ height: '75vh' }}
           >
@@ -194,6 +195,35 @@ const Home = () => {
             <Grid item xs={3} />
           </Grid>
         </Box>
+      </div>
+      <div style={{ backgroundColor: 'white' }}>
+        <Grid
+          container
+          direction={'row'}
+          spacing={4}
+          style={{ height: '60vh', textAlign: 'left' }}
+        >
+          <Grid item xs={2} />
+          <Grid item xs={8}>
+            <Grid spacing={4} container direction={'row'}>
+              <Grid item xs={6}>
+                <Card>
+                  <CardContent>
+                    <h3>[add description here?]</h3>
+                  </CardContent>
+                </Card>
+              </Grid>
+              <Grid item xs={6}>
+                <Card>
+                  <CardContent>
+                    <h3>Start searching...</h3>
+                  </CardContent>
+                </Card>
+              </Grid>
+            </Grid>
+          </Grid>
+          <Grid item xs={2} />
+        </Grid>
       </div>
     </>
   )
