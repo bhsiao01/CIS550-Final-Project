@@ -18,9 +18,9 @@ const NavBar = ( { home }) => {
   const history = useHistory()
   const [searchType, setSearchType] = useState('Location')
   const [city, setCity] = useState('')
-  const [state, setState] = useState('WA')
+  const [state, setState] = useState('State')
   const [company, setCompany] = useState('')
-  const [industry, setIndustry] = useState('Technology')
+  const [industry, setIndustry] = useState('Industry')
   const [industryList, setIndustryList] = useState([])
   const [minPrice, setMinPrice] = useState('')
   const [maxPrice, setMaxPrice] = useState('')
@@ -109,7 +109,6 @@ const NavBar = ( { home }) => {
                   value={state}
                   style={{ minWidth: '60px' }}
                   onChange={(e) => setState(e.target.value)}
-                  defaultValue={'PA'}
                   disableUnderline
                 >
                   <MenuItem value="State" disabled>
@@ -169,6 +168,9 @@ const NavBar = ( { home }) => {
                   style={{ minWidth: '240px', textAlign: 'left' }}
                   disableUnderline
                 >
+                  <MenuItem value="Industry" disabled>
+                    Select Industry
+                  </MenuItem>
                   {industryList.map((val) => (
                     <MenuItem value={val.Sector}>{val.Sector}</MenuItem>
                   ))}
