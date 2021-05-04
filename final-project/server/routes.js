@@ -478,6 +478,7 @@ const getIndustries = (req, res) => {
   const getAllIndustries = `
     SELECT DISTINCT Sector
     FROM StockInfo
+    ORDER BY Sector;
   `;
 
   connection.query(getAllIndustries, (err, rows, fields) => {
