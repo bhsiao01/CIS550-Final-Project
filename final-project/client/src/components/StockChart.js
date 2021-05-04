@@ -62,7 +62,6 @@ const StockChart = ({ prices }) => {
           data={formatData(prices, true)}
           animation={true}
           onNearestX={(d) => {
-            console.log(d)
             setOpenValue(d)
           }}
         />
