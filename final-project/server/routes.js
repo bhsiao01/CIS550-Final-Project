@@ -187,7 +187,7 @@ const getTop20Cities = (req, res) => {
     GROUP BY RegionName, StateName, ForecastedDate
   ),
   StockPricesByCity AS (
-    SELECT I.City, I.StateAbbr, COUNT(*) AS NumCompanies, AVG(S.Close) AS AvgPrice
+    SELECT I.City, I.StateAbbr, COUNT(DISTINCT I.StockSymbol) AS NumCompanies, AVG(S.Close) AS AvgPrice
     FROM Stocks S JOIN StockInfo I ON I.StockSymbol = S.StockSymbol
     WHERE I.StateAbbr = '${state_input}' AND Date >= '2019-01-01'
     GROUP BY I.City, I.StateAbbr
