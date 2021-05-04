@@ -153,7 +153,9 @@ const Company = (props) => {
                 </p>
               </CardContent>
             </Card>
-          )} {(<Card>
+          )} {loading ? (
+            <LinearProgress />
+          ) : (<Card>
                 <CardContent>
                   <h3> Company Information </h3>
                   {companyHq.map((hq) => (
@@ -169,8 +171,11 @@ const Company = (props) => {
                     <p>Revenue (in millions): ${Number(revenue.Revenue).toLocaleString()}</p>
                   ))}
                 </CardContent>
-              </Card>) }
-              {(<Card>
+              </Card>)}
+              {loading && 
+            <LinearProgress />}
+            {!loading && cityStat.length > 0 && (
+                <Card>
                   <CardContent>
                   {companyHq.map((hq) => (
                     <h3> {company} is headquarted in {hq.City}, {hq.StateAbbr}. These are the housing statistics for {hq.City}, {hq.StateAbbr}.</h3>
@@ -235,6 +240,17 @@ const Company = (props) => {
                   </CardContent>
                 </Card>
                 )}
+                {!loading && cityStat.length == 0 && (
+              <Card>
+                <CardContent>
+                  <p>
+                    No results were found for {city}, {state}. This may be
+                    because {city}, {state} is not included in our dataset.
+                    <a href="/">Try searching for another city</a>.
+                  </p>
+                </CardContent>
+              </Card>)}
+
         </Grid>
       </Grid>
     </div>
