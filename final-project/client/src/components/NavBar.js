@@ -139,7 +139,8 @@ const NavBar = ( { home }) => {
                   value={minPrice}
                   onChange={(e) => setMinPrice(e.target.value)}
                   type="number"
-                  placeholder={'Minimum Price'}
+                  placeholder={'Min Price'}
+                  style={{ maxWidth: '125px' }}
                 />
               </FormControl>
               <FormControl>
@@ -148,7 +149,8 @@ const NavBar = ( { home }) => {
                   value={maxPrice}
                   onChange={(e) => setMaxPrice(e.target.value)}
                   type="number"
-                  placeholder={'Maximum Price'}
+                  placeholder={'Max Price'}
+                  style={{ maxWidth: '125px' }}
                 />
               </FormControl>
             </>

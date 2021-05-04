@@ -23,6 +23,12 @@ app.get('/getHousingRange/:min/:max', routes.getHousingRange)
 
 /* LOCATION QUERIES */
 
+//for home page: get top 10 homes by value
+app.get('/getTop10HomeValue/', routes.get10HomeValue)
+
+//for home page: get top 10 homes by number of companies
+app.get('/getTop10NumCompanies/', routes.get10NumCompanies)
+
 //calling app.get for the homeprices page
 app.get('/getAverageHome/:city/:state', routes.getAverageHome)
 

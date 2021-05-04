@@ -679,5 +679,7 @@ module.exports = {
   getCityRanking: getCityRanking,
   getYearsfromTicker: getYearsfromTicker,
   getRevenue: getRevenue,
+  get10HomeValue: get10HomeValue,
+  get10NumCompanies: get10NumCompanies,
 }
 //

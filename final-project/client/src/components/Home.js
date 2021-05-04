@@ -29,6 +29,8 @@ const Home = () => {
   const [mouseY, setMouseY] = useState(0)
   const [minPrice, setMinPrice] = useState('')
   const [maxPrice, setMaxPrice] = useState('')
+  const [highestHomes, setHighestHomes] = useState([])
+  const [highestNumComps, setHighestNumComps] = useState([])
 
   const redirect = () => {
     if (searchType === 'Location' && city.length !== 0 && state.length !== 0) {
@@ -51,6 +53,16 @@ const Home = () => {
     axios.get('http://localhost:8081/getAllIndustries/').then((response) => {
       setIndustryList(response.data)
     })
+
+    axios.get('http://localhost:8081/getTop10HomeValue/').then((response) => {
+      setHighestHomes(response.data)
+    })
+
+    axios
+      .get('http://localhost:8081/getTop10NumCompanies/')
+      .then((response) => {
+        setHighestNumComps(response.data)
+      })
   }, [])
 
   return (
@@ -201,10 +213,10 @@ const Home = () => {
           container
           direction={'row'}
           spacing={4}
-          style={{ height: '60vh', textAlign: 'left' }}
+          style={{ textAlign: 'left' }}
         >
-          <Grid item xs={2} />
-          <Grid item xs={8}>
+          <Grid item xs={1} />
+          <Grid item xs={10}>
             <Grid spacing={4} container direction={'row'}>
               <Grid item xs={6}>
                 <Card>
@@ -217,12 +229,49 @@ const Home = () => {
                 <Card>
                   <CardContent>
                     <h3>Start searching...</h3>
+                    <h4>Cities with Highest Average Home Values</h4>
+                    <ol>
+                      {highestHomes.map((city) => (
+                        <li>
+                          <a
+                            href={
+                              '/location/' +
+                              city.RegionName +
+                              '/' +
+                              city.StateName
+                            }
+                          >
+                            {city.RegionName}, {city.StateName}
+                          </a>
+                          : $
+                          {Number(
+                            Number(city.avg_home_value).toFixed(2)
+                          ).toLocaleString()}
+                        </li>
+                      ))}
+                    </ol>
+
+                    <h4>Cities with the Most Companies Headquartered</h4>
+                    <ol>
+                      {highestNumComps.map((city) => (
+                        <li>
+                          <a
+                            href={
+                              '/location/' + city.City + '/' + city.StateAbbr
+                            }
+                          >
+                            {city.City}, {city.StateAbbr}
+                          </a>
+                          : {city.num_companies}
+                        </li>
+                      ))}
+                    </ol>
                   </CardContent>
                 </Card>
               </Grid>
             </Grid>
           </Grid>
-          <Grid item xs={2} />
+          <Grid item xs={1} />
         </Grid>
       </div>
     </>
