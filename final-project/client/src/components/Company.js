@@ -25,6 +25,10 @@ const parseURL = (url) => {
   }
 }
 
+const get_city_state = (hq) => {
+
+}
+
 const Company = (props) => {
   // useLocation().pathname will return '/company/ticker'
   let url = useLocation().pathname
@@ -38,6 +42,11 @@ const Company = (props) => {
   const [companyName, setCompanyName] = useState([])
   const [companyCeo, setCompanyCEO] = useState([])
   const [companyHq, setCompanyHQ] = useState([])
+  const [city, setCity] = useState([])
+  const [state, setState] = useState([])
+  const [cityStat, setCityStat] = useState([])
+  const [forecast, setForecast] = useState([])
+  const [rank, setRank] = useState([])
 
   //want to add in where company is headquartered + some simple housing stats (maybe)
 
@@ -77,8 +86,25 @@ const Company = (props) => {
     .get('http://localhost:8081/getCompanyHQ/' + company)
     .then((response) => {
       setCompanyHQ(response.data)
+      setCity(response.data[0].City)
+      setState(response.data[0].StateAbbr)
     })
-  }, [company, currYear])
+    axios
+    .get('http://localhost:8081/getCityStat/' + city + '/' + state)
+    .then((response) => {
+      setCityStat(response.data)
+    })
+    axios
+    .get('http://localhost:8081/getForecast/' + city + '/' + state)
+    .then((response) => {
+      setForecast(response.data)
+    })
+    axios
+      .get('http://localhost:8081/getCityRanking/' + state)
+      .then((response) => {
+        setRank(response.data)
+      })
+  }, [company, currYear, city, state])
 
   return (
     <div>
@@ -144,6 +170,71 @@ const Company = (props) => {
                   ))}
                 </CardContent>
               </Card>) }
+              {(<Card>
+                  <CardContent>
+                  {companyHq.map((hq) => (
+                    <h3> {company} is headquarted in {hq.City}, {hq.StateAbbr}. These are the housing statistics for {hq.City}, {hq.StateAbbr}.</h3>
+                  ))}
+                  {cityStat.map((city) => (
+                    <div key={city}>
+                    <p>
+                      Average Home Value: $
+                      {Number(
+                        Number(city.mean).toFixed(2)
+                      ).toLocaleString()}
+                    </p>
+                    <p>
+                      Minimum Home Value: $
+                      {Number(
+                        Number(city.min).toFixed(2)
+                      ).toLocaleString()}
+                    </p>
+                    <p>
+                      Maximum Home Value: $
+                      {Number(
+                        Number(city.max).toFixed(2)
+                      ).toLocaleString()}
+                    </p>
+                  </div>
+                  ))}
+                  {forecast.map((city) => (
+                        <div key={city}>
+                          <p>Forecasted Change: {city.Forecast.toFixed(3)}%</p>
+                        </div>
+                      ))}
+                      {rank.map((row) => {
+                        if (row.RegionName === city) {
+                          if (row.HousingValueChange > 0) {
+                            return (
+                              <>
+                                <p>
+                                  Ranked <b>#{Number(row.row_num).toLocaleString()}</b> in housing value
+                                  growth in {state}. Housing values have
+                                  increased by $
+                                  {Number(row.HousingValueChange.toFixed(2)).toLocaleString()} in the
+                                  past 20 years.
+                                </p>
+                              </>
+                            )
+                          } else {
+                            return (
+                              <>
+                                <p>
+                                  Ranked <b>#{Number(row.row_num).toLocaleString()}</b> in housing value growth
+                                  in {state}. Housing values have decreased by $
+                                  {Number(row.HousingValueChange.toFixed(2)).toLocaleString()} in the
+                                  past 20 years.
+                                </p>
+                              </>
+                            )
+                          }
+                        } else {
+                          return <></>
+                        }
+                      })}
+                  </CardContent>
+                </Card>
+                )}
         </Grid>
       </Grid>
     </div>
