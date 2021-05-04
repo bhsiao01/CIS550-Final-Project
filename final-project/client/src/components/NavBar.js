@@ -84,6 +84,7 @@ const NavBar = ( { home }) => {
               value={searchType}
               onChange={(e) => setSearchType(e.target.value)}
               style={{ minWidth: '120px', marginLeft: '12px' }}
+              disableUnderline 
             >
               <MenuItem value={'Location'}>Location</MenuItem>
               <MenuItem value={'Company'}>Company</MenuItem>
@@ -98,8 +99,9 @@ const NavBar = ( { home }) => {
                   aria-describedby="city-text-input"
                   value={city}
                   onChange={(e) => setCity(e.target.value)}
-                  placeholder={'Seattle'}
+                  placeholder={'Philadelphia'}
                   style={{ minWidth: '35%' }}
+                  disableUnderline
                 />
               </FormControl>
               <FormControl>
@@ -107,7 +109,8 @@ const NavBar = ( { home }) => {
                   value={state}
                   style={{ minWidth: '60px' }}
                   onChange={(e) => setState(e.target.value)}
-                  defaultValue={'WA'}
+                  defaultValue={'PA'}
+                  disableUnderline
                 >
                   <MenuItem value="State" disabled>
                     State
@@ -128,6 +131,7 @@ const NavBar = ( { home }) => {
                   value={company}
                   onChange={(e) => setCompany(e.target.value)}
                   placeholder={'AAPL'}
+                  disableUnderline
                 />
               </FormControl>
             </>
@@ -141,6 +145,7 @@ const NavBar = ( { home }) => {
                   type="number"
                   placeholder={'Min Price'}
                   style={{ maxWidth: '125px' }}
+                  disableUnderline
                 />
               </FormControl>
               <FormControl>
@@ -151,6 +156,7 @@ const NavBar = ( { home }) => {
                   type="number"
                   placeholder={'Max Price'}
                   style={{ maxWidth: '125px' }}
+                  disableUnderline
                 />
               </FormControl>
             </>
@@ -161,6 +167,7 @@ const NavBar = ( { home }) => {
                   value={industry}
                   onChange={(e) => setIndustry(e.target.value)}
                   style={{ minWidth: '240px', textAlign: 'left' }}
+                  disableUnderline
                 >
                   {industryList.map((val) => (
                     <MenuItem value={val.Sector}>{val.Sector}</MenuItem>
