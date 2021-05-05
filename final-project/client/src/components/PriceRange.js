@@ -106,20 +106,19 @@ const PriceRange = () => {
                   {
                     title: 'Min Price',
                     field: 'min',
-                    type: 'numeric',
+                    // type: 'numeric',
                     sortable: true,
                   },
                   {
                     title: 'Max Price',
                     field: 'max',
-                    type: 'numeric',
                     sortable: true,
                   },
                 ]}
                 data={cities.map((city) => ({
                   city: city.RegionName + ', ' + city.StateName,
-                  min: city.Min,
-                  max: city.Max,
+                  min: '$' + Number(city.Min).toLocaleString(),
+                  max: '$' + Number(city.Max).toLocaleString(),
                 }))}
                 options={{
                   pageSize: 10,
