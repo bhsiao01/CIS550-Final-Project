@@ -347,7 +347,7 @@ const getCompanyName = (req, res) => {
   connection.query(db, (err, rows, fields) => {})*/
 
   const getCompanyName = `
-    SELECT CompanyName
+    SELECT CompanyName, Website
     FROM StockInfo
     WHERE StockSymbol = '${company_input}'
   `;

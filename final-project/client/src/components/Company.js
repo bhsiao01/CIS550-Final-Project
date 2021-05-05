@@ -13,7 +13,6 @@ import {
   Select,
   MenuItem,
   InputLabel,
-  Input,
 } from '@material-ui/core'
 
 const API_KEY = config['news-api-key']
@@ -30,8 +29,11 @@ const parseURL = (url) => {
   }
 }
 
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> 2d4c2319f988c2d5e2d96b69144335927cb8bcf3
 const Company = (props) => {
   // useLocation().pathname will return '/company/ticker'
   let url = useLocation().pathname
@@ -56,8 +58,6 @@ const Company = (props) => {
   //const [article_titl, setArticleTitle] = useState([])
 
 
-  //want to add in where company is headquartered + some simple housing stats (maybe)
-
   useEffect(() => {
     axios
       .get('http://localhost:8081/getStockByYear/' + company + '/' + currYear)
@@ -66,7 +66,7 @@ const Company = (props) => {
         setLoading(false)
       })
     axios
-      .get('http://localhost:8081/getYearsFromTicker/' + company )
+      .get('http://localhost:8081/getYearsFromTicker/' + company)
       .then((response) => {
         setAllYears(response.data)
       })
@@ -76,42 +76,50 @@ const Company = (props) => {
         setIndustry(response.data)
       })
     axios
-    .get('http://localhost:8081/getCompanyRevenue/' + company)
-    .then((response) => {
-      setRevenue(response.data)
-    })
-    axios
-    .get('http://localhost:8081/getCompanyName/' + company)
-    .then((response) => {
-      setCompanyName(response.data)
-    })
-    axios
-    .get('http://localhost:8081/getCompanyCEO/' + company)
-    .then((response) => {
-      setCompanyCEO(response.data)
-    })
-    axios
-    .get('http://localhost:8081/getCompanyHQ/' + company)
-    .then((response) => {
-      setCompanyHQ(response.data)
-      setCity(response.data[0].City)
-      setState(response.data[0].StateAbbr)
-    })
-    axios
-    .get('http://localhost:8081/getCityStat/' + city + '/' + state)
-    .then((response) => {
-      setCityStat(response.data)
-    })
-    axios
-    .get('http://localhost:8081/getForecast/' + city + '/' + state)
-    .then((response) => {
-      setForecast(response.data)
-    })
-    axios
-      .get('http://localhost:8081/getCityRanking/' + state)
+      .get('http://localhost:8081/getCompanyRevenue/' + company)
       .then((response) => {
-        setRank(response.data)
+        setRevenue(response.data)
       })
+    axios
+      .get('http://localhost:8081/getCompanyName/' + company)
+      .then((response) => {
+        setCompanyName(response.data)
+      })
+    axios
+      .get('http://localhost:8081/getCompanyCEO/' + company)
+      .then((response) => {
+        setCompanyCEO(response.data)
+      })
+    axios
+      .get('http://localhost:8081/getCompanyHQ/' + company)
+      .then((response) => {
+        setCompanyHQ(response.data)
+
+        if (response.data.length > 0) {
+          setCity(response.data[0].City)
+          setState(response.data[0].StateAbbr)
+
+          const city = response.data[0].City
+          const state = response.data[0].StateAbbr
+
+          axios
+            .get('http://localhost:8081/getCityStat/' + city + '/' + state)
+            .then((response) => {
+              setCityStat(response.data)
+            })
+          axios
+            .get('http://localhost:8081/getForecast/' + city + '/' + state)
+            .then((response) => {
+              setForecast(response.data)
+            })
+          axios
+            .get('http://localhost:8081/getCityRanking/' + state)
+            .then((response) => {
+              setRank(response.data)
+            })
+        }
+      })
+<<<<<<< HEAD
     axios
     .get(`https://newsapi.org/v2/everything?q=Microsoft&from=2021-05-03&to=2021-05-03&sortBy=popularity&apiKey=${API_KEY}`)
     .then((response) => {
@@ -119,45 +127,188 @@ const Company = (props) => {
     })
   
   }, [company, currYear, city, state])
+=======
+  }, [company, currYear])
+>>>>>>> 2d4c2319f988c2d5e2d96b69144335927cb8bcf3
 
   return (
     <div>
       <NavBar />
-      <Grid
-        container
-        direction={'row'}
-        style={{ textAlign: 'left' }}
-      >
+      <Grid container direction={'row'} style={{ textAlign: 'left' }}>
         <Grid item xs={1} />
         <Grid item xs={10}>
+          {/* Logo and Company Name Header */}
           {companyName.map((name) => (
-            <h2>{name.CompanyName} ({company})</h2>
+            <div style={{ margin: '2em 0' }}>
+              <img
+                src={
+                  process.env.PUBLIC_URL + '/logos/logos/' + company + '.png'
+                }
+                alt="logo"
+                height={40}
+                style={{ verticalAlign: 'bottom', marginRight: '12px' }}
+              />
+              <h2 style={{ display: 'inline' }}>
+                <a href={name.Website} style={{ color: '#333333' }}>
+                  {name.CompanyName}
+                </a>{' '}
+                ({company})
+              </h2>
+            </div>
           ))}
           {loading ? (
+            // data is still loading
             <LinearProgress />
           ) : prices.length > 0 ? (
-            <Card>
-              <CardContent>
-                <div style={{ display: 'inline-flex' }}>
-                  <h3>Stock Prices in </h3>
-                  <FormControl style={{ width: '80px', marginLeft: '12px' }}>
-                    <InputLabel id="search-type">Year</InputLabel>
-                    <Select
-                      value={currYear}
-                      onChange={(e) => setCurrYear(e.target.value)}
-                      style={{ minWidth: '80px', align: 'left' }}
-                    >
-                      {allYears.map((year) => (
-                        <MenuItem value={year.Year}>{year.Year}</MenuItem>
+            // data loaded and stock data available
+            <>
+              <Card>
+                <CardContent>
+                  <div style={{ display: 'inline-flex' }}>
+                    <h3>Stock Prices in </h3>
+                    <FormControl style={{ width: '80px', marginLeft: '12px' }}>
+                      <InputLabel id="search-type">Year</InputLabel>
+                      <Select
+                        value={currYear}
+                        onChange={(e) => setCurrYear(e.target.value)}
+                        style={{ minWidth: '80px', align: 'left' }}
+                      >
+                        {allYears.map((year) => (
+                          <MenuItem value={year.Year}>{year.Year}</MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </div>
+                  <StockChart prices={prices} />
+                </CardContent>
+              </Card>
+              <Grid container direction={'row'} spacing={4}>
+                <Grid item xs={6}>
+                  <Card>
+                    <CardContent>
+                      <h3> Company Information </h3>
+                      {companyHq.map((hq) => (
+                        <p>
+                          Headquarters: {hq.City}, {hq.StateAbbr}
+                        </p>
                       ))}
-                    </Select>
-                  </FormControl>
-                </div>
-                <StockChart prices={prices} />
-              </CardContent>
-            </Card>
-
+                      {companyCeo.map((ceo) => (
+                        <p>CEO: {ceo.CEO}</p>
+                      ))}
+                      {industry.map((sector) => (
+                        <p>Industry: {sector.Sector}</p>
+                      ))}
+                      {revenue.map((revenue) => (
+                        <p>
+                          Revenue (in millions): $
+                          {Number(revenue.Revenue).toLocaleString()}
+                        </p>
+                      ))}
+                    </CardContent>
+                  </Card>
+                </Grid>
+                <Grid item xs={6}>
+                  {!loading && cityStat.length > 0 && (
+                    <Card>
+                      <CardContent>
+                        {companyHq.map((hq) => (
+                          <h3>
+                            {' '}
+                            {company} is headquarted in {hq.City},{' '}
+                            {hq.StateAbbr}. These are the housing statistics for{' '}
+                            {hq.City}, {hq.StateAbbr}.
+                          </h3>
+                        ))}
+                        {cityStat.map((city) => (
+                          <div key={city}>
+                            <p>
+                              Average Home Value: $
+                              {Number(
+                                Number(city.mean).toFixed(2)
+                              ).toLocaleString()}
+                            </p>
+                            <p>
+                              Minimum Home Value: $
+                              {Number(
+                                Number(city.min).toFixed(2)
+                              ).toLocaleString()}
+                            </p>
+                            <p>
+                              Maximum Home Value: $
+                              {Number(
+                                Number(city.max).toFixed(2)
+                              ).toLocaleString()}
+                            </p>
+                          </div>
+                        ))}
+                        {forecast.map((city) => (
+                          <div key={city}>
+                            <p>
+                              Forecasted Change: {city.Forecast.toFixed(3)}%
+                            </p>
+                          </div>
+                        ))}
+                        {rank.map((row) => {
+                          if (row.RegionName === city) {
+                            if (row.HousingValueChange > 0) {
+                              return (
+                                <>
+                                  <p>
+                                    Ranked{' '}
+                                    <b>
+                                      #{Number(row.row_num).toLocaleString()}
+                                    </b>{' '}
+                                    in housing value growth in {state}. Housing
+                                    values have increased by $
+                                    {Number(
+                                      row.HousingValueChange.toFixed(2)
+                                    ).toLocaleString()}{' '}
+                                    in the past 20 years.
+                                  </p>
+                                </>
+                              )
+                            } else {
+                              return (
+                                <>
+                                  <p>
+                                    Ranked{' '}
+                                    <b>
+                                      #{Number(row.row_num).toLocaleString()}
+                                    </b>{' '}
+                                    in housing value growth in {state}. Housing
+                                    values have decreased by $
+                                    {Number(
+                                      row.HousingValueChange.toFixed(2)
+                                    ).toLocaleString()}{' '}
+                                    in the past 20 years.
+                                  </p>
+                                </>
+                              )
+                            }
+                          } else {
+                            return <></>
+                          }
+                        })}
+                      </CardContent>
+                    </Card>
+                  )}
+                  {!loading && cityStat.length === 0 && (
+                    <Card>
+                      <CardContent>
+                        <p>
+                          No results were found for {city}, {state}. This may be
+                          because {city}, {state} is not included in our
+                          dataset.
+                          <a href="/">Try searching for another city</a>.
+                        </p>
+                      </CardContent>
+                    </Card>
+                  )}
+                </Grid>
+              </Grid>
+            </>
           ) : (
+            // data loaded but stock data unavailable
             <Card>
               <CardContent>
                 <p>
@@ -167,6 +318,7 @@ const Company = (props) => {
                 </p>
               </CardContent>
             </Card>
+<<<<<<< HEAD
           )} {loading ? (
             <LinearProgress />
           ) : (<Card>
@@ -272,6 +424,9 @@ const Company = (props) => {
                   ))}
                 </CardContent>
               </Card>)}
+=======
+          )}
+>>>>>>> 2d4c2319f988c2d5e2d96b69144335927cb8bcf3
         </Grid>
       </Grid>
     </div>
