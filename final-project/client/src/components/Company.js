@@ -115,7 +115,7 @@ const Company = (props) => {
         }
       })
     axios
-    .get(`https://newsapi.org/v2/everything?q=Microsoft&from=2021-05-03&to=2021-05-03&sortBy=popularity&apiKey=${API_KEY}`)
+    .get(`https://newsapi.org/v2/everything?q=${companyName.map((name) => (name.CompanyName))}$&from=2021-05-03&to=2021-05-03&sortBy=popularity&apiKey=${API_KEY}`)
     .then((response) => {
       setArticles(response.data.articles)
     })
