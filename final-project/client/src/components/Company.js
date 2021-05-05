@@ -29,11 +29,6 @@ const parseURL = (url) => {
   }
 }
 
-<<<<<<< HEAD
-
-
-=======
->>>>>>> 2d4c2319f988c2d5e2d96b69144335927cb8bcf3
 const Company = (props) => {
   // useLocation().pathname will return '/company/ticker'
   let url = useLocation().pathname
@@ -119,7 +114,6 @@ const Company = (props) => {
             })
         }
       })
-<<<<<<< HEAD
     axios
     .get(`https://newsapi.org/v2/everything?q=Microsoft&from=2021-05-03&to=2021-05-03&sortBy=popularity&apiKey=${API_KEY}`)
     .then((response) => {
@@ -127,9 +121,6 @@ const Company = (props) => {
     })
   
   }, [company, currYear, city, state])
-=======
-  }, [company, currYear])
->>>>>>> 2d4c2319f988c2d5e2d96b69144335927cb8bcf3
 
   return (
     <div>
@@ -318,104 +309,7 @@ const Company = (props) => {
                 </p>
               </CardContent>
             </Card>
-<<<<<<< HEAD
-          )} {loading ? (
-            <LinearProgress />
-          ) : (<Card>
-                <CardContent>
-                  <h3> Company Information </h3>
-                  {companyHq.map((hq) => (
-                    <p>Headquarters: {hq.City}, {hq.StateAbbr}</p>
-                  ))}
-                  {companyCeo.map((ceo) => (
-                    <p>CEO: {ceo.CEO}</p>
-                  ))}
-                  {industry.map((sector) => (
-                  <p>Industry: {sector.Sector}</p>
-                  ))}
-                  {revenue.map((revenue) => (
-                    <p>Revenue (in millions): ${Number(revenue.Revenue).toLocaleString()}</p>
-                  ))}
-                </CardContent>
-              </Card>)}
-              {loading && 
-            <LinearProgress />}
-            {!loading && cityStat.length > 0 && (
-                <Card>
-                  <CardContent>
-                  {companyHq.map((hq) => (
-                    <h3> {company} is headquarted in {hq.City}, {hq.StateAbbr}. These are the housing statistics for {hq.City}, {hq.StateAbbr}.</h3>
-                  ))}
-                  {cityStat.map((city) => (
-                    <div key={city}>
-                    <p>
-                      Average Home Value: $
-                      {Number(
-                        Number(city.mean).toFixed(2)
-                      ).toLocaleString()}
-                    </p>
-                    <p>
-                      Minimum Home Value: $
-                      {Number(
-                        Number(city.min).toFixed(2)
-                      ).toLocaleString()}
-                    </p>
-                    <p>
-                      Maximum Home Value: $
-                      {Number(
-                        Number(city.max).toFixed(2)
-                      ).toLocaleString()}
-                    </p>
-                  </div>
-                  ))}
-                  {forecast.map((city) => (
-                        <div key={city}>
-                          <p>Forecasted Change: {city.Forecast.toFixed(3)}%</p>
-                        </div>
-                      ))}
-                      {rank.map((row) => {
-                        if (row.RegionName === city) {
-                          if (row.HousingValueChange > 0) {
-                            return (
-                              <>
-                                <p>
-                                  Ranked <b>#{Number(row.row_num).toLocaleString()}</b> in housing value
-                                  growth in {state}. Housing values have
-                                  increased by $
-                                  {Number(row.HousingValueChange.toFixed(2)).toLocaleString()} in the
-                                  past 20 years.
-                                </p>
-                              </>
-                            )
-                          } else {
-                            return (
-                              <>
-                                <p>
-                                  Ranked <b>#{Number(row.row_num).toLocaleString()}</b> in housing value growth
-                                  in {state}. Housing values have decreased by $
-                                  {Number(row.HousingValueChange.toFixed(2)).toLocaleString()} in the
-                                  past 20 years.
-                                </p>
-                              </>
-                            )
-                          }
-                        } else {
-                          return <></>
-                        }
-                      })}
-                  </CardContent>
-                </Card>
-                )}
-                {!loading && cityStat.length == 0 && (
-              <Card>
-                <CardContent>
-                  <p>
-                    No results were found for {city}, {state}. This may be
-                    because {city}, {state} is not included in our dataset.
-                    <a href="/">Try searching for another city</a>.
-                  </p>
-                </CardContent>
-              </Card>)}
+          )} 
               {(
               <Card>
                 <CardContent>
@@ -424,9 +318,7 @@ const Company = (props) => {
                   ))}
                 </CardContent>
               </Card>)}
-=======
           )}
->>>>>>> 2d4c2319f988c2d5e2d96b69144335927cb8bcf3
         </Grid>
       </Grid>
     </div>
