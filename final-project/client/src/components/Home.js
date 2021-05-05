@@ -4,6 +4,7 @@ import axios from 'axios'
 import SearchIcon from '@material-ui/icons/Search'
 import state_abrev from '../states.js'
 import NavBar from './NavBar'
+import Footer from './Footer'
 import {
   Box,
   Grid,
@@ -309,6 +310,7 @@ const Home = () => {
           <Grid item xs={1} />
         </Grid>
       </div>
+      <Footer />
     </>
   )
 }
