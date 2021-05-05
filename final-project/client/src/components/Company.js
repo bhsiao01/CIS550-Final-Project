@@ -115,7 +115,7 @@ const Company = (props) => {
         }
       })
     axios
-    .get(`https://newsapi.org/v2/everything?q=Microsoft&from=2021-05-03&to=2021-05-03&sortBy=popularity&apiKey=${API_KEY}`)
+    .get(`https://newsapi.org/v2/everything?q=${companyName.map((name) => (name.CompanyName))}$&from=2021-05-03&to=2021-05-03&sortBy=popularity&apiKey=${API_KEY}`)
     .then((response) => {
       setArticles(response.data.articles)
     })
@@ -311,14 +311,23 @@ const Company = (props) => {
             </Card>
           )} 
               {(
-              <Card>
-                <CardContent>
-                {companyArticles.map((ca) => (
-                    <img src={ca.urlToImage} />
+              <Grid container direction={'row'} >
+                {companyArticles.slice(0, 5).map((ca) => (
+                  <Card>
+                    <CardContent>
+                      <div style = {{ margineLeft: '8px', marginRight: '8px', justify: 'space-evenly',  display: 'grid' }}>
+                      <img 
+                      src={ca.urlToImage} 
+                      alt="news_img"
+                      height={175}
+                      width = {200}
+                      />
+                      <h3> {ca.title} </h3>
+                      </div>
+                    </CardContent>
+                  </Card>
                   ))}
-                </CardContent>
-              </Card>)}
-          )}
+              </Grid>)}
         </Grid>
       </Grid>
     </div>
