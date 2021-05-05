@@ -2,17 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useLocation } from 'react-router'
 import axios from 'axios'
 import NavBar from './NavBar'
-import {
-  Grid,
-  LinearProgress,
-  Card,
-  CardContent,
-  Table,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableBody,
-} from '@material-ui/core'
+import { Grid, LinearProgress, Card, CardContent } from '@material-ui/core'
 import PriceRangeMap from './PriceRangeMap'
 import Geocode from 'react-geocode'
 import config from '../config.json'
@@ -61,12 +51,10 @@ const PriceRange = () => {
   // useLocation().pathname will return '/price/minPrice/maxPrice'
   let url = useLocation().pathname
   const [loading, setLoading] = useState(true)
-  const [min, setMin] = useState(parseURL(url)[0])
-  const [max, setMax] = useState(parseURL(url)[1])
+  const [min] = useState(parseURL(url)[0])
+  const [max] = useState(parseURL(url)[1])
   const [cities, setCities] = useState([])
   const [coords, setCoords] = useState([])
-
-  // TODO: allow user to choose how to sort?
 
   useEffect(() => {
     axios
@@ -99,8 +87,10 @@ const PriceRange = () => {
       >
         {loading ? (
           <>
-            <p>Loading...</p>
-            <LinearProgress />
+            <Grid item xs={12}>
+              <p>Loading...</p>
+              <LinearProgress />
+            </Grid>
           </>
         ) : cities.length > 0 ? (
           <>
