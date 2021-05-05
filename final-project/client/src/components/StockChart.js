@@ -13,6 +13,7 @@ import {
 const StockChart = ({ prices }) => {
   const [openValue, setOpenValue] = useState(false)
   const [closeValue, setCloseValue] = useState(false)
+  const [maxY, setMaxY] = useState(0)
 
   const formatData = (prices, open) => {
     const data = []
@@ -33,12 +34,27 @@ const StockChart = ({ prices }) => {
     return data
   }
 
+  const getMaxMin = (prices) => {
+    let max = 0
+    let min = prices[0].Open
+    prices.forEach((p) => {
+      if (p.Open > max) {
+        max = p.Open
+      }
+      if (p.Open < min) {
+        min = p.Open
+      } 
+    })
+    return [min, max];
+  }
+
   return (
     <div>
       <FlexibleWidthXYPlot
         xType="time"
         height={300}
         onMouseLeave={() => setOpenValue(false)}
+        yDomain={[getMaxMin(prices)[0], 1.1*getMaxMin(prices)[1]]}
       >
         <DiscreteColorLegend
           style={{ position: 'absolute', right: '50px', top: '10px' }}
