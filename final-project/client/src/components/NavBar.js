@@ -12,10 +12,10 @@ import {
   Button,
   IconButton,
 } from '@material-ui/core'
-import firebase from "firebase/app"
-import "firebase/auth"
+import firebase from 'firebase/app'
+import 'firebase/auth'
 
-const NavBar = ( { home }) => {
+const NavBar = ({ home }) => {
   const [searchType, setSearchType] = useState('Location')
   const [city, setCity] = useState('')
   const [state, setState] = useState('State')
@@ -71,140 +71,139 @@ const NavBar = ( { home }) => {
           <Link to="/" style={{ textDecoration: 'none' }}>
             <Button size="large">🦉Home</Button>
           </Link>
-          <Link to="/login" style={{ textDecoration: 'none' }}>
-          <Button size="large" 
-                      onClick={() => {
-                        firebase
-                          .app()
-                          .auth()
-                          .signOut();
-                      }}
-                    >
-                      Sign out
-                    </Button>
-          </Link>
         </Grid>
         {!home && (
           <Grid
-          item
-          style={{
-            display: 'inline-flex',
-            borderRadius: '40px',
-            boxShadow:
-              '0px 1px 2px rgb(0 0 0 / 8%), 0px 4px 12px rgb(0 0 0 / 5%)',
-            alignItems: 'center'
-          }}
-        >
-          <FormControl>
-            <Select
-              value={searchType}
-              onChange={(e) => setSearchType(e.target.value)}
-              style={{ minWidth: '120px', marginLeft: '12px' }}
-              disableUnderline 
-            >
-              <MenuItem value={'Location'}>Location</MenuItem>
-              <MenuItem value={'Company'}>Company</MenuItem>
-              <MenuItem value={'Industry'}>Industry</MenuItem>
-              <MenuItem value={'Price'}>Price Range</MenuItem>
-            </Select>
-          </FormControl>
-          {searchType === 'Location' ? (
-            <>
-              <FormControl>
-                <Input
-                  aria-describedby="city-text-input"
-                  value={city}
-                  onChange={(e) => setCity(e.target.value)}
-                  placeholder={'Philadelphia'}
-                  style={{ minWidth: '35%' }}
-                  disableUnderline
-                />
-              </FormControl>
-              <FormControl>
-                <Select
-                  value={state}
-                  style={{ minWidth: '60px' }}
-                  onChange={(e) => setState(e.target.value)}
-                  disableUnderline
-                >
-                  <MenuItem value="State" disabled>
-                    State
-                  </MenuItem>
-                  {state_abrev.map((state) => (
-                    <MenuItem value={state} key={state}>
-                      {state}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </>
-          ) : searchType === 'Company' ? (
-            <>
-              <FormControl>
-                <Input
-                  aria-describedby="company-text-input"
-                  value={company}
-                  onChange={(e) => setCompany(e.target.value)}
-                  placeholder={'AAPL'}
-                  disableUnderline
-                />
-              </FormControl>
-            </>
-          ) : searchType === 'Price' ? (
-            <>
-              <FormControl>
-                <Input
-                  aria-describedby="price-text-input"
-                  value={minPrice}
-                  onChange={(e) => setMinPrice(e.target.value)}
-                  type="number"
-                  placeholder={'Min Price'}
-                  style={{ maxWidth: '125px' }}
-                  disableUnderline
-                />
-              </FormControl>
-              <FormControl>
-                <Input
-                  aria-describedby="price-text-input"
-                  value={maxPrice}
-                  onChange={(e) => setMaxPrice(e.target.value)}
-                  type="number"
-                  placeholder={'Max Price'}
-                  style={{ maxWidth: '125px' }}
-                  disableUnderline
-                />
-              </FormControl>
-            </>
-          ) : (
-            <>
-              <FormControl>
-                <Select
-                  value={industry}
-                  onChange={(e) => setIndustry(e.target.value)}
-                  style={{ minWidth: '240px', textAlign: 'left' }}
-                  disableUnderline
-                >
-                  <MenuItem value="Industry" disabled>
-                    Select Industry
-                  </MenuItem>
-                  {industryList.map((val) => (
-                    <MenuItem value={val.Sector}>{val.Sector}</MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </>
-          )}
-          <IconButton
-            color="primary"
-            onClick={redirect}
-            style={{ float: 'right', padding: '0 12px' }}
-            disableelevation="true"
+            item
+            style={{
+              display: 'inline-flex',
+              borderRadius: '40px',
+              boxShadow:
+                '0px 1px 2px rgb(0 0 0 / 8%), 0px 4px 12px rgb(0 0 0 / 5%)',
+              alignItems: 'center',
+            }}
           >
-            <SearchIcon />
-          </IconButton>
-        </Grid>
+            <FormControl>
+              <Select
+                value={searchType}
+                onChange={(e) => setSearchType(e.target.value)}
+                style={{ minWidth: '120px', marginLeft: '12px' }}
+                disableUnderline
+              >
+                <MenuItem value={'Location'}>Location</MenuItem>
+                <MenuItem value={'Company'}>Company</MenuItem>
+                <MenuItem value={'Industry'}>Industry</MenuItem>
+                <MenuItem value={'Price'}>Price Range</MenuItem>
+              </Select>
+            </FormControl>
+            {searchType === 'Location' ? (
+              <>
+                <FormControl>
+                  <Input
+                    aria-describedby="city-text-input"
+                    value={city}
+                    onChange={(e) => setCity(e.target.value)}
+                    placeholder={'Philadelphia'}
+                    style={{ minWidth: '35%' }}
+                    disableUnderline
+                  />
+                </FormControl>
+                <FormControl>
+                  <Select
+                    value={state}
+                    style={{ minWidth: '60px' }}
+                    onChange={(e) => setState(e.target.value)}
+                    disableUnderline
+                  >
+                    <MenuItem value="State" disabled>
+                      State
+                    </MenuItem>
+                    {state_abrev.map((state) => (
+                      <MenuItem value={state} key={state}>
+                        {state}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </>
+            ) : searchType === 'Company' ? (
+              <>
+                <FormControl>
+                  <Input
+                    aria-describedby="company-text-input"
+                    value={company}
+                    onChange={(e) => setCompany(e.target.value)}
+                    placeholder={'AAPL'}
+                    disableUnderline
+                  />
+                </FormControl>
+              </>
+            ) : searchType === 'Price' ? (
+              <>
+                <FormControl>
+                  <Input
+                    aria-describedby="price-text-input"
+                    value={minPrice}
+                    onChange={(e) => setMinPrice(e.target.value)}
+                    type="number"
+                    placeholder={'Min Price'}
+                    style={{ maxWidth: '125px' }}
+                    disableUnderline
+                  />
+                </FormControl>
+                <FormControl>
+                  <Input
+                    aria-describedby="price-text-input"
+                    value={maxPrice}
+                    onChange={(e) => setMaxPrice(e.target.value)}
+                    type="number"
+                    placeholder={'Max Price'}
+                    style={{ maxWidth: '125px' }}
+                    disableUnderline
+                  />
+                </FormControl>
+              </>
+            ) : (
+              <>
+                <FormControl>
+                  <Select
+                    value={industry}
+                    onChange={(e) => setIndustry(e.target.value)}
+                    style={{ minWidth: '240px', textAlign: 'left' }}
+                    disableUnderline
+                  >
+                    <MenuItem value="Industry" disabled>
+                      Select Industry
+                    </MenuItem>
+                    {industryList.map((val) => (
+                      <MenuItem value={val.Sector}>{val.Sector}</MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </>
+            )}
+            <IconButton
+              color="primary"
+              onClick={redirect}
+              style={{ float: 'right', padding: '0 12px' }}
+              disableelevation="true"
+            >
+              <SearchIcon />
+            </IconButton>
+          </Grid>
         )}
-        <Grid item xs={3}></Grid>
+        <Grid item xs={3} style={{textAlign: 'right'}}>
+          <Link to="/login" style={{ textDecoration: 'none' }}>
+            <Button
+              size="large"
+              onClick={() => {
+                firebase.app().auth().signOut()
+              }}
+            >
+              Sign out
+            </Button>
+          </Link>
+        </Grid>
       </Grid>
     </>
   )
