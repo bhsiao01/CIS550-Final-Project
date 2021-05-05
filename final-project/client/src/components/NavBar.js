@@ -184,7 +184,7 @@ const NavBar = ( { home }) => {
             color="primary"
             onClick={redirect}
             style={{ float: 'right', padding: '0 12px' }}
-            disableelevation={true}
+            disableelevation="true"
           >
             <SearchIcon />
           </IconButton>
