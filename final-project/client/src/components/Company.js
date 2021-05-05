@@ -3,6 +3,7 @@ import { useLocation } from 'react-router'
 import axios from 'axios'
 import NavBar from './NavBar'
 import StockChart from './StockChart'
+import config from '../config.json'
 import {
   Grid,
   Card,
@@ -15,6 +16,10 @@ import {
   Input,
 } from '@material-ui/core'
 
+const API_KEY = config['news-api-key']
+
+
+
 // parses URL queries for company name.
 const parseURL = (url) => {
   if (url.split('/').length > 2) {
@@ -25,9 +30,7 @@ const parseURL = (url) => {
   }
 }
 
-const get_city_state = (hq) => {
 
-}
 
 const Company = (props) => {
   // useLocation().pathname will return '/company/ticker'
@@ -47,6 +50,11 @@ const Company = (props) => {
   const [cityStat, setCityStat] = useState([])
   const [forecast, setForecast] = useState([])
   const [rank, setRank] = useState([])
+  const [companyArticles, setArticles] = useState([])
+  //const [imageUrl, setImageUrl] = useState([])
+  //const [article_url, setArticleUrl] = useState([])
+  //const [article_titl, setArticleTitle] = useState([])
+
 
   //want to add in where company is headquartered + some simple housing stats (maybe)
 
@@ -104,6 +112,12 @@ const Company = (props) => {
       .then((response) => {
         setRank(response.data)
       })
+    axios
+    .get(`https://newsapi.org/v2/everything?q=Microsoft&from=2021-05-03&to=2021-05-03&sortBy=popularity&apiKey=${API_KEY}`)
+    .then((response) => {
+      setArticles(response.data.articles)
+    })
+  
   }, [company, currYear, city, state])
 
   return (
@@ -250,7 +264,14 @@ const Company = (props) => {
                   </p>
                 </CardContent>
               </Card>)}
-
+              {(
+              <Card>
+                <CardContent>
+                {companyArticles.map((ca) => (
+                    <img src={ca.urlToImage} />
+                  ))}
+                </CardContent>
+              </Card>)}
         </Grid>
       </Grid>
     </div>
