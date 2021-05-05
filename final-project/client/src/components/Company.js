@@ -17,8 +17,6 @@ import {
 
 const API_KEY = config['news-api-key']
 
-
-
 // parses URL queries for company name.
 const parseURL = (url) => {
   if (url.split('/').length > 2) {
@@ -51,7 +49,6 @@ const Company = (props) => {
   //const [imageUrl, setImageUrl] = useState([])
   //const [article_url, setArticleUrl] = useState([])
   //const [article_titl, setArticleTitle] = useState([])
-
 
   useEffect(() => {
     axios
@@ -115,11 +112,14 @@ const Company = (props) => {
         }
       })
     axios
-    .get(`https://newsapi.org/v2/everything?q=${companyName.map((name) => (name.CompanyName))}$&from=2021-05-03&to=2021-05-03&sortBy=popularity&apiKey=${API_KEY}`)
-    .then((response) => {
-      setArticles(response.data.articles)
-    })
-  
+      .get(
+        `https://newsapi.org/v2/everything?q=${companyName.map(
+          (name) => name.CompanyName
+        )}$&from=2021-05-03&to=2021-05-03&sortBy=popularity&apiKey=${API_KEY}`
+      )
+      .then((response) => {
+        setArticles(response.data.articles)
+      })
   }, [company, currYear, city, state])
 
   return (
@@ -140,7 +140,12 @@ const Company = (props) => {
                 style={{ verticalAlign: 'bottom', marginRight: '12px' }}
               />
               <h2 style={{ display: 'inline' }}>
-                <a href={name.Website} style={{ color: '#333333' }}>
+                <a
+                  href={name.Website}
+                  style={{ color: '#333333' }}
+                  target="_blank"
+                  rel="noreferrer"
+                >
                   {name.CompanyName}
                 </a>{' '}
                 ({company})
@@ -309,25 +314,33 @@ const Company = (props) => {
                 </p>
               </CardContent>
             </Card>
-          )} 
-              {(
-              <Grid container direction={'row'} >
-                {companyArticles.slice(0, 5).map((ca) => (
-                  <Card>
-                    <CardContent>
-                      <div style = {{ margineLeft: '8px', marginRight: '8px', justify: 'space-evenly',  display: 'grid' }}>
-                      <img 
-                      src={ca.urlToImage} 
-                      alt="news_img"
-                      height={175}
-                      width = {200}
+          )}
+          {
+            <Grid container direction={'row'}>
+              {companyArticles.slice(0, 5).map((ca) => (
+                <Card>
+                  <CardContent>
+                    <div
+                      style={{
+                        margineLeft: '8px',
+                        marginRight: '8px',
+                        justify: 'space-evenly',
+                        display: 'grid',
+                      }}
+                    >
+                      <img
+                        src={ca.urlToImage}
+                        alt="news_img"
+                        height={175}
+                        width={200}
                       />
                       <h3> {ca.title} </h3>
-                      </div>
-                    </CardContent>
-                  </Card>
-                  ))}
-              </Grid>)}
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </Grid>
+          }
         </Grid>
       </Grid>
     </div>

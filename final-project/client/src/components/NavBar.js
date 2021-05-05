@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import { useHistory } from 'react-router-dom'
 import axios from 'axios'
 import SearchIcon from '@material-ui/icons/Search'
 import state_abrev from '../states.js'
@@ -15,7 +14,6 @@ import {
 } from '@material-ui/core'
 
 const NavBar = ( { home }) => {
-  const history = useHistory()
   const [searchType, setSearchType] = useState('Location')
   const [city, setCity] = useState('')
   const [state, setState] = useState('State')
@@ -186,7 +184,7 @@ const NavBar = ( { home }) => {
             color="primary"
             onClick={redirect}
             style={{ float: 'right', padding: '0 12px' }}
-            disableElevation
+            disableelevation="true"
           >
             <SearchIcon />
           </IconButton>

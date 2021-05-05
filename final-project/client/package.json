@@ -13,6 +13,7 @@
     "axios": "^0.21.1",
     "express": "^4.17.1",
     "firebase": "^8.4.3",
+    "material-table": "^1.69.3",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-geocode": "^0.2.3",

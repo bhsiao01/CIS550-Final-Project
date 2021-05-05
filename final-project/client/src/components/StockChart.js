@@ -13,7 +13,6 @@ import {
 const StockChart = ({ prices }) => {
   const [openValue, setOpenValue] = useState(false)
   const [closeValue, setCloseValue] = useState(false)
-  const [maxY, setMaxY] = useState(0)
 
   const formatData = (prices, open) => {
     const data = []

@@ -267,7 +267,7 @@ const Home = () => {
                     <h4>Cities with Highest Average Home Values</h4>
                     <ol>
                       {highestHomes.map((city) => (
-                        <li>
+                        <li key={city.RegionName}>
                           <a
                             href={
                               '/location/' +
@@ -289,7 +289,7 @@ const Home = () => {
                     <h4>Cities with the Most Companies Headquartered</h4>
                     <ol>
                       {highestNumComps.map((city) => (
-                        <li>
+                        <li key={city.City}>
                           <a
                             href={
                               '/location/' + city.City + '/' + city.StateAbbr
