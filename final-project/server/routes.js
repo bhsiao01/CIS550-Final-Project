@@ -174,12 +174,10 @@ const getAverageHome = (req, res) => {
   });
 }
 
-// SABHYA TO DO - explain how this query would work 
-// TODO: Optimize, maybe lift restriction on date/work with larger range of dates (2018-01-01 takes about 5 sec)
+// Find 20 cities with the highest predicted change in ZHVI and the number of companies in each city
 const getTop20Cities = (req, res) => {
   var state_input = req.params.state; 
   const topTwenty = `
-
   WITH AvgForecastedValues AS (
     SELECT RegionName, StateName, ForecastedDate, AVG(ForecastYoYPctChange) AS ForecastYoYPctChange
     FROM ZillowForecast
@@ -210,6 +208,7 @@ connection.query(topTwenty, (err, rows, fields) => {
   })
 }
 
+// Get city ranking based on the largest change in housing value from first date on file to last date on file
 const getCityRanking = (req, res) => {
   var state_input = req.params.state;
   const ranking = `
@@ -249,18 +248,6 @@ const getCityRanking = (req, res) => {
     SELECT H.RegionName, H.StateName, H.HousingValueChange, (@row_num:=@row_num + 1) AS row_num
     FROM HousingValues H;
   `
-
-  // const ranking = `
-  //   WITH HousingValues AS (
-  //       SELECT Z.RegionName, Z.StateName, MAX(Value) - MIN(Value) AS HousingValueChange
-  //       FROM ZillowHistoricalData Z 
-  //       WHERE Z.StateName = '${state_input}'
-  //       GROUP BY Z.RegionName, Z.StateName
-  //       ORDER BY HousingValueChange DESC
-  //       )
-  //     SELECT H.RegionName, H.StateName, H.HousingValueChange, (@row_num:=@row_num + 1) AS row
-  //     FROM HousingValues H, (SELECT @row_num:=0) as temp;
-  // `
   connection.query(ranking, (err, rows, fields) => {
     if (err) console.log(err)
     else {
@@ -518,12 +505,8 @@ connection.query(meanP, (err, rows, fields) => {
 
 // For the companies with the ten highest revenues, find the change in housing value in the 
 // location of their headquarters in the past 5 years.
-//optimize! 
 const getTop10RevByIndustry = (req, res) => {
   var industry_input = req.params.sector;
-  //console.log("industry: " + industry_input);
-
-  // TODO: don't limit date - too fast (decades still has value)
   const topTenRev = `
   WITH CompanyRevenues AS (
     SELECT StockSymbol, Revenue, CompanyName, City, StateAbbr
