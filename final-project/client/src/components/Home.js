@@ -92,14 +92,15 @@ const Home = () => {
           >
             <Grid item xs={3} />
             <Grid item xs={6}>
-              <h1 style={{ textAlign: 'left' }}>🦉Vision</h1>
+              <h1 style={{ textAlign: 'center', fontSize: '5em', letterSpacing: '3px' }}>🦉Vision</h1>
               <h2
                 style={{
-                  marginBottom: '3.5rem',
-                  textAlign: 'left',
+                  marginBottom: '7.5rem',
+                  textAlign: 'center',
+                  letterSpacing: '2px'
                 }}
               >
-                <em>Keep looking forward.</em>
+                <em>Keep Looking Forward.</em>
               </h2>
               <FormControl style={{ width: '20%' }}>
                 <InputLabel id="search-type">Search Type</InputLabel>
