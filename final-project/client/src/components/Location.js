@@ -2,10 +2,14 @@ import React, { useEffect, useState } from 'react'
 import { useLocation } from 'react-router'
 import axios from 'axios'
 import NavBar from './NavBar'
-import { Grid, Card, CardContent, LinearProgress } from '@material-ui/core'
+import { Grid, Card, CardContent, LinearProgress, Button } from '@material-ui/core'
 import LocationMap from './LocationMap'
 import Geocode from 'react-geocode'
 import config from '../config.json'
+import firebase from "firebase/app"
+import "firebase/auth"
+import "firebase/firestore"
+const db = firebase.firestore();
 
 Geocode.setApiKey(config['maps-api-key'])
 
@@ -51,6 +55,65 @@ const geocodeAllCities = async (cityList) => {
   )
 }
 
+async function sendData(city) {
+  // if read user id gives empty then add otherwise update
+  console.log(city)
+  let currEmail = ''
+  let currName = ''
+  let hasLocations = false
+  let uniqueArray = []
+  await firebase.auth().onAuthStateChanged(function(user) {
+    if (user) {
+      currEmail = firebase.auth().currentUser.email
+      currName = firebase.auth().currentUser.displayName
+      // User is signed in.
+    } else {
+      currEmail = ''
+      currName = ''
+      // No user is signed in.
+    }
+  });
+  
+  await db.collection("test").where("email", "==", currEmail)
+  .onSnapshot((querySnapshot) => {
+    var locations = []
+    querySnapshot.forEach((doc) => {
+      locations.push(doc.data().savedLocs);
+  });
+  uniqueArray = locations.filter((v, index) => {
+      return locations.indexOf(v) === index;
+  });
+  console.log(uniqueArray.flat())
+  //console.log("I have read: Current cities in CA: ", locations.join(", "));
+  if (locations.length === 0) {
+    hasLocations = false; 
+   // console.log(locations.length)
+  } else {
+   // console.log(locations.length)
+    hasLocations = true; 
+  }
+  });
+  if (hasLocations) {
+    //console.log('doning the right thing')
+    db.collection('test').update({
+      locations: firebase.firestore.FieldValue.arrayUnion(city)
+    });
+  } else {
+    db.collection("test").add({
+      name: currName,
+      email: currEmail,
+      savedLocs: [city]
+  })
+  .then((docRef) => {
+      console.log("Document written with ID: ", docRef.id);
+  })
+  .catch((error) => {
+      console.error("Error adding document: ", error);
+  });
+  }
+  return uniqueArray;
+}
+
 const Location = () => {
   // useLocation().pathname will return '/location/city/state'
   let url = useLocation().pathname
@@ -64,6 +127,7 @@ const Location = () => {
   const [defaultCenter, setDefaultCenter] = useState()
   const [loading, setLoading] = useState(true)
   const [rank, setRank] = useState([])
+  const [locations, setLocations] = useState([])
 
   useEffect(() => {
     axios
@@ -128,6 +192,9 @@ const Location = () => {
               {city}, {state}
               {loading && <LinearProgress />}
             </h2>
+            <Button onClick={() => setLocations(sendData(city))}>
+            Save Search 
+            </Button>
             <Grid container direction={'row'} spacing={4}>
               <Grid item xs={4}>
                 {!loading && cityStat.length === 0 && companies.length === 0 && (

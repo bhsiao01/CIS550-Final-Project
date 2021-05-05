@@ -12,6 +12,8 @@ import {
   Button,
   IconButton,
 } from '@material-ui/core'
+import firebase from "firebase/app"
+import "firebase/auth"
 
 const NavBar = ( { home }) => {
   const [searchType, setSearchType] = useState('Location')
@@ -68,6 +70,18 @@ const NavBar = ( { home }) => {
         <Grid item xs={2} style={{ textAlign: 'left' }}>
           <Link to="/" style={{ textDecoration: 'none' }}>
             <Button size="large">🦉Home</Button>
+          </Link>
+          <Link to="/login" style={{ textDecoration: 'none' }}>
+          <Button size="large" 
+                      onClick={() => {
+                        firebase
+                          .app()
+                          .auth()
+                          .signOut();
+                      }}
+                    >
+                      Sign out
+                    </Button>
           </Link>
         </Grid>
         {!home && (
