@@ -92,14 +92,15 @@ const Home = () => {
           >
             <Grid item xs={3} />
             <Grid item xs={6}>
-              <h1
+              <h1 style={{ textAlign: 'left' }}>🦉Vision</h1>
+              <h2
                 style={{
                   marginBottom: '3.5rem',
                   textAlign: 'left',
                 }}
               >
-                Search for a city, company, or industry...
-              </h1>
+                <em>Keep looking forward.</em>
+              </h2>
               <FormControl style={{ width: '20%' }}>
                 <InputLabel id="search-type">Search Type</InputLabel>
                 <Select
@@ -221,7 +222,40 @@ const Home = () => {
               <Grid item xs={6}>
                 <Card>
                   <CardContent>
-                    <h3>[add description here?]</h3>
+                    <h3>What is Vision?</h3>
+                    True to its slogan “Keep looking forward,” Vision allows
+                    prospective job seekers to gather information about
+                    companies they are interested in working for and the city
+                    they would like to work in. Users can search for a company
+                    and see an analysis on how that company’s stock has
+                    performed in past years. This allows users to gain an
+                    understanding of the locations they are interested in
+                    working in. In addition, users can analyze housing values in
+                    the location of a company’s headquarters and the correlation
+                    between housing values and the company’s stock performance.
+                    <br />
+                    <br />
+                    Our project hopes to investigate the question of whether a
+                    company setting up headquarters at a location increases
+                    housing values for that location. In recent years, many
+                    concerns over tech companies gentrifying regions and driving
+                    up house values have been raised. The main two datasets used
+                    are a dataset of 30 years of stock prices on more than 5000
+                    companies and a Zillow dataset of home values in different
+                    cities.
+                    <br />
+                    <br />
+                    Vision allows users to browse for cities, companies,
+                    industries, and price ranges of houses that they are
+                    interested in. Thus, users can perform both specific and
+                    general searches. For instance, if they are already set on
+                    where they would like to work, they can search for a
+                    specific location or company and obtain tailored information
+                    for them. On the other hand, if they want to find more
+                    career and location options that best suit them, they can
+                    search for a specific industry or price range on housing
+                    prices. This will allow them to narrow down where they may
+                    want to live or work in the future.
                   </CardContent>
                 </Card>
               </Grid>
