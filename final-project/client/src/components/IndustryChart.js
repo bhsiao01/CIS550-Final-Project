@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import {
   FlexibleWidthXYPlot,
   ChartLabel,
-  XAxis,
   YAxis,
   VerticalBarSeries,
   Crosshair,
