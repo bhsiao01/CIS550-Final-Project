@@ -69,7 +69,7 @@ const NavBar = ( { home }) => {
       >
         <Grid item xs={2} style={{ textAlign: 'left' }}>
           <Link to="/" style={{ textDecoration: 'none' }}>
-            <Button size="large">Home</Button>
+            <Button size="large">🦉Home</Button>
           </Link>
         </Grid>
         {!home && (

@@ -13,7 +13,7 @@ const theme = createMuiTheme({
   typography: {
     button: {
       textTransform: 'none',
-      fontFamily: 'Vollkorn'
+      fontFamily: 'Inter var'
     }
   },
   overrides: {
