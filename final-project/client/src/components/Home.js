@@ -74,7 +74,6 @@ const Home = () => {
           setMouseY((e.pageY / window.innerHeight) * 100)
         }}
         style={{
-          height: '100vh',
           background:
             'radial-gradient(at ' +
             mouseX +
@@ -89,7 +88,7 @@ const Home = () => {
             container
             direction={'row'}
             alignItems="center"
-            style={{ height: '75vh' }}
+            style={{ height: '80vh' }}
           >
             <Grid item xs={3} />
             <Grid item xs={6}>
@@ -210,8 +209,7 @@ const Home = () => {
             <Grid item xs={3} />
           </Grid>
         </Box>
-      </div>
-      <div style={{ backgroundColor: 'white' }}>
+        <div style={{marginTop: '3rem'}}>
         <Grid
           container
           direction={'row'}
@@ -310,6 +308,8 @@ const Home = () => {
           <Grid item xs={1} />
         </Grid>
       </div>
+      </div>
+      
       <Footer />
     </>
   )
