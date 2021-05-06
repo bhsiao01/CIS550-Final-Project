@@ -243,7 +243,7 @@ const Company = (props) => {
           {loading ? (
             // data is still loading
             <LinearProgress />
-          ) : prices.length > 0 ? (
+          ) : prices.length > 0 && (
             // data loaded and stock data available
             <>
             {compSaved.length > 0 && (
@@ -419,17 +419,6 @@ const Company = (props) => {
                 </Grid>
               </Grid>
             </>
-          ) : (
-            // data loaded but stock data unavailable
-            <Card>
-              <CardContent>
-                <p>
-                  No results were found for {company}. This may be because{' '}
-                  {company} is not included in our dataset.
-                  <a href="/">Try searching for another company</a>.
-                </p>
-              </CardContent>
-            </Card>
           )}
           {
             <GridList
@@ -440,7 +429,7 @@ const Company = (props) => {
               {companyArticles.map((ca) => (
                 <GridListTile style={{height: '200'}}>
                   <Link to={{pathname: ca.url}} style={{textDecoration: 'none'}} target="_blank">
-                  <Card style={{height: 'auto', minHeight: '300', display: 'flex'}}>
+                  <Card style={{height: '300px', minHeight: '300px', display: 'flex'}}>
                     <CardContent>
                     <h3>{ca.title}</h3>
                       <img src={ca.urlToImage} alt={ca.title} align="left" style={style}/>
