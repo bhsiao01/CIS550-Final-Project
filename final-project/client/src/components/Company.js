@@ -327,8 +327,8 @@ const Company = (props) => {
                             >
                               {hq.City}, {hq.StateAbbr}
                             </a>
-                            . These are the housing statistics for {hq.City},{' '}
-                            {hq.StateAbbr}.
+                            . Home Value statistics for {hq.City},{' '}
+                            {hq.StateAbbr} are:
                           </h3>
                         ))}
                         {cityStat.map((city) => (

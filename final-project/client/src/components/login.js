@@ -3,7 +3,10 @@ import axios from 'axios'
 import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/firestore";
-import { Button } from '@material-ui/core'
+import {
+  Box,
+  Button
+} from '@material-ui/core'
 import back from "./back.jpg";
 import './Login.css'
 import { Link } from 'react-router-dom'
@@ -27,33 +30,24 @@ firebase.initializeApp({
   measurementId: "G-VPS7BWYP5F"
 });
 
-//  const db = firebase.firestore();
-
-// db.collection("users").add({
-//   first: "Ada",
-//   last: "Lovelace",
-//   born: 1815
-// })
-// .then((docRef) => {
-//   console.log("Document written with ID: ", docRef.id);
-// })
-// .catch((error) => {
-//   console.error("Error adding document: ", error);
-// });
-
-
 const IfUnAuthed = () => {
-  // const user = firebase.auth().currentUser;
-  // const name = ''
+  const [mouseX, setMouseX] = useState(0)
+  const [mouseY, setMouseY] = useState(0)
   return (
-    <div style={{  
-      backgroundImage: `url(${back})` ,
-      backgroundPosition: 'center',
-      backgroundSize: 'cover',
-      backgroundRepeat: 'no-repeat',
-      width: '100%', 
-      height: '100vh'
-    }} className="img-bg">
+    <div
+        onMouseMove={(e) => {
+          setMouseX((e.pageX / window.innerWidth) * 100)
+          setMouseY((e.pageY / window.innerHeight) * 100)
+        }}
+        style={{
+          height: '100vh',
+          background:
+            'radial-gradient(at ' +
+            mouseX +
+            '% ' +
+            mouseY +
+            '%, #e3def1, #def1e7)',
+        }}>
       <div className="white-bg">
       <FirebaseAuthProvider {...config} firebase={firebase}>
         <div className="sign-in">
@@ -61,21 +55,14 @@ const IfUnAuthed = () => {
             {({ isSignedIn, firebase }) => {
                 return (
                   <div>
-                    <h2 className="sign-in-h2">You're not signed in </h2>
-                    <Link to="/" style={{ textDecoration: 'none' }}>
-                    <Button variant="contained" color="primary" className="button-1"
-                      onClick={() => {
-                        firebase
-                          .app()
-                          .auth()
-                          .signInAnonymously();
-                      }}
-                    >
-                      Sign in anonymously
-                    </Button>
-                    </Link>
-                    <Link to="/" style={{ textDecoration: 'none' }}>
-                    <Button variant="contained" color="primary"
+                    <h1 style={{ textAlign: 'center', fontSize: '4em', letterSpacing: '3px' }} className="header">Vision</h1>
+                    <h1 className="owl">🦉</h1>
+                    <h2 className="sign-in-h2">Sign In </h2>
+                    <div className="buttons-wrap">
+                      <div className="buttons-1">
+                      <Link to="/home" style={{ textDecoration: 'none' }}>
+                        <Box m={2}>
+                        <Button variant="contained" color="primary"
                       onClick={() => {
                         const googleAuthProvider = new firebase.auth.GoogleAuthProvider();
                         firebase.auth().signInWithPopup(googleAuthProvider);
@@ -83,9 +70,14 @@ const IfUnAuthed = () => {
                     >
                       Sign in with Google
                     </Button>
+                        </Box>
+                    
                     </Link>
-                    <Link to="/" style={{ textDecoration: 'none' }}> 
-                    <Button variant="contained" color="primary"
+                      </div>
+                      <div className="buttons-2">
+                      <Link to="/home" style={{ textDecoration: 'none' }}> 
+                      <Box m={2}>
+                      <Button variant="contained" color="primary"
                     onClick={() => {
                       const fbAuthProvider = new firebase.auth.FacebookAuthProvider();
                       firebase
@@ -118,7 +110,13 @@ const IfUnAuthed = () => {
                     >
                       Sign in with Facebook
                     </Button>
+                      </Box>
                     </Link>
+                    <p className="text-1"> Powered by Jasmine Cao, Bethany Hsiao, </p>
+                     <p className="text-2"> Sabhya Raju, Claire Wang </p>
+                      </div>
+                    </div>
+                    
                   </div>
                   
                 );

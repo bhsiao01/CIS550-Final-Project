@@ -3,7 +3,7 @@ import firebase from 'firebase/app'
 import './App.css'
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import Home from './components/Home'
-import Login from './components/login'
+import Login from './components/Login'
 import Company from './components/Company'
 import Location from './components/Location'
 import Industry from './components/Industry'
@@ -18,10 +18,10 @@ function App() {
         <div className="App">
           <Router>
             <Switch>
-              <Route exact path="/login" render={() => <Login />} />
+              <Route exact path="/" render={() => <Login />} />
             </Switch>
             <Switch>
-              <Route exact path="/" render={() => <Home />} />
+              <Route exact path="/home" render={() => <Home />} />
             </Switch>
             <Switch>
               <Route exact={false} path="/company" render={() => <Company />} />
