@@ -429,7 +429,7 @@ const Company = (props) => {
               {companyArticles.map((ca) => (
                 <GridListTile style={{height: '200'}}>
                   <Link to={{pathname: ca.url}} style={{textDecoration: 'none'}} target="_blank">
-                  <Card style={{height: '300px', minHeight: '300px', display: 'flex'}}>
+                  <Card style={{height: '275px', minHeight: '275px', display: 'flex'}}>
                     <CardContent>
                     <h3>{ca.title}</h3>
                       <img src={ca.urlToImage} alt={ca.title} align="left" style={style}/>
