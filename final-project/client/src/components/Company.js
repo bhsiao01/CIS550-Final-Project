@@ -4,6 +4,7 @@ import axios from 'axios'
 import NavBar from './NavBar'
 import StockChart from './StockChart'
 import config from '../config.json'
+import { Link } from 'react-router-dom'
 import {
   Grid,
   Card,
@@ -16,6 +17,8 @@ import {
   Select,
   MenuItem,
   InputLabel,
+  GridList,
+  GridListTile,
 } from '@material-ui/core'
 
 const API_KEY = config['news-api-key']
@@ -31,9 +34,11 @@ const parseURL = (url) => {
 }
 
 const style = {
+  align: 'right',
   height: 150,
   width: 190,
-};
+  marginRight: '12px',
+}
 
 const Company = (props) => {
   // useLocation().pathname will return '/company/ticker'
@@ -218,9 +223,16 @@ const Company = (props) => {
                         {companyHq.map((hq) => (
                           <h3>
                             {' '}
-                            {company} is headquartered in <a href={'../../location/' + hq.City + '/' + hq.StateAbbr}>{hq.City},{' '}
-                            {hq.StateAbbr}</a>. These are the housing statistics for{' '}
-                            {hq.City}, {hq.StateAbbr}.
+                            {company} is headquartered in{' '}
+                            <a
+                              href={
+                                '../../location/' + hq.City + '/' + hq.StateAbbr
+                              }
+                            >
+                              {hq.City}, {hq.StateAbbr}
+                            </a>
+                            . These are the housing statistics for {hq.City},{' '}
+                            {hq.StateAbbr}.
                           </h3>
                         ))}
                         {cityStat.map((city) => (
@@ -324,31 +336,25 @@ const Company = (props) => {
             </Card>
           )}
           {
-            <Grid container direction={'row'} style={{ justify: 'space-evenly' }}>
-              {companyArticles.slice(0, 5).map((ca) => (
-                <Card> 
-                  <CardContent>
-                    <CardActionArea>
-                      <CardMedia
-                        component = "img"
-                        className="news_img2"
-                        src={ca.urlToImage}
-                        style = {style}
-                        title="news_img"
-                      />
-                      <CardContent>
-                        <Typography gutterBottom variant="h5" component="h2" style = {style}>
-                          {ca.title}
-                        </Typography>
-                        <Typography variant="body2" color="textSecondary" component="p" style = {style}>
-                          {ca.content}
-                        </Typography>
-                      </CardContent>
-                    </CardActionArea>
-                  </CardContent>
-                </Card>
+            <GridList
+              cols={2.2}
+              style={{ flexWrap: 'nowrap', marginBottom: '3rem' }}
+              cellHeight={275}
+            >
+              {companyArticles.map((ca) => (
+                <GridListTile style={{height: '200'}}>
+                  <Link to={{pathname: ca.url}} style={{textDecoration: 'none'}} target="_blank">
+                  <Card style={{height: 'auto', minHeight: '300', display: 'flex'}}>
+                    <CardContent>
+                    <h3>{ca.title}</h3>
+                      <img src={ca.urlToImage} alt={ca.title} align="left" style={style}/>
+                      <p>{ca.content}</p>
+                    </CardContent>
+                  </Card>
+                  </Link>
+                </GridListTile>
               ))}
-            </Grid>
+            </GridList>
           }
         </Grid>
       </Grid>
