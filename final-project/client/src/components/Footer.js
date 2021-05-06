@@ -10,7 +10,7 @@ const Footer = () => {
         padding: '1.5rem 0',
       }}
     >
-      Made with 💖 by Bethany, Claire, Sabhya, and Jasmine
+      Made with 💖&nbsp; by Jasmine, Bethany, Sabhya, and Claire
     </div>
   )
 }
