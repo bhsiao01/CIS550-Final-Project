@@ -71,6 +71,10 @@ app.get('/getYearsFromTicker/:ticker', routes.getYearsfromTicker)
 app.get('/getIndustryFromCompany/:ticker', routes.getCompanyIndustry)
 
 /* INDUSTRY QUERIES */
+
+//calling app.get to find the topstocks by revenue per industry
+app.get('/getTopRevenue/:industry', routes.getTopRevenue)
+
 //calling app.get to find the topstocks per industry
 app.get('/getTop10/:sector', routes.getTop10StocksPerIndustry)
 

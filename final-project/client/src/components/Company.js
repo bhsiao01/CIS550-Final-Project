@@ -19,7 +19,13 @@ import {
   InputLabel,
   GridList,
   GridListTile,
+  Button,
+  Box
 } from '@material-ui/core'
+import firebase from "firebase/app"
+import "firebase/auth"
+import "firebase/firestore"
+const db = firebase.firestore();
 
 const API_KEY = config['news-api-key']
 
@@ -62,6 +68,7 @@ const Company = (props) => {
   //const [imageUrl, setImageUrl] = useState([])
   //const [article_url, setArticleUrl] = useState([])
   //const [article_titl, setArticleTitle] = useState([])
+  const [compSaved, setCompSaved] = useState([])
 
   useEffect(() => {
     axios
@@ -135,6 +142,67 @@ const Company = (props) => {
       })
   }, [company, currYear, city, state])
 
+  async function sendData(company) {
+    // if read user id gives empty then add otherwise update
+    //console.log(city)
+    let currEmail = ''
+    let currName = ''
+    let hasLocations = false
+    let uniqueArray = []
+    await firebase.auth().onAuthStateChanged(function(user) {
+      if (user) {
+        currEmail = firebase.auth().currentUser.email
+        currName = firebase.auth().currentUser.displayName
+        // User is signed in.
+      } else {
+        currEmail = ''
+        currName = ''
+        // No user is signed in.
+      }
+    });
+    
+    await db.collection("companies").where("email", "==", currEmail)
+    .onSnapshot((querySnapshot) => {
+      var locations = []
+      querySnapshot.forEach((doc) => {
+        locations.push(doc.data().savedCompanies);
+    });
+    uniqueArray = locations.filter((v, index) => {
+        return locations.indexOf(v) === index;
+    });
+    console.log(uniqueArray.flat())
+    if (locations.length === 0) {
+      hasLocations = false; 
+    } else {
+      hasLocations = true; 
+    }
+    db.collection("companies").doc(currEmail).get().then((doc) => {
+      if (doc.exists) {
+          //console.log("Document data:", doc.data());
+          db.collection('companies').doc(currEmail).update({
+            savedCompanies: firebase.firestore.FieldValue.arrayUnion(company)
+          });
+      } else {
+          console.log("No such document");
+          var data = {
+            name: currName,
+            email: currEmail,
+            savedCompanies: [company]
+        }
+        db.collection("companies").doc(currEmail).set(data).then(() => {
+          console.log("Document successfully written!");
+        });
+      }
+  }).catch((error) => {
+      console.log("Error getting document:", error);
+  });
+  setCompSaved(uniqueArray.flat())
+  //console.log(locations)
+  return uniqueArray.flat();
+    });
+  return compSaved.flat();
+  }
+
   return (
     <div>
       <NavBar />
@@ -163,6 +231,13 @@ const Company = (props) => {
                 </a>{' '}
                 ({company})
               </h2>
+              <Box m={2} ml={0}>
+            <Button variant="contained"
+                  color="primary"
+                  onClick={() => sendData(company)}>
+            Save Search 
+            </Button>
+            </Box>
             </div>
           ))}
           {loading ? (
@@ -171,6 +246,27 @@ const Company = (props) => {
           ) : prices.length > 0 ? (
             // data loaded and stock data available
             <>
+            {compSaved.length > 0 && (
+                  <Card>
+                  <CardContent>
+                    <h3> Saved Companies </h3>
+                    {compSaved.map((result) => (
+                      <div key={company}>
+                        <p>
+                          <a
+                            href={
+                              '/company/' +
+                              result
+                            }
+                          >
+                            {result}
+                          </a>
+                        </p>
+                      </div>
+                    ))}
+                  </CardContent>
+                </Card>
+                 )}
               <Card>
                 <CardContent>
                   <div style={{ display: 'inline-flex' }}>

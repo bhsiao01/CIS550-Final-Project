@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useLocation } from 'react-router'
 import axios from 'axios'
 import NavBar from './NavBar'
-import { Grid, Card, CardContent, LinearProgress, Button } from '@material-ui/core'
+import { Grid, Card, CardContent, LinearProgress, Button, Box } from '@material-ui/core'
 import LocationMap from './LocationMap'
 import Geocode from 'react-geocode'
 import config from '../config.json'
@@ -55,64 +55,6 @@ const geocodeAllCities = async (cityList) => {
   )
 }
 
-async function sendData(city) {
-  // if read user id gives empty then add otherwise update
-  console.log(city)
-  let currEmail = ''
-  let currName = ''
-  let hasLocations = false
-  let uniqueArray = []
-  await firebase.auth().onAuthStateChanged(function(user) {
-    if (user) {
-      currEmail = firebase.auth().currentUser.email
-      currName = firebase.auth().currentUser.displayName
-      // User is signed in.
-    } else {
-      currEmail = ''
-      currName = ''
-      // No user is signed in.
-    }
-  });
-  
-  await db.collection("test").where("email", "==", currEmail)
-  .onSnapshot((querySnapshot) => {
-    var locations = []
-    querySnapshot.forEach((doc) => {
-      locations.push(doc.data().savedLocs);
-  });
-  uniqueArray = locations.filter((v, index) => {
-      return locations.indexOf(v) === index;
-  });
-  console.log(uniqueArray.flat())
-  //console.log("I have read: Current cities in CA: ", locations.join(", "));
-  if (locations.length === 0) {
-    hasLocations = false; 
-   // console.log(locations.length)
-  } else {
-   // console.log(locations.length)
-    hasLocations = true; 
-  }
-  });
-  if (hasLocations) {
-    //console.log('doning the right thing')
-    db.collection('test').update({
-      locations: firebase.firestore.FieldValue.arrayUnion(city)
-    });
-  } else {
-    db.collection("test").add({
-      name: currName,
-      email: currEmail,
-      savedLocs: [city]
-  })
-  .then((docRef) => {
-      console.log("Document written with ID: ", docRef.id);
-  })
-  .catch((error) => {
-      console.error("Error adding document: ", error);
-  });
-  }
-  return uniqueArray;
-}
 
 const Location = () => {
   // useLocation().pathname will return '/location/city/state'
@@ -176,6 +118,67 @@ const Location = () => {
     )
   }, [city, state])
 
+  async function sendData(city, state) {
+    // if read user id gives empty then add otherwise update
+    //console.log(city)
+    let currEmail = ''
+    let currName = ''
+    let hasLocations = false
+    let uniqueArray = []
+    await firebase.auth().onAuthStateChanged(function(user) {
+      if (user) {
+        currEmail = firebase.auth().currentUser.email
+        currName = firebase.auth().currentUser.displayName
+        // User is signed in.
+      } else {
+        currEmail = ''
+        currName = ''
+        // No user is signed in.
+      }
+    });
+    
+    await db.collection("locations").where("email", "==", currEmail)
+    .onSnapshot((querySnapshot) => {
+      var locations = []
+      querySnapshot.forEach((doc) => {
+        locations.push(doc.data().savedLocs);
+    });
+    uniqueArray = locations.filter((v, index) => {
+        return locations.indexOf(v) === index;
+    });
+    //console.log(uniqueArray.flat())
+    if (locations.length === 0) {
+      hasLocations = false; 
+    } else {
+      hasLocations = true; 
+    }
+    db.collection("locations").doc(currEmail).get().then((doc) => {
+      if (doc.exists) {
+          //console.log("Document data:", doc.data());
+          db.collection('locations').doc(currEmail).update({
+            savedLocs: firebase.firestore.FieldValue.arrayUnion(city + ', '+ state)
+          });
+      } else {
+          console.log("No such document");
+          var data = {
+            name: currName,
+            email: currEmail,
+            savedLocs: [city + ', '+ state]
+        }
+        db.collection("locations").doc(currEmail).set(data).then(() => {
+          console.log("Document successfully written!");
+        });
+      }
+  }).catch((error) => {
+      console.log("Error getting document:", error);
+  });
+  setLocations(uniqueArray.flat())
+  //console.log(locations)
+  return uniqueArray.flat();
+    });
+  return locations.flat();
+  }
+
   return (
     <>
       <NavBar />
@@ -192,9 +195,13 @@ const Location = () => {
               {city}, {state}
               {loading && <LinearProgress />}
             </h2>
-            <Button onClick={() => setLocations(sendData(city))}>
+            <Box m={2} ml={0}>
+            <Button variant="contained"
+                  color="primary"
+                  onClick={() => sendData(city, state)}>
             Save Search 
             </Button>
+            </Box>
             <Grid container direction={'row'} spacing={4}>
               <Grid item xs={4}>
                 {!loading && cityStat.length === 0 && companies.length === 0 && (
@@ -208,6 +215,29 @@ const Location = () => {
                     </CardContent>
                   </Card>
                 )}
+                {locations.length > 0 && (
+                  <Card>
+                  <CardContent>
+                    <h3> Saved Locations </h3>
+                    {locations.map((result) => (
+                      <div key={city}>
+                        <p>
+                          <a
+                            href={
+                              '/location/' +
+                              result.split(',')[0] +
+                              '/' +
+                              result.split(',')[1]
+                            }
+                          >
+                            {result.split(',')[0]}, {result.split(',')[1]}
+                          </a>
+                        </p>
+                      </div>
+                    ))}
+                  </CardContent>
+                </Card>
+                 )}
                 {cityStat.length > 0 && (
                   <Card>
                     <CardContent>

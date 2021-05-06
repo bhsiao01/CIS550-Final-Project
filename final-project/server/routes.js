@@ -638,6 +638,26 @@ const getHomesFromSector = (req, res) => {
   })
 }
 
+const getTopRevenue = (req, res) => {
+  var industry_input = req.params.industry;
+  const db = `use master;`;
+  connection.query(db, (err, rows, fields) => {});
+  const getTopRevenue = `
+  SELECT StockSymbol, Revenue, CompanyName, City, StateAbbr
+   FROM StockInfo
+   WHERE Sector = '${industry_input}'
+   ORDER BY Revenue DESC
+   LIMIT 10;
+  `
+  connection.query(getTopRevenue, (err, rows, fields) => {
+    if (err) console.log(err);
+    else {
+      res.json(rows);
+    }
+  });
+
+}
+
 module.exports = {
   getAverageHome: getAverageHome,
   // getCompanies: getCompanies,
@@ -665,5 +685,5 @@ module.exports = {
   getRevenue: getRevenue,
   get10HomeValue: get10HomeValue,
   get10NumCompanies: get10NumCompanies,
+  getTopRevenue: getTopRevenue
 }
-//
