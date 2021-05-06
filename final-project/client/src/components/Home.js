@@ -80,7 +80,7 @@ const Home = () => {
             mouseX +
             '% ' +
             mouseY +
-            '%, #e3def1, #def1e7)',
+            '%, #e3def1, #def1e7)'
         }}
       >
         <Box>
@@ -93,10 +93,10 @@ const Home = () => {
           >
             <Grid item xs={3} />
             <Grid item xs={6}>
-              <h1 style={{ textAlign: 'center', fontSize: '5em', letterSpacing: '3px' }}>🦉Vision</h1>
+              <h1 style={{ textAlign: 'center', fontSize: '5em', marginBottom: '-1rem', letterSpacing: '3px' }}>🦉Vision</h1>
               <h2
                 style={{
-                  marginBottom: '7.5rem',
+                  marginBottom: '5.5rem',
                   textAlign: 'center',
                   letterSpacing: '2px'
                 }}
