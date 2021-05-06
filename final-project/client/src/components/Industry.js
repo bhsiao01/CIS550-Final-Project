@@ -252,7 +252,7 @@ const Industry = () => {
                                   <b>{comp.CompanyName}</b>
                                 </a>{' '}
                                 ({comp.StockSymbol})<br></br>
-                                Revenue (in millions): ${comp.Revenue}
+                                Revenue (in millions): ${Number(comp.Revenue).toLocaleString()}
                                 <br></br>
                                 Location:{' '}
                                 <a

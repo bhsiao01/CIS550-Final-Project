@@ -328,10 +328,6 @@ const getYearsfromTicker = (req, res) => {
 
 const getCompanyName = (req, res) => {
   var company_input = req.params.ticker;
-  console.log(company_input);
-
-  /*const db = `use master;`
-  connection.query(db, (err, rows, fields) => {})*/
 
   const getCompanyName = `
     SELECT CompanyName, Website
@@ -351,10 +347,6 @@ const getCompanyName = (req, res) => {
 //get Industry from company ticker
 const getCompanyIndustry = (req, res) => {
   var company_input = req.params.ticker;
-  console.log(company_input);
-
-  /*const db = `use master;`
-  connection.query(db, (err, rows, fields) => {})*/
 
   const getCompanyIndustry = `
     SELECT Sector
@@ -375,10 +367,6 @@ const getCompanyIndustry = (req, res) => {
 
 const getCompanyCEO = (req, res) => {
   var company_input = req.params.ticker;
-  console.log(company_input);
-
-  /*const db = `use master;`
-  connection.query(db, (err, rows, fields) => {})*/
 
   const getCompanyCEO = `
     SELECT CEO
@@ -400,9 +388,6 @@ const getCompanyCEO = (req, res) => {
 const getHQ = (req, res) => {
   var company_input = req.params.ticker;
   console.log(company_input);
-
-  /*const db = `use master;`
-  connection.query(db, (err, rows, fields) => {})*/
 
   const getCompanyHq = `
     SELECT City, StateAbbr
@@ -533,66 +518,9 @@ connection.query(topTenRev, (err, rows, fields) => {
   })
 }
 
-
-/*// Find the number of NASDAQ companies and their average stock price in the top 20 cities with the 
-// highest forecasted percentage change in value, as of Jan 1st 2020.
-const OldgetTop20Cities = (req, res) => {
-  var state_input = req.params.state; 
-  const topTwenty = `
-  WITH AvgForecastedValues AS (
-    SELECT RegionName, StateName, ForecastedDate, AVG(ForecastYoYPctChange) AS ForecastYoYPctChange
-    FROM ZillowForecast
-    GROUP BY RegionName, StateName, ForecastedDate
-  ),
-  HighestForecastValue AS (
-  SELECT RegionName, StateName, ForecastYoYPctChange
-  FROM AvgForecastedValues
-  ORDER BY ForecastYoYPctChange DESC
-  ),
-  StockPricesByCity AS (
-  SELECT I.City, I.StateAbbr, COUNT(*) AS NumCompanies, AVG(S.Close) AS AvgPrice
-  FROM Stocks S JOIN StockInfo I ON I.StockSymbol = S.StockSymbol
-  WHERE Date >= '2020-01-01'
-  GROUP BY I.City, I.StateAbbr
-  ORDER BY I.City ASC
-  )
-  SELECT City, StateAbbr, NumCompanies, AvgPrice, ForecastYoYPctChange
-  FROM StockPricesByCity S JOIN HighestForecastValue H ON H.RegionName = S.City AND H.StateName = S.StateAbbr
-  WHERE StateAbbr = '${state_input}'
-  LIMIT 50;
-`
-connection.query(topTenRev, (err, rows, fields) => {
-    if (err) console.log(err)
-    else {
-      console.log(rows)
-      res.json(rows)
-    }
-  })
-}*/
-
-
-// get home values for a specific industry
-/*const getSectorHome = (req, res) => {
-  // TODO: If not complex enough, add another join of T1 with companies that are in the city
-  const sectorHome = `
-  WITH temp1 AS (
-    SELECT RegionName, AVG(Value) as mean 
-    FROM ZillowHistoricalData Z JOIN StockInfo S ON Z.RegionName = S.City 
-    WHERE S.Sector = 'Technology'
-    GROUP BY RegionName
-    ORDER BY mean DESC
-  )
-  SELECT T1.RegionName, T1.mean
-  FROM temp1 as T1
-  LIMIT 5;
-  `;
-}*/
-
 // Get high price for all stocks in an industry
 const getHighPricePerIndustry = (req, res) => {
   var sector_input = req.params.sector;
-  const db = `use master;`;
-  connection.query(db, (err, rows, fields) => {});
 
   const industry = `
       SELECT S.StockSymbol, MAX(High) AS MaxPrice
@@ -640,8 +568,6 @@ const getHomesFromSector = (req, res) => {
 
 const getTopRevenue = (req, res) => {
   var industry_input = req.params.industry;
-  const db = `use master;`;
-  connection.query(db, (err, rows, fields) => {});
   const getTopRevenue = `
   SELECT StockSymbol, Revenue, CompanyName, City, StateAbbr
    FROM StockInfo
@@ -660,7 +586,6 @@ const getTopRevenue = (req, res) => {
 
 module.exports = {
   getAverageHome: getAverageHome,
-  // getCompanies: getCompanies,
   getHighPricePerIndustry: getHighPricePerIndustry,
   getCityStat: getCityStat,
   getStockByYear: getStockByYear,
