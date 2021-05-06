@@ -8,6 +8,9 @@ import {
   Grid,
   Card,
   CardContent,
+  CardActionArea,
+  CardMedia,
+  Typography,
   LinearProgress,
   FormControl,
   Select,
@@ -26,6 +29,11 @@ const parseURL = (url) => {
     return company
   }
 }
+
+const style = {
+  height: 150,
+  width: 190,
+};
 
 const Company = (props) => {
   // useLocation().pathname will return '/company/ticker'
@@ -316,26 +324,27 @@ const Company = (props) => {
             </Card>
           )}
           {
-            <Grid container direction={'row'}>
+            <Grid container direction={'row'} style={{ justify: 'space-evenly' }}>
               {companyArticles.slice(0, 5).map((ca) => (
-                <Card>
+                <Card> 
                   <CardContent>
-                    <div
-                      style={{
-                        margineLeft: '8px',
-                        marginRight: '8px',
-                        justify: 'space-evenly',
-                        display: 'grid',
-                      }}
-                    >
-                      <img
+                    <CardActionArea>
+                      <CardMedia
+                        component = "img"
+                        className="news_img2"
                         src={ca.urlToImage}
-                        alt="news_img"
-                        height={175}
-                        width={200}
+                        style = {style}
+                        title="news_img"
                       />
-                      <h3> {ca.title} </h3>
-                    </div>
+                      <CardContent>
+                        <Typography gutterBottom variant="h5" component="h2" style = {style}>
+                          {ca.title}
+                        </Typography>
+                        <Typography variant="body2" color="textSecondary" component="p" style = {style}>
+                          {ca.content}
+                        </Typography>
+                      </CardContent>
+                    </CardActionArea>
                   </CardContent>
                 </Card>
               ))}
