@@ -218,8 +218,8 @@ const Company = (props) => {
                         {companyHq.map((hq) => (
                           <h3>
                             {' '}
-                            {company} is headquarted in {hq.City},{' '}
-                            {hq.StateAbbr}. These are the housing statistics for{' '}
+                            {company} is headquartered in <a href={'../../location/' + hq.City + '/' + hq.StateAbbr}>{hq.City},{' '}
+                            {hq.StateAbbr}</a>. These are the housing statistics for{' '}
                             {hq.City}, {hq.StateAbbr}.
                           </h3>
                         ))}

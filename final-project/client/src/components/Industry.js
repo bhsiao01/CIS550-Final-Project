@@ -118,14 +118,10 @@ const Industry = () => {
                       {topRev.map((comp) => (
                         <div>
                           <p>
-                            <b>{comp.CompanyName}</b> ({comp.StockSymbol})
-                          </p>
-                          <p>Revenue: ${comp.Revenue}</p>
-                          <p>
-                            Location: {comp.City}, {comp.StateAbbr}
-                          </p>
-                          <p>
-                            Housing value change: ${comp.HousingValueChange}{' '}
+                            <b>{comp.CompanyName}</b> ({comp.StockSymbol})<br></br>
+                            Revenue: ${comp.Revenue}<br></br>
+                            Location: {comp.City}, {comp.StateAbbr}<br></br>
+                            Housing value change in the last 5 years: ${Number(comp.HousingValueChange.toFixed(2)).toLocaleString()}{' '}
                           </p>
                         </div>
                       ))}
@@ -164,7 +160,7 @@ const Industry = () => {
                             >
                               {region.RegionName}, {region.StateAbbr}
                             </a>
-                            : Avg. Price of $
+                            : Average value of $
                             {Number(
                               Number(region.mean).toFixed(0)
                             ).toLocaleString()}
