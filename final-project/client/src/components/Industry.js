@@ -2,15 +2,26 @@ import React, { useEffect, useState } from 'react'
 import { useLocation } from 'react-router'
 import axios from 'axios'
 import NavBar from './NavBar'
-import { Grid, Card, CardContent, LinearProgress, Button, Box } from '@material-ui/core'
+import {
+  Grid,
+  Card,
+  CardContent,
+  LinearProgress,
+  Button,
+  Box,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+} from '@material-ui/core'
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import IndustryMap from './IndustryMap'
 import IndustryChart from './IndustryChart'
 import Geocode from 'react-geocode'
 import config from '../config.json'
-import firebase from "firebase/app"
-import "firebase/auth"
-import "firebase/firestore"
-const db = firebase.firestore();
+import firebase from 'firebase/app'
+import 'firebase/auth'
+import 'firebase/firestore'
+const db = firebase.firestore()
 
 Geocode.setApiKey(config['maps-api-key'])
 
@@ -53,8 +64,8 @@ const geocodeAllCities = async (cityList) => {
 }
 
 const companyExists = (companyName, compArray) => {
-  return compArray.some(function(el) {
-    return el.CompanyName === companyName;
+  return compArray.some(function (el) {
+    return el.CompanyName === companyName
   })
 }
 
@@ -88,7 +99,7 @@ const Industry = () => {
       .then((response) => {
         setHighPrice(response.data)
       })
-      axios
+    axios
       .get('http://localhost:8081/getTopRevenue/' + industry)
       .then((response) => {
         setTop10Rev(response.data)
@@ -111,7 +122,7 @@ const Industry = () => {
     let currName = ''
     let hasLocations = false
     let uniqueArray = []
-    await firebase.auth().onAuthStateChanged(function(user) {
+    await firebase.auth().onAuthStateChanged(function (user) {
       if (user) {
         currEmail = firebase.auth().currentUser.email
         currName = firebase.auth().currentUser.displayName
@@ -121,50 +132,60 @@ const Industry = () => {
         currName = ''
         // No user is signed in.
       }
-    });
-    
-    await db.collection("industries").where("email", "==", currEmail)
-    .onSnapshot((querySnapshot) => {
-      var locations = []
-      querySnapshot.forEach((doc) => {
-        locations.push(doc.data().savedInds);
-    });
-    uniqueArray = locations.filter((v, index) => {
-        return locations.indexOf(v) === index;
-    });
-    console.log(uniqueArray.flat())
-    if (locations.length === 0) {
-      hasLocations = false; 
-    } else {
-      hasLocations = true; 
-    }
-    db.collection("industries").doc(currEmail).get().then((doc) => {
-      if (doc.exists) {
-          //console.log("Document data:", doc.data());
-          db.collection('industries').doc(currEmail).update({
-            savedInds: firebase.firestore.FieldValue.arrayUnion(industry)
-          });
-      } else {
-          console.log("No such document");
-          var data = {
-            name: currName,
-            email: currEmail,
-            savedInds: [industry]
-        }
-        db.collection("industries").doc(currEmail).set(data).then(() => {
-          console.log("Document successfully written!");
-        });
-      }
-  }).catch((error) => {
-      console.log("Error getting document:", error);
-  });
-  setIndSaved(uniqueArray.flat())
-  //console.log(locations)
-  return uniqueArray.flat();
-    });
-  return indSaved.flat();
-  }
+    })
 
+    await db
+      .collection('industries')
+      .where('email', '==', currEmail)
+      .onSnapshot((querySnapshot) => {
+        var locations = []
+        querySnapshot.forEach((doc) => {
+          locations.push(doc.data().savedInds)
+        })
+        uniqueArray = locations.filter((v, index) => {
+          return locations.indexOf(v) === index
+        })
+        console.log(uniqueArray.flat())
+        if (locations.length === 0) {
+          hasLocations = false
+        } else {
+          hasLocations = true
+        }
+        db.collection('industries')
+          .doc(currEmail)
+          .get()
+          .then((doc) => {
+            if (doc.exists) {
+              //console.log("Document data:", doc.data());
+              db.collection('industries')
+                .doc(currEmail)
+                .update({
+                  savedInds: firebase.firestore.FieldValue.arrayUnion(industry),
+                })
+            } else {
+              console.log('No such document')
+              var data = {
+                name: currName,
+                email: currEmail,
+                savedInds: [industry],
+              }
+              db.collection('industries')
+                .doc(currEmail)
+                .set(data)
+                .then(() => {
+                  console.log('Document successfully written!')
+                })
+            }
+          })
+          .catch((error) => {
+            console.log('Error getting document:', error)
+          })
+        setIndSaved(uniqueArray.flat())
+        //console.log(locations)
+        return uniqueArray.flat()
+      })
+    return indSaved.flat()
+  }
 
   return (
     <>
@@ -179,33 +200,28 @@ const Industry = () => {
         <Grid item xs={10}>
           <h2>{industry} Industry</h2>
           <Box m={2} ml={0}>
-            <Button variant="contained"
-                  color="primary"
-                  onClick={() => sendData(industry)}>
-            Save Search 
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => sendData(industry)}
+            >
+              Save Search
             </Button>
-            </Box>
-            {indSaved.length > 0 && (
-                  <Card>
-                  <CardContent>
-                    <h3> Saved Industries </h3>
-                    {indSaved.map((result) => (
-                      <div key={industry}>
-                        <p>
-                          <a
-                            href={
-                              '/industry/' +
-                              result
-                            }
-                          >
-                            {result}
-                          </a>
-                        </p>
-                      </div>
-                    ))}
-                  </CardContent>
-                </Card>
-                 )}
+          </Box>
+          {indSaved.length > 0 && (
+            <Accordion style={{ marginBottom: '12px' }} defaultExpanded={true}>
+              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                <h3 style={{ margin: '0px' }}> Saved Industries </h3>
+              </AccordionSummary>
+              <AccordionDetails style={{ flexDirection: 'column' }}>
+                {indSaved.map((result) => (
+                  <p style={{ marginBottom: '3px' }}>
+                    <a href={'/industry/' + result}>{result}</a>
+                  </p>
+                ))}
+              </AccordionDetails>
+            </Accordion>
+          )}
           <Grid container direction={'row'} spacing={4}>
             {loading ? (
               <>
@@ -215,80 +231,83 @@ const Industry = () => {
               </>
             ) : topRev.length > 0 ? (
               <>
-              
                 <Grid item xs={5}>
-                <Card>
+                  <Card>
                     <CardContent>
-                      <h3>Companies with the highest revenues in the {industry}{' '}
+                      <h3>
+                        Companies with the highest revenues in the {industry}{' '}
                         Industry
-                        </h3>
-                        
-                        {top10Rev.map((comp) => {
-                          if (companyExists(comp.CompanyName, topRev)) {
-                            console.log('true')
-                            return (
-                              <div>
-                                <p>
-                              <a
-                                href={'../../company/' + comp.StockSymbol}
-                                style={{ color: 'black' }}
-                              >
-                                <b>{comp.CompanyName}</b></a> ({comp.StockSymbol})
-                             
-                              <br></br>
-                              Revenue (in millions): ${comp.Revenue}
-                              <br></br>
-                              Location:{' '}
-                              <a
-                                href={
-                                  '/location/' +
-                                  comp.City +
-                                  '/' +
-                                  comp.StateAbbr
-                                }
-                                style={{ color: 'black' }}
-                              >
-                                {comp.City}, {comp.StateAbbr}
-                              </a>
-                              <br></br>
-                                  Housing value change in the last 5 years: ${topRev.filter(company => company.CompanyName === comp.CompanyName
-                                  ).map((e) => (e.HousingValueChange))}{' '}
-                              
-                            </p>
-                              </div>
-                            )
-                          } else {
-                                return (
-                                  <div>
-                                     <p>
-                              <a
-                                href={'../../company/' + comp.StockSymbol}
-                                style={{ color: 'black' }}
-                              >
-                                <b>{comp.CompanyName}</b></a> ({comp.StockSymbol})
-                             
-                              <br></br>
-                              Revenue (in millions): ${comp.Revenue}
-                              <br></br>
-                              Location:{' '}
-                              <a
-                                href={
-                                  '/location/' +
-                                  comp.City +
-                                  '/' +
-                                  comp.StateAbbr
-                                }
-                                style={{ color: 'black' }}
-                              >
-                                {comp.City}, {comp.StateAbbr}
-                              </a>
-                                    </p>
-                                  </div>
-                                )
-                          }
-                        })}
-                        
-                        </CardContent>
+                      </h3>
+
+                      {top10Rev.map((comp) => {
+                        if (companyExists(comp.CompanyName, topRev)) {
+                          console.log('true')
+                          return (
+                            <div>
+                              <p>
+                                <a
+                                  href={'../../company/' + comp.StockSymbol}
+                                  style={{ color: 'black' }}
+                                >
+                                  <b>{comp.CompanyName}</b>
+                                </a>{' '}
+                                ({comp.StockSymbol})<br></br>
+                                Revenue (in millions): ${comp.Revenue}
+                                <br></br>
+                                Location:{' '}
+                                <a
+                                  href={
+                                    '/location/' +
+                                    comp.City +
+                                    '/' +
+                                    comp.StateAbbr
+                                  }
+                                  style={{ color: 'black' }}
+                                >
+                                  {comp.City}, {comp.StateAbbr}
+                                </a>
+                                <br></br>
+                                Housing value change in the last 5 years: $
+                                {topRev
+                                  .filter(
+                                    (company) =>
+                                      company.CompanyName === comp.CompanyName
+                                  )
+                                  .map((e) => e.HousingValueChange)}{' '}
+                              </p>
+                            </div>
+                          )
+                        } else {
+                          return (
+                            <div>
+                              <p>
+                                <a
+                                  href={'../../company/' + comp.StockSymbol}
+                                  style={{ color: 'black' }}
+                                >
+                                  <b>{comp.CompanyName}</b>
+                                </a>{' '}
+                                ({comp.StockSymbol})<br></br>
+                                Revenue (in millions): ${comp.Revenue}
+                                <br></br>
+                                Location:{' '}
+                                <a
+                                  href={
+                                    '/location/' +
+                                    comp.City +
+                                    '/' +
+                                    comp.StateAbbr
+                                  }
+                                  style={{ color: 'black' }}
+                                >
+                                  {comp.City}, {comp.StateAbbr}
+                                </a>
+                              </p>
+                            </div>
+                          )
+                        }
+                      })}
+                    </CardContent>
                   </Card>
                 </Grid>
                 <Grid item xs={7}>
@@ -296,7 +315,8 @@ const Industry = () => {
                     <CardContent>
                       <h3>Cities with companies in the {industry} Industry </h3>
                       <p>
-                        The map below displays cities with companies in the  {industry}  industry and the average home value in those
+                        The map below displays cities with companies in the{' '}
+                        {industry} industry and the average home value in those
                         cities, based on Zillow's Home Value Index. Click on the
                         markers to learn more about each city.
                       </p>
@@ -349,8 +369,8 @@ const Industry = () => {
                   <CardContent>
                     <p>
                       No results were found for {industry}. This may be because{' '}
-                      {industry} is not included in our dataset. 
-                      <a href="/"> Try searching for another industry</a>.
+                      {industry} is not included in our dataset.
+                      <a href="/home"> Try searching for another industry</a>.
                     </p>
                   </CardContent>
                 </Card>

@@ -143,7 +143,7 @@ const PriceRange = () => {
             <CardContent>
               <p>
                 No results were found for the range ${min} - ${max}.
-                <a href="/">Try searching again</a>.
+                <a href="/home">Try searching again</a>.
               </p>
             </CardContent>
           </Card>

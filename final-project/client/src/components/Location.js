@@ -2,14 +2,25 @@ import React, { useEffect, useState } from 'react'
 import { useLocation } from 'react-router'
 import axios from 'axios'
 import NavBar from './NavBar'
-import { Grid, Card, CardContent, LinearProgress, Button, Box } from '@material-ui/core'
+import {
+  Grid,
+  Card,
+  CardContent,
+  LinearProgress,
+  Button,
+  Box,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+} from '@material-ui/core'
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import LocationMap from './LocationMap'
 import Geocode from 'react-geocode'
 import config from '../config.json'
-import firebase from "firebase/app"
-import "firebase/auth"
-import "firebase/firestore"
-const db = firebase.firestore();
+import firebase from 'firebase/app'
+import 'firebase/auth'
+import 'firebase/firestore'
+const db = firebase.firestore()
 
 Geocode.setApiKey(config['maps-api-key'])
 
@@ -54,7 +65,6 @@ const geocodeAllCities = async (cityList) => {
     })
   )
 }
-
 
 const Location = () => {
   // useLocation().pathname will return '/location/city/state'
@@ -125,7 +135,7 @@ const Location = () => {
     let currName = ''
     let hasLocations = false
     let uniqueArray = []
-    await firebase.auth().onAuthStateChanged(function(user) {
+    await firebase.auth().onAuthStateChanged(function (user) {
       if (user) {
         currEmail = firebase.auth().currentUser.email
         currName = firebase.auth().currentUser.displayName
@@ -135,48 +145,61 @@ const Location = () => {
         currName = ''
         // No user is signed in.
       }
-    });
-    
-    await db.collection("locations").where("email", "==", currEmail)
-    .onSnapshot((querySnapshot) => {
-      var locations = []
-      querySnapshot.forEach((doc) => {
-        locations.push(doc.data().savedLocs);
-    });
-    uniqueArray = locations.filter((v, index) => {
-        return locations.indexOf(v) === index;
-    });
-    //console.log(uniqueArray.flat())
-    if (locations.length === 0) {
-      hasLocations = false; 
-    } else {
-      hasLocations = true; 
-    }
-    db.collection("locations").doc(currEmail).get().then((doc) => {
-      if (doc.exists) {
-          //console.log("Document data:", doc.data());
-          db.collection('locations').doc(currEmail).update({
-            savedLocs: firebase.firestore.FieldValue.arrayUnion(city + ', '+ state)
-          });
-      } else {
-          console.log("No such document");
-          var data = {
-            name: currName,
-            email: currEmail,
-            savedLocs: [city + ', '+ state]
+    })
+
+    await db
+      .collection('locations')
+      .where('email', '==', currEmail)
+      .onSnapshot((querySnapshot) => {
+        var locations = []
+        querySnapshot.forEach((doc) => {
+          locations.push(doc.data().savedLocs)
+        })
+        uniqueArray = locations.filter((v, index) => {
+          return locations.indexOf(v) === index
+        })
+        //console.log(uniqueArray.flat())
+        if (locations.length === 0) {
+          hasLocations = false
+        } else {
+          hasLocations = true
         }
-        db.collection("locations").doc(currEmail).set(data).then(() => {
-          console.log("Document successfully written!");
-        });
-      }
-  }).catch((error) => {
-      console.log("Error getting document:", error);
-  });
-  setLocations(uniqueArray.flat())
-  //console.log(locations)
-  return uniqueArray.flat();
-    });
-  return locations.flat();
+        db.collection('locations')
+          .doc(currEmail)
+          .get()
+          .then((doc) => {
+            if (doc.exists) {
+              //console.log("Document data:", doc.data());
+              db.collection('locations')
+                .doc(currEmail)
+                .update({
+                  savedLocs: firebase.firestore.FieldValue.arrayUnion(
+                    city + ', ' + state
+                  ),
+                })
+            } else {
+              console.log('No such document')
+              var data = {
+                name: currName,
+                email: currEmail,
+                savedLocs: [city + ', ' + state],
+              }
+              db.collection('locations')
+                .doc(currEmail)
+                .set(data)
+                .then(() => {
+                  console.log('Document successfully written!')
+                })
+            }
+          })
+          .catch((error) => {
+            console.log('Error getting document:', error)
+          })
+        setLocations(uniqueArray.flat())
+        //console.log(locations)
+        return uniqueArray.flat()
+      })
+    return locations.flat()
   }
 
   return (
@@ -196,11 +219,13 @@ const Location = () => {
               {loading && <LinearProgress />}
             </h2>
             <Box m={2} ml={0}>
-            <Button variant="contained"
-                  color="primary"
-                  onClick={() => sendData(city, state)}>
-            Save Search 
-            </Button>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => sendData(city, state)}
+              >
+                Save Search
+              </Button>
             </Box>
             <Grid container direction={'row'} spacing={4}>
               <Grid item xs={4}>
@@ -210,18 +235,22 @@ const Location = () => {
                       <p>
                         No results were found for {city}, {state}. This may be
                         because {city}, {state} is not included in our dataset.
-                        <a href="/">Try searching for another city</a>.
+                        <a href="/home">Try searching for another city</a>.
                       </p>
                     </CardContent>
                   </Card>
                 )}
                 {locations.length > 0 && (
-                  <Card>
-                  <CardContent>
-                    <h3> Saved Locations </h3>
-                    {locations.map((result) => (
-                      <div key={city}>
-                        <p>
+                  <Accordion
+                    style={{ marginBottom: '12px' }}
+                    defaultExpanded={true}
+                  >
+                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                      <h3 style={{ margin: '0px' }}> Saved Locations </h3>
+                    </AccordionSummary>
+                    <AccordionDetails style={{ flexDirection: 'column' }}>
+                      {locations.map((result) => (
+                        <p style={{ marginBottom: '3px' }}>
                           <a
                             href={
                               '/location/' +
@@ -233,11 +262,10 @@ const Location = () => {
                             {result.split(',')[0]}, {result.split(',')[1]}
                           </a>
                         </p>
-                      </div>
-                    ))}
-                  </CardContent>
-                </Card>
-                 )}
+                      ))}
+                    </AccordionDetails>
+                  </Accordion>
+                )}
                 {cityStat.length > 0 && (
                   <Card>
                     <CardContent>
@@ -275,11 +303,14 @@ const Location = () => {
                             return (
                               <>
                                 <p>
-                                  Ranked <b>#{Number(row.row_num).toLocaleString()}</b> in housing value
-                                  growth in {state}. Housing values have
-                                  increased by $
-                                  {Number(row.HousingValueChange.toFixed(2)).toLocaleString()} in the
-                                  past 20 years.
+                                  Ranked{' '}
+                                  <b>#{Number(row.row_num).toLocaleString()}</b>{' '}
+                                  in housing value growth in {state}. Housing
+                                  values have increased by $
+                                  {Number(
+                                    row.HousingValueChange.toFixed(2)
+                                  ).toLocaleString()}{' '}
+                                  in the past 20 years.
                                 </p>
                               </>
                             )
@@ -287,10 +318,14 @@ const Location = () => {
                             return (
                               <>
                                 <p>
-                                  Ranked <b>#{Number(row.row_num).toLocaleString()}</b> in housing value growth
-                                  in {state}. Housing values have decreased by $
-                                  {Number(row.HousingValueChange.toFixed(2)).toLocaleString()} in the
-                                  past 20 years.
+                                  Ranked{' '}
+                                  <b>#{Number(row.row_num).toLocaleString()}</b>{' '}
+                                  in housing value growth in {state}. Housing
+                                  values have decreased by $
+                                  {Number(
+                                    row.HousingValueChange.toFixed(2)
+                                  ).toLocaleString()}{' '}
+                                  in the past 20 years.
                                 </p>
                               </>
                             )

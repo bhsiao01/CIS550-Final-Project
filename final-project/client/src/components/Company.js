@@ -9,9 +9,6 @@ import {
   Grid,
   Card,
   CardContent,
-  CardActionArea,
-  CardMedia,
-  Typography,
   LinearProgress,
   FormControl,
   Select,
@@ -20,12 +17,16 @@ import {
   GridList,
   GridListTile,
   Button,
-  Box
+  Box,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
 } from '@material-ui/core'
-import firebase from "firebase/app"
-import "firebase/auth"
-import "firebase/firestore"
-const db = firebase.firestore();
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
+import firebase from 'firebase/app'
+import 'firebase/auth'
+import 'firebase/firestore'
+const db = firebase.firestore()
 
 const API_KEY = config['news-api-key']
 
@@ -149,7 +150,7 @@ const Company = (props) => {
     let currName = ''
     let hasLocations = false
     let uniqueArray = []
-    await firebase.auth().onAuthStateChanged(function(user) {
+    await firebase.auth().onAuthStateChanged(function (user) {
       if (user) {
         currEmail = firebase.auth().currentUser.email
         currName = firebase.auth().currentUser.displayName
@@ -159,48 +160,61 @@ const Company = (props) => {
         currName = ''
         // No user is signed in.
       }
-    });
-    
-    await db.collection("companies").where("email", "==", currEmail)
-    .onSnapshot((querySnapshot) => {
-      var locations = []
-      querySnapshot.forEach((doc) => {
-        locations.push(doc.data().savedCompanies);
-    });
-    uniqueArray = locations.filter((v, index) => {
-        return locations.indexOf(v) === index;
-    });
-    console.log(uniqueArray.flat())
-    if (locations.length === 0) {
-      hasLocations = false; 
-    } else {
-      hasLocations = true; 
-    }
-    db.collection("companies").doc(currEmail).get().then((doc) => {
-      if (doc.exists) {
-          //console.log("Document data:", doc.data());
-          db.collection('companies').doc(currEmail).update({
-            savedCompanies: firebase.firestore.FieldValue.arrayUnion(company)
-          });
-      } else {
-          console.log("No such document");
-          var data = {
-            name: currName,
-            email: currEmail,
-            savedCompanies: [company]
+    })
+
+    await db
+      .collection('companies')
+      .where('email', '==', currEmail)
+      .onSnapshot((querySnapshot) => {
+        var locations = []
+        querySnapshot.forEach((doc) => {
+          locations.push(doc.data().savedCompanies)
+        })
+        uniqueArray = locations.filter((v, index) => {
+          return locations.indexOf(v) === index
+        })
+        console.log(uniqueArray.flat())
+        if (locations.length === 0) {
+          hasLocations = false
+        } else {
+          hasLocations = true
         }
-        db.collection("companies").doc(currEmail).set(data).then(() => {
-          console.log("Document successfully written!");
-        });
-      }
-  }).catch((error) => {
-      console.log("Error getting document:", error);
-  });
-  setCompSaved(uniqueArray.flat())
-  //console.log(locations)
-  return uniqueArray.flat();
-    });
-  return compSaved.flat();
+        db.collection('companies')
+          .doc(currEmail)
+          .get()
+          .then((doc) => {
+            if (doc.exists) {
+              //console.log("Document data:", doc.data());
+              db.collection('companies')
+                .doc(currEmail)
+                .update({
+                  savedCompanies: firebase.firestore.FieldValue.arrayUnion(
+                    company
+                  ),
+                })
+            } else {
+              console.log('No such document')
+              var data = {
+                name: currName,
+                email: currEmail,
+                savedCompanies: [company],
+              }
+              db.collection('companies')
+                .doc(currEmail)
+                .set(data)
+                .then(() => {
+                  console.log('Document successfully written!')
+                })
+            }
+          })
+          .catch((error) => {
+            console.log('Error getting document:', error)
+          })
+        setCompSaved(uniqueArray.flat())
+        //console.log(locations)
+        return uniqueArray.flat()
+      })
+    return compSaved.flat()
   }
 
   return (
@@ -232,41 +246,39 @@ const Company = (props) => {
                 ({company})
               </h2>
               <Box m={2} ml={0}>
-            <Button variant="contained"
+                <Button
+                  variant="contained"
                   color="primary"
-                  onClick={() => sendData(company)}>
-            Save Search 
-            </Button>
-            </Box>
+                  onClick={() => sendData(company)}
+                >
+                  Save Search
+                </Button>
+              </Box>
             </div>
           ))}
           {loading ? (
             // data is still loading
             <LinearProgress />
-          ) : prices.length > 0 && (
+          ) : prices.length > 0 ? (
             // data loaded and stock data available
             <>
-            {compSaved.length > 0 && (
-                  <Card>
-                  <CardContent>
-                    <h3> Saved Companies </h3>
+              {compSaved.length > 0 && (
+                <Accordion
+                  style={{ marginBottom: '12px' }}
+                  defaultExpanded={true}
+                >
+                  <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                    <h3 style={{ margin: '0px' }}> Saved Companies </h3>
+                  </AccordionSummary>
+                  <AccordionDetails style={{ flexDirection: 'column' }}>
                     {compSaved.map((result) => (
-                      <div key={company}>
-                        <p>
-                          <a
-                            href={
-                              '/company/' +
-                              result
-                            }
-                          >
-                            {result}
-                          </a>
-                        </p>
-                      </div>
+                      <p style={{ marginBottom: '3px' }}>
+                        <a href={'/company/' + result}>{result}</a>
+                      </p>
                     ))}
-                  </CardContent>
-                </Card>
-                 )}
+                  </AccordionDetails>
+                </Accordion>
+              )}
               <Card>
                 <CardContent>
                   <div style={{ display: 'inline-flex' }}>
@@ -411,7 +423,7 @@ const Company = (props) => {
                           No results were found for {city}, {state}. This may be
                           because {city}, {state} is not included in our
                           dataset.
-                          <a href="/">Try searching for another city</a>.
+                          <a href="/home">Try searching for another city</a>.
                         </p>
                       </CardContent>
                     </Card>
@@ -419,6 +431,17 @@ const Company = (props) => {
                 </Grid>
               </Grid>
             </>
+          ) : (
+            // data loaded but stock data unavailable
+            <Card>
+              <CardContent>
+                <p>
+                  No results were found for {company}. This may be because{' '}
+                  {company} is not included in our dataset.
+                  <a href="/home">Try searching for another company</a>.
+                </p>
+              </CardContent>
+            </Card>
           )}
           {
             <GridList
@@ -427,15 +450,30 @@ const Company = (props) => {
               cellHeight={275}
             >
               {companyArticles.map((ca) => (
-                <GridListTile style={{height: '200'}}>
-                  <Link to={{pathname: ca.url}} style={{textDecoration: 'none'}} target="_blank">
-                  <Card style={{height: '275px', minHeight: '275px', display: 'flex'}}>
-                    <CardContent>
-                    <h3>{ca.title}</h3>
-                      <img src={ca.urlToImage} alt={ca.title} align="left" style={style}/>
-                      <p>{ca.content}</p>
-                    </CardContent>
-                  </Card>
+                <GridListTile style={{ height: '200' }}>
+                  <Link
+                    to={{ pathname: ca.url }}
+                    style={{ textDecoration: 'none' }}
+                    target="_blank"
+                  >
+                    <Card
+                      style={{
+                        height: '275px',
+                        minHeight: '275px',
+                        display: 'flex',
+                      }}
+                    >
+                      <CardContent>
+                        <h3>{ca.title}</h3>
+                        <img
+                          src={ca.urlToImage}
+                          alt={ca.title}
+                          align="left"
+                          style={style}
+                        />
+                        <p>{ca.content}</p>
+                      </CardContent>
+                    </Card>
                   </Link>
                 </GridListTile>
               ))}
