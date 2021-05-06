@@ -68,7 +68,7 @@ const NavBar = ({ home }) => {
         justify={'space-between'}
       >
         <Grid item xs={2} style={{ textAlign: 'left' }}>
-          <Link to="/" style={{ textDecoration: 'none' }}>
+          <Link to="/home" style={{ textDecoration: 'none' }}>
             <Button size="large">🦉Home</Button>
           </Link>
         </Grid>
@@ -193,7 +193,7 @@ const NavBar = ({ home }) => {
           </Grid>
         )}
         <Grid item xs={3} style={{textAlign: 'right'}}>
-          <Link to="/login" style={{ textDecoration: 'none' }}>
+          <Link to="/" style={{ textDecoration: 'none' }}>
             <Button
               size="large"
               onClick={() => {

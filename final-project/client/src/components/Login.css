@@ -14,20 +14,102 @@ body {
     margin: 100px;
 }
 
-.sign-in, .white-bg {
+.sign-in{
     padding: 0;
     margin: 0;
     display: block;
-    padding-top: 400px;
+    padding-top: 390px;
     width: 500px;
-    height: 200px;
+    height: 100px;
+}
+
+.sign-in-h2 {
+    color: black;
+    position: absolute;
+    margin: auto;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    padding-top: 60px;
+    width: 300px;
+    height: 0px;
 }
 
 .white-bg {
     background-color: rgb(255, 255, 255);
     opacity: 0.6;
+    position: absolute;
+    margin: auto;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 400px;
+    height: 600px;
 }
 
 .button-1 {
     display: block;
+}
+
+.buttons-wrap {
+    position: absolute;
+    margin: auto;
+    top: 3;
+    right: 0;
+    bottom: 3;
+    left: 0;
+    width: 300px;
+    height: 2px;
+}
+
+.header{
+    position: absolute;
+    color: black;
+    opacity: 1;
+    margin: auto;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 300px;
+    height: 480px;
+}
+
+.owl {
+    font-size: 8rem;
+    position: absolute;
+    margin: auto;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 300px;
+    height: 310px;
+}
+
+.text-1 {
+    position: absolute;
+    color: black;
+    margin: auto;
+    top: 3;
+    right: 0;
+    bottom: 3;
+    left: 0;
+    padding-top: 3em;
+    width: 300px;
+    height: 0;
+}
+.text-2 {
+    position: absolute;
+    margin: auto;
+    color: black;
+    top: 3;
+    right: 0;
+    bottom: 3;
+    left: 0;
+    padding-top: 4.5em;
+    width: 300px;
+    height: 0;
 }
