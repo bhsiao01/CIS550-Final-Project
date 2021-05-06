@@ -93,7 +93,7 @@ const Industry = () => {
       <Grid
         container
         direction={'row'}
-        spacing={3}
+        spacing={2}
         style={{ textAlign: 'left' }}
       >
         <Grid item xs={1} />
@@ -108,33 +108,57 @@ const Industry = () => {
               </>
             ) : topRev.length > 0 ? (
               <>
-                <Grid item xs={4}>
+                <Grid item xs={5}>
                   <Card>
                     <CardContent>
                       <h3>
                         Companies with the highest revenues in the {industry}{' '}
                         Industry
                       </h3>
-                      {topRev.map((comp) => (
-                        <div>
-                          <p>
-                            <b>{comp.CompanyName}</b> ({comp.StockSymbol})<br></br>
-                            Revenue: ${comp.Revenue}<br></br>
-                            Location: {comp.City}, {comp.StateAbbr}<br></br>
-                            Housing value change in the last 5 years: ${Number(comp.HousingValueChange.toFixed(2)).toLocaleString()}{' '}
-                          </p>
-                        </div>
-                      ))}
+                      <ol>
+                        {topRev.map((comp) => (
+                          <li>
+                            <p>
+                              <a
+                                href={'../../company/' + comp.StockSymbol}
+                                style={{ color: 'black' }}
+                              >
+                                <b>{comp.CompanyName}</b></a> ({comp.StockSymbol})
+                             
+                              <br></br>
+                              Revenue (in millions): ${comp.Revenue}
+                              <br></br>
+                              Location:{' '}
+                              <a
+                                href={
+                                  '/location/' +
+                                  comp.RegionName +
+                                  '/' +
+                                  comp.StateAbbr
+                                }
+                                style={{ color: 'black' }}
+                              >
+                                {comp.City}, {comp.StateAbbr}
+                              </a>
+                              <br></br>
+                              Housing value change in the last 5 years: $
+                              {Number(
+                                comp.HousingValueChange.toFixed(2)
+                              ).toLocaleString()}{' '}
+                            </p>
+                          </li>
+                        ))}
+                      </ol>
                     </CardContent>
                   </Card>
                 </Grid>
-                <Grid item xs={8}>
+                <Grid item xs={7}>
                   <Card>
                     <CardContent>
                       <h3>Cities with companies in the {industry} Industry </h3>
                       <p>
                         The map below displays cities with companies in the
-                        Technology industry and the average home value in those
+                        {industry} industry and the average home value in those
                         cities, based on Zillow's Home Value Index. Click on the
                         markers to learn more about each city.
                       </p>
