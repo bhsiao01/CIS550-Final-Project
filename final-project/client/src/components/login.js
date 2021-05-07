@@ -65,7 +65,7 @@ const IfUnAuthed = () => {
                         <Button variant="contained" color="primary"
                       onClick={() => {
                         const googleAuthProvider = new firebase.auth.GoogleAuthProvider();
-                        firebase.auth().signInWithPopup(googleAuthProvider);
+                        firebase.auth().signInWithRedirect(googleAuthProvider);
                       }}
                     >
                       Sign in with Google
@@ -82,7 +82,7 @@ const IfUnAuthed = () => {
                       const fbAuthProvider = new firebase.auth.FacebookAuthProvider();
                       firebase
                       .auth()
-                      .signInWithPopup(fbAuthProvider)
+                      .signInWithRedirect(fbAuthProvider)
                       .then((result) => {
                         /** @type {firebase.auth.OAuthCredential} */
                         const credential = result.credential;
