@@ -3,6 +3,7 @@ import {
   FlexibleWidthXYPlot,
   ChartLabel,
   YAxis,
+  XAxis,
   VerticalBarSeries,
   Crosshair,
 } from 'react-vis'
@@ -29,14 +30,9 @@ const IndustryChart = ({ prices }) => {
         xType="ordinal"
         height={300}
         onMouseLeave={() => setValue(false)}
+        margin={{ left: 50 }}
       >
-        <ChartLabel
-          text="Stock"
-          className="alt-x-label"
-          includeMargin={false}
-          xPercent={0.5}
-          yPercent={1.1}
-        />
+        <XAxis title="Stock" />
         <YAxis title="Price ($)" />
         <VerticalBarSeries
           data={formatData(prices)}
