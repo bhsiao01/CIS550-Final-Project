@@ -408,9 +408,7 @@ const getHQ = (req, res) => {
 
 // Find the top 10 stocks with the greatest price for each industry.
 const getTop10StocksPerIndustry = (req, res) => {
-  var industry_input = req.params.industry;
-  const db = `use master;`
-  connection.query(db, (err, rows, fields) => {})
+  var industry_input = req.params.sector;
   const topTen = `
     WITH HighPrice AS (
       SELECT S.StockSymbol, MAX(High) AS MaxPrice
@@ -426,15 +424,13 @@ const getTop10StocksPerIndustry = (req, res) => {
     MaxPrices AS (
       SELECT MaxPrice
       FROM PriceIndustry
-      WHERE Sector = ${industry_input}
+      WHERE Sector = '${industry_input}'
       ORDER BY MaxPrice DESC
       LIMIT 10
-    )  
+    ) 
     SELECT DISTINCT S.StockSymbol, I.Sector, I.CompanyName, P.MaxPrice
     FROM Stocks S JOIN StockInfo I ON I.StockSymbol = S.StockSymbol JOIN PriceIndustry P ON I.StockSymbol = P.StockSymbol
-    WHERE S.Date >= '2019-01-01' AND S.High >= (SELECT MIN(MaxPrice)
-    FROM MaxPrices);
-  `;
+    WHERE S.Date >= '2019-01-01' AND S.High >= (SELECT MIN(MaxPrice) FROM MaxPrices);`
 
 connection.query(topTen, (err, rows, fields) => {
     if (err) console.log(err)

@@ -94,8 +94,13 @@ const Industry = () => {
         setTopRev(response.data)
         setLoading(false)
       })
-    axios
+    /*axios
       .get('http://localhost:8081/getHighPriceIndustry/' + industry)
+      .then((response) => {
+        setHighPrice(response.data)
+      })*/
+      axios
+      .get('http://localhost:8081/getTop10/' + industry)
       .then((response) => {
         setHighPrice(response.data)
       })
