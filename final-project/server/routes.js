@@ -430,7 +430,8 @@ const getTop10StocksPerIndustry = (req, res) => {
     ) 
     SELECT DISTINCT S.StockSymbol, I.Sector, I.CompanyName, P.MaxPrice
     FROM Stocks S JOIN StockInfo I ON I.StockSymbol = S.StockSymbol JOIN PriceIndustry P ON I.StockSymbol = P.StockSymbol
-    WHERE S.Date >= '2019-01-01' AND S.High >= (SELECT MIN(MaxPrice) FROM MaxPrices);`
+    WHERE S.Date >= '2019-01-01' AND S.High >= (SELECT MIN(MaxPrice) FROM MaxPrices)
+    ORDER BY P.MaxPrice DESC;`
 
 connection.query(topTen, (err, rows, fields) => {
     if (err) console.log(err)
